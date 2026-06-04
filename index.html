@@ -4,35 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GOOD TIME | ساعت لوکس جهانی</title>
-  <meta name="description" content="ساعت لوکس جهانی با طراحی رولکس – زمان شهرهای جهان، تاریخ شمسی و نقل‌قول‌های ادبی">
+  <meta name="description" content="ساعت لوکس جهانی با طراحی منحصربه‌فرد – زمان را هنرمندانه ببینید">
   <meta property="og:title" content="GOOD TIME | ساعت لوکس جهانی">
-  <meta property="og:description" content="زمان را به سبک لاکچری تجربه کنید">
+  <meta property="og:description" content="یک تجربهٔ ناب از زمان">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "GOOD TIME",
     "applicationCategory": "Lifestyle",
-    "description": "ساعت لوکس جهانی با نمایش زمان شهرهای مختلف و تاریخ شمسی"
+    "description": "ساعت لوکس جهانی با طراحی هنری و نمایش زمان شهرهای مختلف"
   }
   </script>
   <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
   <style>
     :root {
-      --bg: #0a0a0f;
-      --glass: rgba(20, 20, 30, 0.65);
-      --border: rgba(255, 215, 0, 0.25);
-      --text: #f0e6d0;
+      --bg: #050508;
+      --glass: rgba(20, 20, 28, 0.5);
+      --border: rgba(212, 175, 55, 0.3);
+      --text: #e0d5c0;
       --accent: #d4af37;
-      --accent-glow: rgba(212, 175, 55, 0.6);
+      --accent-glow: rgba(212, 175, 55, 0.7);
     }
-    [data-theme="ice"] { --accent: #7ec8e3; --border: rgba(126,200,227,0.4); --accent-glow: rgba(126,200,227,0.6); }
-    [data-theme="purple"] { --accent: #b388ff; --border: rgba(179,136,255,0.4); --accent-glow: rgba(179,136,255,0.6); }
-    [data-theme="emerald"] { --accent: #6ee7b7; --border: rgba(110,231,183,0.4); --accent-glow: rgba(110,231,183,0.6); }
+    [data-theme="ice"] { --accent: #7ec8e3; --border: rgba(126,200,227,0.4); --accent-glow: rgba(126,200,227,0.7); }
+    [data-theme="emerald"] { --accent: #6ee7b7; --border: rgba(110,231,183,0.4); --accent-glow: rgba(110,231,183,0.7); }
+    [data-theme="rose"] { --accent: #fb7185; --border: rgba(251,113,133,0.4); --accent-glow: rgba(251,113,133,0.7); }
 
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      font-family: 'Vazirmatn', sans-serif;
+      font-family: 'Vazirmatn', serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -40,356 +40,453 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       position: relative;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    /* پس‌زمینهٔ ستاره‌ای (بدون تصویر) */
-    .stars {
-      position: fixed; top:0; left:0; width:100%; height:100%;
-      z-index:-1;
-      background: radial-gradient(ellipse at 50% 50%, rgba(212,175,55,0.08) 0%, transparent 70%);
+    /* پس‌زمینهٔ ذرات (Canvas) */
+    #particlesCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
     }
-    .star {
-      position: absolute;
-      background: white;
-      border-radius: 50%;
-      animation: twinkle 3s infinite alternate;
-    }
-    @keyframes twinkle {
-      0% { opacity: 0.3; transform: scale(0.8); }
-      100% { opacity: 1; transform: scale(1.2); }
+
+    /* محتوا */
+    .content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 600px;
+      padding: 1rem;
     }
 
     /* لوگو */
     .logo {
-      font-size: 2.2rem;
+      font-size: 2rem;
       font-weight: 700;
-      letter-spacing: 4px;
-      background: linear-gradient(135deg, var(--accent), #fff);
+      letter-spacing: 6px;
+      background: linear-gradient(180deg, var(--accent) 0%, #fff 80%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin: 1.5rem 0 0.5rem;
-      filter: drop-shadow(0 0 12px var(--accent-glow));
+      text-shadow: 0 0 30px var(--accent-glow);
+    }
+
+    /* حلقهٔ شهرها + ساعت مرکزی */
+    .clock-container {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      margin: 1rem auto;
+    }
+
+    canvas#mainClock {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 20px var(--accent-glow));
+    }
+
+    /* شهرهای دور حلقه */
+    .city-ring {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
+      pointer-events: auto;
+    }
+    .city-node {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      transition: 0.3s;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+    .city-node:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--accent);
+      box-shadow: 0 0 25px var(--accent-glow);
+    }
+    .city-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+    .city-dot.night {
+      background: #3b5998;
+      box-shadow: 0 0 10px rgba(59,89,152,0.7);
+    }
+
+    /* برچسب شهر */
+    .city-label {
+      position: absolute;
+      white-space: nowrap;
+      font-size: 0.7rem;
+      transform: translate(-50%, 20px);
+      opacity: 0.8;
+      pointer-events: none;
     }
 
     /* ساعت دیجیتال ایران */
-    .digital-clock {
+    .iran-time {
       text-align: center;
-      background: var(--glass);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--border);
-      border-radius: 32px;
-      padding: 1.5rem 2rem;
-      margin: 0 1rem;
-      width: auto;
-      display: inline-block;
+      font-size: 1.8rem;
+      font-weight: 300;
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px var(--accent-glow);
     }
-    .time-main {
-      font-size: 3.5rem;
-      font-weight: 200;
-      letter-spacing: 4px;
-      color: white;
-      text-shadow: 0 0 20px var(--accent-glow);
+    .iran-date {
+      font-size: 0.8rem;
+      opacity: 0.8;
     }
-    .date-main { font-size: 1rem; opacity: 0.8; margin-top: 0.3rem; }
-
-    /* ساعت آنالوگ بزرگ (Canvas) */
-    .analog-container {
-      display: flex;
-      justify-content: center;
-      margin: 2rem 0;
-    }
-    canvas#mainAnalog {
-      width: 220px;
-      height: 220px;
-      filter: drop-shadow(0 0 15px var(--accent-glow));
-    }
-
-    /* شبکه شهرها */
-    .cities-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 1rem;
-      width: 90%;
-      max-width: 700px;
-      margin: 1rem auto;
-    }
-    .city-card {
-      background: var(--glass);
-      backdrop-filter: blur(15px);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 1rem;
-      text-align: center;
-      transition: 0.3s;
-      cursor: pointer;
-    }
-    .city-card:hover { background: rgba(255,255,255,0.1); border-color: var(--accent); }
-    .city-name { font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.3rem; }
-    .city-time { font-size: 1.2rem; font-weight: 500; }
-    .status-dot {
-      display: inline-block;
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      margin-left: 4px;
-    }
-    .dot-green { background: #10b981; box-shadow: 0 0 8px #10b981; }
-    .dot-orange { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
 
     /* نقل‌قول */
     .quote-box {
       background: var(--glass);
-      backdrop-filter: blur(15px);
+      backdrop-filter: blur(20px);
       border: 1px solid var(--border);
-      border-right: 3px solid var(--accent);
       border-radius: 20px;
-      padding: 1rem 1.2rem;
-      margin: 1.5rem 1rem 2rem;
-      width: 90%;
-      max-width: 700px;
+      padding: 1rem 1.5rem;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
     }
-    .quote-text { font-style: italic; font-size: 0.9rem; line-height: 1.7; margin-bottom: 0.4rem; }
-    .quote-author { font-size: 0.75rem; opacity: 0.6; text-align: left; }
-    .next-btn {
-      background: rgba(255,255,255,0.05);
+    .quote-text { font-style: italic; font-size: 0.9rem; line-height: 1.7; }
+    .quote-author { font-size: 0.7rem; opacity: 0.6; margin-top: 0.5rem; }
+    .next-quote-btn {
+      background: none;
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 0.4rem 1rem;
-      border-radius: 16px;
+      padding: 0.3rem 1rem;
+      border-radius: 15px;
+      margin-top: 0.5rem;
       cursor: pointer;
       font-family: inherit;
-      margin-top: 0.5rem;
+      transition: 0.3s;
     }
+    .next-quote-btn:hover { background: rgba(255,255,255,0.1); }
 
-    /* مدال شهر */
+    /* مدال جزئیات شهر */
     .modal {
       position: fixed;
-      top:0; left:0; width:100%; height:100%;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(10px);
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(15px);
       z-index: 100;
       display: flex;
       align-items: center;
       justify-content: center;
       opacity: 0;
       pointer-events: none;
-      transition: 0.3s;
+      transition: 0.4s;
     }
-    .modal.active { opacity:1; pointer-events:auto; }
-    .modal-content {
+    .modal.active { opacity: 1; pointer-events: auto; }
+    .modal-card {
       background: var(--glass);
       backdrop-filter: blur(30px);
       border: 1px solid var(--border);
-      border-radius: 32px;
+      border-radius: 30px;
       padding: 2rem;
       text-align: center;
-      max-width: 320px;
-      width: 90%;
+      width: 280px;
     }
     .modal-city { font-size: 1.8rem; margin-bottom: 1rem; }
-    .modal-time { font-size: 2.2rem; }
-    .modal-date { opacity: 0.8; margin: 0.5rem 0; }
-    .close-btn {
+    canvas#modalClock { width: 130px; height: 130px; }
+    .modal-time { font-size: 2rem; margin: 0.5rem 0; }
+    .modal-date { opacity: 0.8; font-size: 0.8rem; }
+    .modal-close {
       background: rgba(255,255,255,0.1);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 0.5rem 1.5rem;
+      padding: 0.4rem 1.2rem;
       border-radius: 20px;
-      cursor: pointer;
       margin-top: 1rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* دکمهٔ تغییر تم */
+    .theme-toggle {
+      position: fixed;
+      top: 1rem; right: 1rem;
+      z-index: 50;
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
     }
   </style>
 </head>
 <body>
 
-  <!-- ستاره‌های پس‌زمینه -->
-  <div class="stars" id="starsContainer"></div>
+  <canvas id="particlesCanvas"></canvas>
 
-  <div class="logo">GOOD TIME</div>
+  <div class="content">
+    <div class="logo">GOOD TIME</div>
 
-  <div class="digital-clock">
-    <div class="time-main" id="digitalTime">--:--</div>
-    <div class="date-main" id="digitalDate">...</div>
-  </div>
+    <div class="clock-container" id="clockContainer">
+      <canvas id="mainClock" width="320" height="320"></canvas>
+      <!-- داینامیک: شهرها اینجا با JS اضافه می‌شوند -->
+    </div>
 
-  <div class="analog-container">
-    <canvas id="mainAnalog" width="220" height="220"></canvas>
-  </div>
+    <div class="iran-time" id="iranDigital">--:--</div>
+    <div class="iran-date" id="iranDate">...</div>
 
-  <div class="cities-grid" id="citiesGrid"></div>
-
-  <div class="quote-box">
-    <div class="quote-text" id="quoteText">...</div>
-    <div class="quote-author" id="quoteAuthor"></div>
-    <button class="next-btn" id="nextQuoteBtn">جمله بعدی</button>
-  </div>
-
-  <!-- مدال جزئیات شهر -->
-  <div class="modal" id="cityModal">
-    <div class="modal-content">
-      <div class="modal-city" id="modalCityName"></div>
-      <canvas id="modalAnalog" width="150" height="150"></canvas>
-      <div class="modal-time" id="modalTime"></div>
-      <div class="modal-date" id="modalDate"></div>
-      <button class="close-btn" id="closeModal">بستن</button>
+    <div class="quote-box">
+      <div class="quote-text" id="quoteText">...</div>
+      <div class="quote-author" id="quoteAuthor"></div>
+      <button class="next-quote-btn" id="nextQuoteBtn">جمله بعدی</button>
     </div>
   </div>
 
+  <!-- مدال شهر -->
+  <div class="modal" id="cityModal">
+    <div class="modal-card">
+      <div class="modal-city" id="modalCityName"></div>
+      <canvas id="modalClock" width="130" height="130"></canvas>
+      <div class="modal-time" id="modalTime"></div>
+      <div class="modal-date" id="modalDate"></div>
+      <button class="modal-close" id="modalClose">بستن</button>
+    </div>
+  </div>
+
+  <button class="theme-toggle" id="themeToggle">🎨</button>
+
   <script src="quotes.js"></script>
   <script>
-    // ==================== ستاره‌های پس‌زمینه ====================
-    function createStars() {
-      const container = document.getElementById('starsContainer');
-      for (let i = 0; i < 120; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        star.style.left = Math.random() * 100 + '%';
-        star.style.top = Math.random() * 100 + '%';
-        star.style.width = star.style.height = Math.random() * 3 + 1 + 'px';
-        star.style.animationDelay = Math.random() * 3 + 's';
-        container.appendChild(star);
-      }
+    // ==================== پس‌زمینهٔ ذرات ====================
+    const pCanvas = document.getElementById('particlesCanvas');
+    const pCtx = pCanvas.getContext('2d');
+    pCanvas.width = window.innerWidth;
+    pCanvas.height = window.innerHeight;
+    const particles = [];
+    for (let i = 0; i < 200; i++) {
+      particles.push({
+        x: Math.random() * pCanvas.width,
+        y: Math.random() * pCanvas.height,
+        r: Math.random() * 1.5 + 0.5,
+        speedX: (Math.random() - 0.5) * 0.5,
+        speedY: (Math.random() - 0.5) * 0.5,
+        opacity: Math.random() * 0.8 + 0.2
+      });
     }
-    createStars();
+    function animateParticles() {
+      pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+      particles.forEach(p => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        if (p.x < 0) p.x = pCanvas.width;
+        if (p.x > pCanvas.width) p.x = 0;
+        if (p.y < 0) p.y = pCanvas.height;
+        if (p.y > pCanvas.height) p.y = 0;
+        pCtx.beginPath();
+        pCtx.arc(p.x, p.y, p.r, 0, 2*Math.PI);
+        pCtx.fillStyle = `rgba(255,255,255,${p.opacity})`;
+        pCtx.fill();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+    window.addEventListener('resize', () => {
+      pCanvas.width = window.innerWidth;
+      pCanvas.height = window.innerHeight;
+    });
 
-    // ==================== ساعت آنالوگ اصلی (ایران) ====================
-    const mainCanvas = document.getElementById('mainAnalog');
+    // ==================== داده‌های شهرها ====================
+    const cities = [
+      { name: 'تهران', tz: 'Asia/Tehran' },
+      { name: 'لندن', tz: 'Europe/London' },
+      { name: 'نیویورک', tz: 'America/New_York' },
+      { name: 'توکیو', tz: 'Asia/Tokyo' },
+      { name: 'دبی', tz: 'Asia/Dubai' },
+      { name: 'پاریس', tz: 'Europe/Paris' },
+      { name: 'برلین', tz: 'Europe/Berlin' },
+      { name: 'مسکو', tz: 'Europe/Moscow' },
+      { name: 'سیدنی', tz: 'Australia/Sydney' },
+      { name: 'تورنتو', tz: 'America/Toronto' },
+      { name: 'بمبئی', tz: 'Asia/Kolkata' },
+      { name: 'شانگهای', tz: 'Asia/Shanghai' }
+    ];
+
+    // ==================== رسم ساعت اصلی (Canvas) ====================
+    const mainCanvas = document.getElementById('mainClock');
     const mainCtx = mainCanvas.getContext('2d');
-    function drawMainAnalog() {
-      const now = new Date();
+    const clockRadius = 140;
+    const centerX = 160, centerY = 160;
+
+    function drawClockFace(ctx, now, isModal = false) {
+      const r = isModal ? 60 : clockRadius;
+      const cx = isModal ? 65 : centerX;
+      const cy = isModal ? 65 : centerY;
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      
+      // حلقهٔ بیرونی
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, 2*Math.PI);
+      ctx.strokeStyle = 'rgba(212,175,55,0.4)';
+      ctx.lineWidth = isModal ? 2 : 3;
+      ctx.stroke();
+      
+      // اعداد رومی ساده (فقط خطوط)
+      for (let i = 0; i < 12; i++) {
+        const angle = (i * 30 - 90) * Math.PI / 180;
+        const outerX = cx + (r - 15) * Math.cos(angle);
+        const outerY = cy + (r - 15) * Math.sin(angle);
+        const innerX = cx + (r - 25) * Math.cos(angle);
+        const innerY = cy + (r - 25) * Math.sin(angle);
+        ctx.beginPath();
+        ctx.moveTo(innerX, innerY);
+        ctx.lineTo(outerX, outerY);
+        ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+        ctx.lineWidth = isModal ? 1.5 : 2;
+        ctx.stroke();
+      }
+
       const h = now.getHours() % 12;
       const m = now.getMinutes();
       const s = now.getSeconds();
-      const w = mainCanvas.width;
-      const cx = w/2, cy = w/2, r = w/2 - 10;
-      mainCtx.clearRect(0,0,w,w);
-      // قاب
-      mainCtx.beginPath();
-      mainCtx.arc(cx, cy, r, 0, Math.PI*2);
-      mainCtx.strokeStyle = 'rgba(212,175,55,0.6)';
-      mainCtx.lineWidth = 4;
-      mainCtx.stroke();
+      
       // عقربه‌ها
-      drawHand(mainCtx, cx, cy, (h*30 + m*0.5) * Math.PI/180, r*0.5, 4, '#f8fafc');
-      drawHand(mainCtx, cx, cy, m*6 * Math.PI/180, r*0.7, 2.5, '#e2e8f0');
-      drawHand(mainCtx, cx, cy, s*6 * Math.PI/180, r*0.8, 1, '#d4af37', true);
-      // مرکز
-      mainCtx.beginPath();
-      mainCtx.arc(cx, cy, 6, 0, 2*Math.PI);
-      mainCtx.fillStyle = '#fff';
-      mainCtx.fill();
-    }
-    function drawHand(ctx, x, y, angle, length, width, color, glow=false) {
+      function drawHand(angle, length, width, color, glow = false) {
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        const rad = (angle * Math.PI / 180) - (Math.PI / 2);
+        ctx.lineTo(cx + length * Math.cos(rad), cy + length * Math.sin(rad));
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        if (glow) {
+          ctx.shadowColor = color;
+          ctx.shadowBlur = 8;
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+      
+      drawHand((h * 30) + (m * 0.5), r * 0.5, 4, '#f8fafc');
+      drawHand(m * 6, r * 0.7, 2.5, '#e2e8f0');
+      drawHand(s * 6, r * 0.8, 1, '#d4af37', true);
+      
+      // نقطهٔ مرکز
       ctx.beginPath();
-      ctx.lineWidth = width;
-      ctx.strokeStyle = color;
-      if (glow) ctx.shadowColor = color;
-      else ctx.shadowColor = 'transparent';
-      ctx.shadowBlur = glow ? 10 : 0;
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + Math.sin(angle) * length, y - Math.cos(angle) * length);
-      ctx.stroke();
-      ctx.shadowColor = 'transparent';
+      ctx.arc(cx, cy, 5, 0, 2*Math.PI);
+      ctx.fillStyle = '#d4af37';
+      ctx.fill();
     }
-    drawMainAnalog();
-    setInterval(drawMainAnalog, 1000);
 
-    // ==================== شهرهای جهان ====================
-    const worldCities = [
-      { name:'تهران', tz:'Asia/Tehran' },
-      { name:'لندن', tz:'Europe/London' },
-      { name:'نیویورک', tz:'America/New_York' },
-      { name:'توکیو', tz:'Asia/Tokyo' },
-      { name:'دبی', tz:'Asia/Dubai' },
-      { name:'پاریس', tz:'Europe/Paris' },
-      { name:'برلین', tz:'Europe/Berlin' },
-      { name:'مسکو', tz:'Europe/Moscow' },
-      { name:'سیدنی', tz:'Australia/Sydney' },
-      { name:'تورنتو', tz:'America/Toronto' },
-      { name:'بمبئی', tz:'Asia/Kolkata' },
-      { name:'شانگهای', tz:'Asia/Shanghai' }
-    ];
-
-    function updateWorldCities() {
+    function updateMainClock() {
       const now = new Date();
-      document.getElementById('citiesGrid').innerHTML = worldCities.map(c => {
-        const cityTime = new Date(now.toLocaleString('en-US', { timeZone: c.tz }));
-        const hour = cityTime.getHours();
-        const isBusiness = hour >= 9 && hour < 17;
-        const dotClass = isBusiness ? 'dot-green' : 'dot-orange';
-        return `
-          <div class="city-card" data-city="${c.name}" data-tz="${c.tz}">
-            <div class="city-name">${c.name}</div>
-            <div class="city-time"><span class="status-dot ${dotClass}"></span>${cityTime.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit' })}</div>
-          </div>
-        `;
-      });
-      // کلیک روی هر شهر
-      document.querySelectorAll('.city-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const city = card.dataset.city;
-          const tz = card.dataset.tz;
-          showCityModal(city, tz);
-        });
-      });
+      drawClockFace(mainCtx, now);
+      document.getElementById('iranDigital').textContent = now.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit' });
+      document.getElementById('iranDate').textContent = new Intl.DateTimeFormat('fa-IR', { dateStyle:'full' }).format(now);
     }
-    updateWorldCities();
-    setInterval(updateWorldCities, 60000);
+    updateMainClock();
+    setInterval(updateMainClock, 1000);
+
+    // ==================== حلقهٔ شهرها ====================
+    const container = document.getElementById('clockContainer');
+    const ringRadius = 130; // فاصلهٔ مرکز تا شهرها
+    cities.forEach((city, i) => {
+      const angle = (i * 30 - 90) * Math.PI / 180; // هر شهر ۳۰ درجه فاصله
+      const x = 160 + ringRadius * Math.cos(angle);
+      const y = 160 + ringRadius * Math.sin(angle);
+      
+      const node = document.createElement('div');
+      node.className = 'city-node';
+      node.style.left = x + 'px';
+      node.style.top = y + 'px';
+      node.innerHTML = '<div class="city-dot"></div>';
+      node.addEventListener('click', () => showCityModal(city));
+      
+      const label = document.createElement('div');
+      label.className = 'city-label';
+      label.style.left = x + 'px';
+      label.style.top = y + 'px';
+      label.textContent = city.name;
+      
+      container.appendChild(node);
+      container.appendChild(label);
+      
+      // به‌روزرسانی رنگ نقطه بر اساس روز/شب
+      setInterval(() => {
+        const now = new Date();
+        const cityTime = new Date(now.toLocaleString('en-US', { timeZone: city.tz }));
+        const hour = cityTime.getHours();
+        const dot = node.querySelector('.city-dot');
+        if (hour >= 6 && hour < 18) {
+          dot.classList.remove('night');
+        } else {
+          dot.classList.add('night');
+        }
+      }, 60000);
+      // اجرای اولیه
+      (function() {
+        const now = new Date();
+        const cityTime = new Date(now.toLocaleString('en-US', { timeZone: city.tz }));
+        const hour = cityTime.getHours();
+        const dot = node.querySelector('.city-dot');
+        if (hour >= 6 && hour < 18) {
+          dot.classList.remove('night');
+        } else {
+          dot.classList.add('night');
+        }
+      })();
+    });
 
     // ==================== مدال شهر ====================
-    function showCityModal(city, tz) {
-      const modal = document.getElementById('cityModal');
-      document.getElementById('modalCityName').textContent = city;
-      document.getElementById('closeModal').onclick = () => modal.classList.remove('active');
+    const modal = document.getElementById('cityModal');
+    const modalClose = document.getElementById('modalClose');
+    let modalInterval;
+
+    function showCityModal(city) {
+      document.getElementById('modalCityName').textContent = city.name;
       modal.classList.add('active');
-      // بروزرسانی داخل مدال
       function updateModal() {
         const now = new Date();
-        const cityTime = new Date(now.toLocaleString('en-US', { timeZone: tz }));
+        const cityTime = new Date(now.toLocaleString('en-US', { timeZone: city.tz }));
         document.getElementById('modalTime').textContent = cityTime.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
         document.getElementById('modalDate').textContent = 
           new Intl.DateTimeFormat('fa-IR', { dateStyle:'full' }).format(cityTime) + ' | ' +
           cityTime.toLocaleDateString('en-US', { dateStyle:'full' });
-        drawModalAnalog(cityTime);
+        drawClockFace(document.getElementById('modalClock').getContext('2d'), cityTime, true);
       }
       updateModal();
-      const interval = setInterval(updateModal, 1000);
-      document.getElementById('closeModal').addEventListener('click', () => clearInterval(interval), { once: true });
+      modalInterval = setInterval(updateModal, 1000);
     }
 
-    function drawModalAnalog(date) {
-      const canvas = document.getElementById('modalAnalog');
-      const ctx = canvas.getContext('2d');
-      const w = canvas.width, cx = w/2, cy = w/2, r = w/2 - 8;
-      ctx.clearRect(0,0,w,w);
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI*2);
-      ctx.strokeStyle = 'rgba(212,175,55,0.7)';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      const h = date.getHours() % 12;
-      const m = date.getMinutes();
-      const s = date.getSeconds();
-      drawHand(ctx, cx, cy, (h*30 + m*0.5) * Math.PI/180, r*0.45, 3, '#f8fafc');
-      drawHand(ctx, cx, cy, m*6 * Math.PI/180, r*0.65, 2, '#e2e8f0');
-      drawHand(ctx, cx, cy, s*6 * Math.PI/180, r*0.75, 1, '#d4af37', true);
-      ctx.beginPath();
-      ctx.arc(cx, cy, 4, 0, 2*Math.PI);
-      ctx.fillStyle = '#fff';
-      ctx.fill();
+    function closeModal() {
+      modal.classList.remove('active');
+      clearInterval(modalInterval);
     }
+    modalClose.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
 
-    // ==================== ساعت دیجیتال ====================
-    function updateDigital() {
-      const now = new Date();
-      document.getElementById('digitalTime').textContent = now.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit' });
-      document.getElementById('digitalDate').textContent = new Intl.DateTimeFormat('fa-IR', { dateStyle:'full' }).format(now);
-    }
-    updateDigital();
-    setInterval(updateDigital, 1000);
-
-    // ==================== نقل‌قول ====================
+    // ==================== نقل‌قول‌ها ====================
     let quoteIndex = -1, remainingQuotes = [];
     function resetQuotes() {
       if (typeof quotes !== 'undefined' && Array.isArray(quotes)) {
@@ -416,24 +513,18 @@
     setInterval(showQuote, 60000);
     document.getElementById('nextQuoteBtn').addEventListener('click', showQuote);
 
-    // ==================== تم‌ها (انتخاب با دکمه کوچک در گوشه) ====================
-    // یک دکمهٔ کوچک برای سوییچ تم اضافه می‌کنیم
-    const themeBtn = document.createElement('button');
-    themeBtn.textContent = '🎨';
-    themeBtn.style.cssText = 'position:fixed; top:1rem; right:1rem; z-index:50; background:var(--glass); border:1px solid var(--border); color:var(--text); border-radius:50%; width:40px; height:40px; backdrop-filter:blur(10px); cursor:pointer; font-size:1.2rem;';
-    document.body.appendChild(themeBtn);
-    const themes = ['default', 'ice', 'purple', 'emerald'];
+    // ==================== تغییر تم ====================
+    const themes = ['default', 'ice', 'emerald', 'rose'];
     let currentTheme = localStorage.getItem('goodtime-theme') || 'default';
     function setTheme(t) {
       document.body.setAttribute('data-theme', t === 'default' ? '' : t);
       localStorage.setItem('goodtime-theme', t);
     }
     setTheme(currentTheme);
-    themeBtn.addEventListener('click', () => {
+    document.getElementById('themeToggle').addEventListener('click', () => {
       const idx = themes.indexOf(currentTheme);
-      const next = themes[(idx + 1) % themes.length];
-      currentTheme = next;
-      setTheme(next);
+      currentTheme = themes[(idx + 1) % themes.length];
+      setTheme(currentTheme);
     });
   </script>
 </body>
