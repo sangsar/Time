@@ -817,4 +817,85 @@
                 for (let i = 0; i < count; i++) {
                     particles.push({
                         x: Math.random() * particlesCanvas.width,
-                        y: Math.random
+                        y: Math.random() * particlesCanvas.height,
+                        radius: Math.random() * 2.2 + 0.4,
+                        speedX: (Math.random() - 0.5) * 0.25,
+                        speedY: -(Math.random() * 0.4 + 0.15),
+                        opacity: Math.random() * 0.7 + 0.15,
+                        twinkleSpeed: Math.random() * 0.015 + 0.005,
+                        twinkleOffset: Math.random() * Math.PI * 2,
+                    });
+                }
+            }
+
+            function animateParticles(timestamp) {
+                ctx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+                particles.forEach(p => {
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    p.opacity += Math.sin(timestamp * p.twinkleSpeed + p.twinkleOffset) * 0.008;
+                    p.opacity = Math.max(0.08, Math.min(0.85, p.opacity));
+                    if (p.y < -10) { p.y = particlesCanvas.height + 10;
+                        p.x = Math.random() * particlesCanvas.width; }
+                    if (p.x < -10) p.x = particlesCanvas.width + 10;
+                    if (p.x > particlesCanvas.width + 10) p.x = -10;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 3);
+                    gradient.addColorStop(0, `rgba(220,210,255,${p.opacity})`);
+                    gradient.addColorStop(0.4, `rgba(180,170,220,${p.opacity * 0.6})`);
+                    gradient.addColorStop(1, 'rgba(100,90,160,0)');
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+                });
+                animationFrameId = requestAnimationFrame(animateParticles);
+            }
+
+            // ─── راه‌اندازی ───
+            async function init() {
+                resizeCanvas();
+                createParticles();
+                animationFrameId = requestAnimationFrame(animateParticles);
+
+                createClockCards();
+                updateAllClocks();
+
+                // لود عکس‌های NASA و Hubble
+                await loadBackgroundImages();
+                console.log(`✅ ${nasaImages.length} عکس فضایی از NASA/Hubble بارگذاری شد`);
+
+                // نقل‌قول اولیه از quotes.js
+                if (window.quotes && window.quotes.length > 0) {
+                    updateQuote();
+                    console.log(`✅ ${window.quotes.length} نقل‌قول از quotes.js بارگذاری شد`);
+                } else {
+                    quoteText.textContent = '⚠️ فایل quotes.js را در کنار index.html قرار دهید';
+                    quoteCounter.textContent = '';
+                }
+
+                // تایمرها
+                clockTimer = setInterval(updateAllClocks, CLOCK_UPDATE_INTERVAL);
+                quoteTimer = setInterval(updateQuote, QUOTE_CHANGE_INTERVAL);
+                bgRotationTimer = setInterval(rotateBackground, BACKGROUND_CHANGE_INTERVAL);
+
+                window.addEventListener('resize', () => { resizeCanvas();
+                    createParticles(); });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+            window.addEventListener('beforeunload', () => {
+                if (clockTimer) clearInterval(clockTimer);
+                if (quoteTimer) clearInterval(quoteTimer);
+                if (bgRotationTimer) clearInterval(bgRotationTimer);
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            });
+        })();
+    </script>
+</body>
+</html>
