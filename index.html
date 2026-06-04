@@ -4,16 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Æternum | داشبورد کیهانی</title>
-  <meta name="description" content="ساعت هوشمند جهانی با کره زمین سه‌بعدی و نقل‌قول‌های ادبی">
+  <meta name="description" content="ساعت هوشمند جهانی با کره زمین سه‌بعدی و کیفیت بصری بی‌نهایت">
   <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
   <style>
     :root {
       --bg: #02040a;
-      --glass: rgba(15, 15, 25, 0.55);
-      --border: rgba(255, 255, 255, 0.08);
-      --text: #e0e0e0;
+      --glass: rgba(15, 15, 25, 0.5);
+      --border: rgba(255, 255, 255, 0.1);
+      --text: #f0f0f5;
       --accent: #60a5fa;
     }
+    [data-theme="golden"] { --accent: #fbbf24; }
+    [data-theme="ocean"] { --accent: #38bdf8; }
+    [data-theme="cyberpunk"] { --accent: #ff2a6d; }
+
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: 'Vazirmatn', sans-serif;
@@ -24,21 +28,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
     }
-    /* کرهٔ سه‌بعدی بزرگ پس‌زمینه */
+    /* کرهٔ سه‌بعدی پس‌زمینه */
     #globe-container {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0; right: -10vw;
+      width: 70vw; height: 100vh;
       z-index: 0;
     }
-    /* UI لایه شیشه‌ای */
+    /* UI شیشه‌ای */
     .ui-layer {
       position: relative;
       z-index: 10;
       width: 100%;
-      max-width: 1400px;
       height: 100vh;
       padding: 2rem;
       display: flex;
@@ -47,7 +49,6 @@
       justify-content: space-between;
       pointer-events: none;
     }
-    /* پنل سمت چپ: ساعت هوشمند + نقل‌قول */
     .left-panel {
       display: flex;
       flex-direction: column;
@@ -58,95 +59,97 @@
       margin-bottom: auto;
       margin-right: 5vw;
     }
-    /* حلقهٔ هوشمند ۲۴ ساعته */
-    .smart-ring {
-      width: 280px;
-      height: 280px;
+    
+    /* ساعت فوق‌شیشه‌ای */
+    .glass-clock {
+      width: 320px;
+      height: 320px;
       border-radius: 50%;
-      background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, rgba(10,10,20,0.6) 70%);
+      background: rgba(255, 255, 255, 0.03);
       backdrop-filter: blur(40px);
       -webkit-backdrop-filter: blur(40px);
-      border: 2px solid rgba(255,255,255,0.12);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 0 40px rgba(255,255,255,0.03);
       position: relative;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    .ring-time {
-      font-size: 2.8rem;
+    .clock-face {
+      width: 85%;
+      height: 85%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), transparent 60%);
+      position: relative;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
+    }
+    .hand {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform-origin: bottom center;
+      border-radius: 4px;
+      transition: transform 0.05s linear;
+    }
+    .hour-hand {
+      width: 3px;
+      height: 28%;
+      background: #f8fafc;
+      margin-left: -1.5px;
+      box-shadow: 0 0 8px rgba(255,255,255,0.4);
+    }
+    .minute-hand {
+      width: 2px;
+      height: 38%;
+      background: #e2e8f0;
+      margin-left: -1px;
+    }
+    .second-hand {
+      width: 1px;
+      height: 44%;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+      z-index: 5;
+    }
+    .center-dot {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 12px; height: 12px;
+      background: white;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      box-shadow: 0 0 20px rgba(255,255,255,0.5);
+    }
+    .digital-overlay {
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 2;
+    }
+    .digital-time {
+      font-size: 2.2rem;
       font-weight: 300;
       letter-spacing: 2px;
       text-shadow: 0 0 20px rgba(255,255,255,0.3);
-      z-index: 2;
     }
-    .ring-date {
-      font-size: 0.85rem;
+    .digital-date {
+      font-size: 0.8rem;
       opacity: 0.7;
-      position: absolute;
-      top: 35%;
-      left: 50%;
-      transform: translate(-50%,-50%);
+      margin-top: 4px;
     }
-    /* نقاط شهرها روی حلقه */
-    .city-marker {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #4ade80;
-      box-shadow: 0 0 12px #4ade80;
-      transform: translate(-50%, -50%);
-      transition: all 0.3s;
-      cursor: pointer;
-      z-index: 5;
-    }
-    .city-marker:hover {
-      transform: translate(-50%, -50%) scale(1.8);
-      box-shadow: 0 0 20px #4ade80;
-    }
-    .city-label {
-      position: absolute;
-      font-size: 0.65rem;
-      white-space: nowrap;
-      transform: translate(-50%, 12px);
-      opacity: 0.8;
-      pointer-events: none;
-    }
-    /* قوس رنگین شبانه‌روز */
-    .day-arc {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: conic-gradient(
-        from 90deg,
-        #0f172a 0deg,    /* شب */
-        #1e293b 60deg,    /* شب عمیق */
-        #f59e0b 90deg,    /* طلوع */
-        #fbbf24 110deg,   /* طلوع */
-        #60a5fa 150deg,   /* صبح */
-        #93c5fd 200deg,   /* ظهر */
-        #60a5fa 250deg,   /* بعد از ظهر */
-        #f59e0b 280deg,   /* غروب */
-        #fbbf24 300deg,   /* غروب */
-        #1e293b 340deg,   /* شب */
-        #0f172a 360deg
-      );
-      mask: radial-gradient(circle, transparent 62%, black 63%);
-      -webkit-mask: radial-gradient(circle, transparent 62%, black 63%);
-      opacity: 0.35;
-    }
+
     /* نقل‌قول */
-    .quote-box {
+    .quote-glass {
       background: var(--glass);
       backdrop-filter: blur(30px);
       -webkit-backdrop-filter: blur(30px);
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 1.5rem;
-      max-width: 350px;
+      max-width: 380px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     }
     .quote-text {
@@ -164,56 +167,75 @@
       background: rgba(255,255,255,0.05);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 0.4rem 1.2rem;
+      padding: 0.5rem 1.2rem;
       border-radius: 20px;
       cursor: pointer;
       font-family: inherit;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       margin-top: 0.8rem;
       transition: 0.3s;
       backdrop-filter: blur(10px);
     }
-    .next-btn:hover {
-      background: rgba(255,255,255,0.2);
-      border-color: white;
+    .next-btn:hover { background: rgba(255,255,255,0.2); border-color: white; }
+
+    /* منوی تم */
+    .theme-menu {
+      position: fixed;
+      top: 2rem;
+      left: 2rem;
+      z-index: 20;
+      display: flex;
+      gap: 0.5rem;
     }
+    .theme-dot {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: 0.3s;
+      backdrop-filter: blur(10px);
+    }
+    .theme-dot:hover { transform: scale(1.2); border-color: white; }
+    .theme-dot.active { border-color: white; transform: scale(1.2); }
+
     @media (max-width: 900px) {
-      .ui-layer {
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-      }
-      .left-panel {
-        align-items: center;
-        margin: 0;
-      }
-      .smart-ring {
-        width: 220px;
-        height: 220px;
-      }
-      .ring-time {
-        font-size: 2.2rem;
-      }
-      .quote-box {
-        max-width: 90vw;
-      }
+      #globe-container { width: 100vw; right: 0; height: 50vh; top: 0; }
+      .left-panel { margin: 0; align-items: center; }
+      .glass-clock { width: 260px; height: 260px; }
+      .quote-glass { max-width: 90vw; }
     }
   </style>
 </head>
 <body>
+
+  <!-- منوی تم -->
+  <div class="theme-menu">
+    <span class="theme-dot active" data-theme="default" style="background:#60a5fa;"></span>
+    <span class="theme-dot" data-theme="golden" style="background:#fbbf24;"></span>
+    <span class="theme-dot" data-theme="ocean" style="background:#38bdf8;"></span>
+    <span class="theme-dot" data-theme="cyberpunk" style="background:#ff2a6d;"></span>
+  </div>
+
   <div id="globe-container"></div>
 
   <div class="ui-layer">
     <div class="left-panel">
-      <!-- حلقه هوشمند -->
-      <div class="smart-ring" id="smartRing">
-        <div class="day-arc"></div>
-        <div class="ring-date" id="ringDate"></div>
-        <div class="ring-time" id="ringTime">--:--</div>
+      <!-- ساعت فوق‌شیشه‌ای -->
+      <div class="glass-clock">
+        <div class="clock-face" id="clockFace">
+          <div class="hand hour-hand" id="hourHand"></div>
+          <div class="hand minute-hand" id="minuteHand"></div>
+          <div class="hand second-hand" id="secondHand"></div>
+          <div class="center-dot"></div>
+          <div class="digital-overlay">
+            <div class="digital-time" id="digitalTime">--:--</div>
+            <div class="digital-date" id="digitalDate">...</div>
+          </div>
+        </div>
       </div>
 
       <!-- نقل‌قول -->
-      <div class="quote-box">
+      <div class="quote-glass">
         <div class="quote-text" id="quoteText">...</div>
         <div class="quote-author" id="quoteAuthor"></div>
         <button class="next-btn" id="nextQuoteBtn">جملهٔ بعدی ←</button>
@@ -229,11 +251,11 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    // ==================== کرهٔ بزرگ سه‌بعدی ====================
+    // ==================== کرهٔ سه‌بعدی با کیفیت بی‌نهایت ====================
     const container = document.getElementById('globe-container');
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-    camera.position.set(2.5, 0.2, 2.8);
+    const camera = new THREE.PerspectiveCamera(35, container.clientWidth / container.clientHeight, 0.1, 100);
+    camera.position.set(1.5, 0.3, 2.2);
     camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -241,62 +263,89 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // نورپردازی
-    scene.add(new THREE.AmbientLight(0x333355));
+    // نور خورشید
     const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
     sunLight.position.set(5, 2, 5);
     scene.add(sunLight);
+    scene.add(new THREE.AmbientLight(0x333355));
 
-    // تکسچرهای زمین
+    // بافت‌های باکیفیت ناسا
     const loader = new THREE.TextureLoader();
-    const earthMap = loader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
-    const earthSpecular = loader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
-    const earthBump = loader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
-    const cloudMap = loader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
+    const dayTexture = loader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+    const nightTexture = loader.load('https://threejs.org/examples/textures/planets/earth_lights_2048.png');
+    const cloudsTexture = loader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
 
-    const earth = new THREE.Mesh(
-      new THREE.SphereGeometry(1.5, 64, 64),
-      new THREE.MeshPhongMaterial({
-        map: earthMap,
-        specularMap: earthSpecular,
-        specular: new THREE.Color('grey'),
-        shininess: 5,
-        bumpMap: earthBump,
-        bumpScale: 0.04
-      })
-    );
+    // شیدر سفارشی برای ترکیب روز و شب
+    const earthGeo = new THREE.SphereGeometry(1.4, 128, 128);
+    const earthMat = new THREE.ShaderMaterial({
+      uniforms: {
+        dayMap: { value: dayTexture },
+        nightMap: { value: nightTexture },
+        lightDirection: { value: sunLight.position.clone().normalize() }
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        varying vec3 vNormal;
+        varying vec3 vLightDir;
+        void main() {
+          vUv = uv;
+          vec4 worldPos = modelMatrix * vec4(position, 1.0);
+          vNormal = normalize(mat3(modelMatrix) * normal);
+          vec4 lightDirWorld = vec4(normalize(lightDirection), 0.0);
+          vLightDir = normalize(lightDirWorld.xyz);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        varying vec2 vUv;
+        varying vec3 vNormal;
+        varying vec3 vLightDir;
+        uniform sampler2D dayMap;
+        uniform sampler2D nightMap;
+        void main() {
+          float dotProduct = dot(vNormal, vLightDir);
+          float mixFactor = smoothstep(-0.1, 0.4, dotProduct);
+          vec4 dayColor = texture2D(dayMap, vUv);
+          vec4 nightColor = texture2D(nightMap, vUv);
+          // ترکیب روز و شب
+          vec4 baseColor = mix(nightColor, dayColor, mixFactor);
+          // اضافه کردن کمی روشنایی به قسمت شب برای دیده شدن شهرها
+          gl_FragColor = vec4(baseColor.rgb * (0.6 + 0.4 * mixFactor), 1.0);
+        }
+      `
+    });
+    const earth = new THREE.Mesh(earthGeo, earthMat);
     scene.add(earth);
 
-    // ابرهای شناور
-    const clouds = new THREE.Mesh(
-      new THREE.SphereGeometry(1.52, 64, 64),
-      new THREE.MeshPhongMaterial({ map: cloudMap, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending })
-    );
+    // ابرها
+    const cloudGeo = new THREE.SphereGeometry(1.41, 64, 64);
+    const cloudMat = new THREE.MeshPhongMaterial({ map: cloudsTexture, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending });
+    const clouds = new THREE.Mesh(cloudGeo, cloudMat);
     scene.add(clouds);
 
     // ستاره‌ها
     const starsGeo = new THREE.BufferGeometry();
-    const starsPos = new Float32Array(1500 * 3);
+    const starsPos = new Float32Array(2000 * 3);
     for (let i = 0; i < starsPos.length; i += 3) {
       starsPos[i] = (Math.random() - 0.5) * 20;
       starsPos[i+1] = (Math.random() - 0.5) * 12;
       starsPos[i+2] = (Math.random() - 0.5) * 10 - 2;
     }
     starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
-    scene.add(new THREE.Points(starsGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.02 })));
+    scene.add(new THREE.Points(starsGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.018 })));
 
-    // چرخش آرام
+    // کنترل چرخش نرم
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
+    controls.dampingFactor = 0.04;
     controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.15;
+    controls.autoRotateSpeed = 0.2;
     controls.enableZoom = false;
     controls.enablePan = false;
 
     function animate() {
       requestAnimationFrame(animate);
-      clouds.rotation.y += 0.0002;
+      clouds.rotation.y += 0.0003;
       controls.update();
       renderer.render(scene, camera);
     }
@@ -308,56 +357,28 @@
       renderer.setSize(container.clientWidth, container.clientHeight);
     });
 
-    // ==================== حلقهٔ هوشمند ۲۴ ساعته ====================
-    const cities = [
-      { name: 'تهران', tz: 'Asia/Tehran', lon: 51.4 },
-      { name: 'لندن', tz: 'Europe/London', lon: -0.1 },
-      { name: 'نیویورک', tz: 'America/New_York', lon: -74 },
-      { name: 'توکیو', tz: 'Asia/Tokyo', lon: 139.7 },
-      { name: 'دبی', tz: 'Asia/Dubai', lon: 55.3 },
-      { name: 'پاریس', tz: 'Europe/Paris', lon: 2.3 },
-      { name: 'برلین', tz: 'Europe/Berlin', lon: 13.4 },
-      { name: 'مسکو', tz: 'Europe/Moscow', lon: 37.6 },
-      { name: 'سیدنی', tz: 'Australia/Sydney', lon: 151.2 },
-      { name: 'تورنتو', tz: 'America/Toronto', lon: -79.4 },
-      { name: 'بمبئی', tz: 'Asia/Kolkata', lon: 72.9 },
-      { name: 'شانگهای', tz: 'Asia/Shanghai', lon: 121.5 }
-    ];
+    // ==================== ساعت فوق‌شیشه‌ای ====================
+    const hourHand = document.getElementById('hourHand');
+    const minuteHand = document.getElementById('minuteHand');
+    const secondHand = document.getElementById('secondHand');
+    const digitalTimeEl = document.getElementById('digitalTime');
+    const digitalDateEl = document.getElementById('digitalDate');
 
-    const ring = document.getElementById('smartRing');
-    const radius = 115; // نصف اندازه حلقه منهای حاشیه
-
-    cities.forEach(c => {
-      // موقعیت هر شهر بر اساس طول جغرافیایی روی دایره
-      const lon = c.lon;
-      // تبدیل طول جغرافیایی به درجه روی دایره (۰ درجه = بالای حلقه = نصف‌النهار مبدأ)
-      const angle = (lon + 90) * (Math.PI / 180); 
-      const x = radius * Math.cos(angle);
-      const y = radius * Math.sin(angle);
-
-      const marker = document.createElement('div');
-      marker.className = 'city-marker';
-      marker.style.left = `calc(50% + ${x}px)`;
-      marker.style.top = `calc(50% + ${y}px)`;
-      marker.title = c.name;
-      ring.appendChild(marker);
-
-      const label = document.createElement('div');
-      label.className = 'city-label';
-      label.style.left = `calc(50% + ${x}px)`;
-      label.style.top = `calc(50% + ${y}px)`;
-      label.textContent = c.name;
-      ring.appendChild(label);
-    });
-
-    // به‌روزرسانی زمان ایران
-    function updateRingTime() {
+    function updateClock() {
       const now = new Date();
-      document.getElementById('ringTime').textContent = now.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit' });
-      document.getElementById('ringDate').textContent = new Intl.DateTimeFormat('fa-IR', { dateStyle:'full' }).format(now);
+      const h = now.getHours() % 12;
+      const m = now.getMinutes();
+      const s = now.getSeconds();
+      
+      hourHand.style.transform = `rotate(${h * 30 + m * 0.5}deg)`;
+      minuteHand.style.transform = `rotate(${m * 6}deg)`;
+      secondHand.style.transform = `rotate(${s * 6}deg)`;
+      
+      digitalTimeEl.textContent = now.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit' });
+      digitalDateEl.textContent = new Intl.DateTimeFormat('fa-IR', { dateStyle:'full' }).format(now);
     }
-    updateRingTime();
-    setInterval(updateRingTime, 1000);
+    updateClock();
+    setInterval(updateClock, 1000);
 
     // ==================== نقل‌قول‌ها ====================
     let quoteIndex = -1;
@@ -386,6 +407,22 @@
     showQuote();
     setInterval(showQuote, 60000);
     document.getElementById('nextQuoteBtn').addEventListener('click', showQuote);
+
+    // ==================== تم‌ها ====================
+    document.querySelectorAll('.theme-dot').forEach(dot => {
+      dot.addEventListener('click', () => {
+        document.body.setAttribute('data-theme', dot.dataset.theme === 'default' ? '' : dot.dataset.theme);
+        document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
+        dot.classList.add('active');
+        localStorage.setItem('aeternum-theme', dot.dataset.theme);
+      });
+    });
+    const savedTheme = localStorage.getItem('aeternum-theme');
+    if (savedTheme && savedTheme !== 'default') {
+      document.body.setAttribute('data-theme', savedTheme);
+      document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
+      document.querySelector(`[data-theme="${savedTheme}"]`).classList.add('active');
+    }
   </script>
 </body>
 </html>
