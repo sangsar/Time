@@ -3,96 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Æternum Prime | ساعت هوشمند کیهانی</title>
-  <meta name="description" content="ساعت هوشمند جهانی با کره سه‌بعدی نئونی و طراحی شیشه‌ای – قدرت مهندسی DeepSeek">
+  <title>Aion | گوی کریستالی زمان</title>
+  <meta name="description" content="کره زمین 4K با ساعت هوشمند – تلفیق هنر و مهندسی">
   <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
   <style>
     :root {
-      --bg: #030712;
-      --glass: rgba(255, 255, 255, 0.06);
-      --border: rgba(255, 255, 255, 0.12);
-      --text: #f0f4ff;
-      --accent: #22d3ee;
-      --glow: 0 0 30px rgba(34, 211, 238, 0.3);
-      --panel-bg: rgba(10, 15, 30, 0.5);
+      --bg: #020408;
+      --glass: rgba(15, 15, 25, 0.4);
+      --border: rgba(255, 255, 255, 0.1);
+      --text: #f0f0f5;
+      --accent: #d4af37;
+      --accent-glow: rgba(212, 175, 55, 0.4);
     }
-    [data-theme="golden"] { --accent: #fbbf24; --glow: 0 0 30px rgba(251, 191, 36, 0.3); }
-    [data-theme="ocean"] { --accent: #38bdf8; --glow: 0 0 30px rgba(56, 189, 248, 0.3); }
-    [data-theme="cyberpunk"] { --accent: #ff2a6d; --glow: 0 0 30px rgba(255, 42, 109, 0.3); }
+    [data-theme="ice"] { --accent: #7ec8e3; --accent-glow: rgba(126,200,227,0.4); }
+    [data-theme="purple"] { --accent: #b388ff; --accent-glow: rgba(179,136,255,0.4); }
+    [data-theme="emerald"] { --accent: #6ee7b7; --accent-glow: rgba(110,231,183,0.4); }
 
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: 'Vazirmatn', sans-serif;
       background: var(--bg);
-      background-image: radial-gradient(ellipse at 50% 0%, rgba(34, 211, 238, 0.08) 0%, transparent 60%);
+      background-image: radial-gradient(ellipse at 50% 30%, rgba(212,175,55,0.06) 0%, transparent 70%);
       color: var(--text);
       height: 100vh;
       overflow: hidden;
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
     }
 
-    /* کرهٔ سه‌بعدی */
+    /* کره سه‌بعدی */
     #globe-container {
-      position: fixed;
-      top: 0; right: -5vw;
-      width: 65vw; height: 100vh;
+      position: absolute;
+      top: 0; right: 0;
+      width: 65%; height: 100%;
       z-index: 0;
-      pointer-events: none;
+      cursor: grab;
     }
+    #globe-container:active { cursor: grabbing; }
 
-    /* پنل شیشه‌ای اصلی */
-    .main-panel {
+    /* پنل شیشه‌ای سمت چپ */
+    .panel {
       position: relative;
       z-index: 10;
-      width: 38%;
-      min-width: 420px;
+      width: 35%;
+      min-width: 380px;
       height: 100vh;
       padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      background: rgba(10, 15, 30, 0.35);
+      background: rgba(10, 12, 20, 0.4);
       backdrop-filter: blur(40px);
       -webkit-backdrop-filter: blur(40px);
-      border-left: 1px solid rgba(255,255,255,0.1);
+      border-right: 1px solid var(--border);
       box-shadow: 20px 0 60px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
       overflow-y: auto;
     }
 
-    /* لوگو */
     .logo {
-      font-size: 2.6rem;
+      font-size: 2.8rem;
       font-weight: 700;
-      letter-spacing: 3px;
-      background: linear-gradient(135deg, #22d3ee, #818cf8, #c084fc);
+      letter-spacing: 4px;
+      background: linear-gradient(135deg, var(--accent), #fff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       text-align: center;
-      margin-bottom: 0.5rem;
-      text-shadow: none;
-      filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.4));
+      filter: drop-shadow(0 0 15px var(--accent-glow));
     }
 
-    /* ساعت دیجیتال اصلی */
     .digital-clock {
       text-align: center;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
       border-radius: 32px;
-      padding: 2rem;
+      padding: 2rem 1.5rem;
       backdrop-filter: blur(20px);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.4), var(--glow);
     }
     .time-main {
       font-size: 4.5rem;
       font-weight: 200;
       letter-spacing: 6px;
-      line-height: 1.2;
-      text-shadow: 0 0 40px var(--accent);
       color: white;
+      text-shadow: 0 0 30px var(--accent-glow);
     }
     .date-main {
       font-size: 1rem;
@@ -100,25 +94,23 @@
       margin-top: 0.5rem;
     }
 
-    /* ساعت آنالوگ کوچک */
     .mini-analog {
       display: flex;
       align-items: center;
       gap: 1.5rem;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 24px;
-      padding: 1.2rem 1.5rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1rem 1.2rem;
       backdrop-filter: blur(20px);
     }
     .analog-face {
-      width: 90px;
-      height: 90px;
+      width: 80px; height: 80px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), transparent 60%);
-      border: 2px solid rgba(255,255,255,0.2);
+      border: 2px solid var(--accent);
       position: relative;
-      box-shadow: 0 0 20px rgba(255,255,255,0.05);
+      box-shadow: 0 0 20px var(--accent-glow);
       flex-shrink: 0;
     }
     .mini-hand {
@@ -128,36 +120,26 @@
       transform-origin: bottom center;
       border-radius: 3px;
     }
-    .mini-hour { width: 3px; height: 22px; background: #f8fafc; margin-left: -1.5px; }
-    .mini-minute { width: 2px; height: 32px; background: #e2e8f0; margin-left: -1px; }
-    .mini-second { width: 1px; height: 36px; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+    .mini-hour { width: 2.5px; height: 20px; background: #f8fafc; margin-left: -1.25px; }
+    .mini-minute { width: 1.8px; height: 28px; background: #e2e8f0; margin-left: -0.9px; }
+    .mini-second { width: 1px; height: 32px; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
     .mini-center {
       position: absolute; top: 50%; left: 50%;
-      width: 8px; height: 8px; background: white; border-radius: 50%;
+      width: 6px; height: 6px; background: white; border-radius: 50%;
       transform: translate(-50%, -50%); z-index: 5;
     }
-    .mini-label {
-      font-size: 0.9rem;
-      opacity: 0.7;
-    }
+    .mini-label { font-size: 0.9rem; opacity: 0.7; }
 
-    /* شهرهای جهان */
-    .cities-title {
-      font-size: 0.9rem;
-      opacity: 0.7;
-      margin-bottom: 0.5rem;
-      letter-spacing: 1px;
-    }
     .cities-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 0.6rem;
+      gap: 0.5rem;
     }
     .city-chip {
       background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px;
-      padding: 0.6rem 0.4rem;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 0.5rem 0.3rem;
       text-align: center;
       backdrop-filter: blur(10px);
       transition: 0.3s;
@@ -165,94 +147,67 @@
     .city-chip:hover {
       background: rgba(255,255,255,0.08);
       border-color: var(--accent);
-      box-shadow: 0 0 15px var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
     }
-    .city-name {
-      font-size: 0.7rem;
-      opacity: 0.7;
-    }
-    .city-time {
-      font-size: 1rem;
-      font-weight: 500;
-    }
-    .day-night {
-      font-size: 0.7rem;
-      opacity: 0.6;
-    }
+    .city-name { font-size: 0.7rem; opacity: 0.7; }
+    .city-time { font-size: 0.95rem; font-weight: 500; }
+    .day-night { font-size: 0.65rem; opacity: 0.6; }
 
-    /* نقل‌قول */
     .quote-box {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-left: 3px solid var(--accent);
-      border-radius: 20px;
-      padding: 1rem 1.5rem;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-right: 3px solid var(--accent);
+      border-radius: 16px;
+      padding: 1rem 1.2rem;
       backdrop-filter: blur(15px);
     }
-    .quote-text {
-      font-style: italic;
-      font-size: 0.9rem;
-      line-height: 1.8;
-      margin-bottom: 0.4rem;
-    }
-    .quote-author {
-      font-size: 0.75rem;
-      opacity: 0.6;
-      text-align: left;
-    }
+    .quote-text { font-style: italic; font-size: 0.9rem; line-height: 1.8; margin-bottom: 0.4rem; }
+    .quote-author { font-size: 0.75rem; opacity: 0.6; text-align: left; }
     .next-btn {
       background: rgba(255,255,255,0.05);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 0.4rem 1.2rem;
-      border-radius: 20px;
+      padding: 0.4rem 1rem;
+      border-radius: 16px;
       cursor: pointer;
       font-family: inherit;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       margin-top: 0.5rem;
       transition: 0.3s;
     }
     .next-btn:hover { background: rgba(255,255,255,0.2); border-color: white; }
 
-    /* تم‌ها */
     .theme-dots {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.4rem;
       justify-content: center;
     }
     .theme-dot {
-      width: 26px; height: 26px;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: 0.3s;
+      width: 24px; height: 24px; border-radius: 50%;
+      cursor: pointer; border: 2px solid transparent; transition: 0.3s;
     }
     .theme-dot:hover { transform: scale(1.2); border-color: white; }
     .theme-dot.active { border-color: white; transform: scale(1.2); }
 
     @media (max-width: 900px) {
       body { flex-direction: column; overflow-y: auto; }
-      #globe-container { width: 100vw; height: 45vh; position: relative; right: 0; }
-      .main-panel { width: 100%; min-width: auto; height: auto; border-left: none; border-top: 1px solid rgba(255,255,255,0.1); }
+      #globe-container { width: 100%; height: 45vh; position: relative; }
+      .panel { width: 100%; min-width: auto; height: auto; border-right: none; border-top: 1px solid var(--border); }
     }
   </style>
 </head>
 <body>
 
-  <!-- کرهٔ سه‌بعدی نئونی -->
   <div id="globe-container"></div>
 
-  <!-- پنل شیشه‌ای اصلی -->
-  <div class="main-panel">
-    <div class="logo">Æternum</div>
+  <div class="panel">
+    <div class="logo">Aion</div>
 
-    <!-- ساعت دیجیتال -->
     <div class="digital-clock">
       <div class="time-main" id="digitalTime">--:--</div>
       <div class="date-main" id="digitalDate">...</div>
     </div>
 
-    <!-- ساعت آنالوگ کوچک -->
     <div class="mini-analog">
       <div class="analog-face" id="analogFace">
         <div class="mini-hand mini-hour" id="miniHour"></div>
@@ -263,25 +218,22 @@
       <div class="mini-label">ساعت ایران</div>
     </div>
 
-    <!-- شهرهای جهان -->
     <div>
-      <div class="cities-title">🌍 زمان در جهان</div>
+      <div style="font-size:0.8rem; opacity:0.7; margin-bottom:0.5rem;">🌍 زمان در جهان</div>
       <div class="cities-grid" id="citiesGrid"></div>
     </div>
 
-    <!-- نقل‌قول -->
     <div class="quote-box">
       <div class="quote-text" id="quoteText">...</div>
       <div class="quote-author" id="quoteAuthor"></div>
-      <button class="next-btn" id="nextQuoteBtn">جملهٔ بعدی ←</button>
+      <button class="next-btn" id="nextQuoteBtn">جمله بعدی</button>
     </div>
 
-    <!-- تم‌ها -->
     <div class="theme-dots">
-      <span class="theme-dot active" data-theme="default" style="background:#22d3ee;"></span>
-      <span class="theme-dot" data-theme="golden" style="background:#fbbf24;"></span>
-      <span class="theme-dot" data-theme="ocean" style="background:#38bdf8;"></span>
-      <span class="theme-dot" data-theme="cyberpunk" style="background:#ff2a6d;"></span>
+      <span class="theme-dot active" data-theme="default" style="background:#d4af37;"></span>
+      <span class="theme-dot" data-theme="ice" style="background:#7ec8e3;"></span>
+      <span class="theme-dot" data-theme="purple" style="background:#b388ff;"></span>
+      <span class="theme-dot" data-theme="emerald" style="background:#6ee7b7;"></span>
     </div>
   </div>
 
@@ -292,15 +244,12 @@
   <script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-    // ==================== کرهٔ نئونی با افکت درخشش ====================
+    // ==================== کره زمین 4K ====================
     const container = document.getElementById('globe-container');
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
-    camera.position.set(0.8, 0.2, 3.0);
+    const camera = new THREE.PerspectiveCamera(38, container.clientWidth / container.clientHeight, 0.1, 100);
+    camera.position.set(0, 0.2, 3.0);
     camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -308,139 +257,70 @@
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
-    // Post-processing برای درخشش نئونی
-    const composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, camera));
-    const bloomPass = new UnrealBloomPass(new THREE.Vector2(container.clientWidth, container.clientHeight), 1.0, 0.4, 0.85);
-    bloomPass.threshold = 0.1;
-    bloomPass.strength = 1.2;
-    bloomPass.radius = 0.5;
-    composer.addPass(bloomPass);
+    // نورپردازی
+    const ambientLight = new THREE.AmbientLight(0x334466);
+    scene.add(ambientLight);
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1.3);
+    sunLight.position.set(5, 2, 5);
+    scene.add(sunLight);
 
-    // کرهٔ اصلی (wireframe)
-    const globeRadius = 1.3;
-    const globeGeo = new THREE.SphereGeometry(globeRadius, 64, 64);
-    const globeMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, wireframe: true, transparent: true, opacity: 0.25 });
-    const globe = new THREE.Mesh(globeGeo, globeMat);
-    scene.add(globe);
+    // بافت‌های 4K
+    const loader = new THREE.TextureLoader();
+    const earthMapUrl = 'https://raw.githubusercontent.com/turban/webgl-earth/master/images/2_no_clouds_4k.jpg';
+    const cloudMapUrl = 'https://raw.githubusercontent.com/turban/webgl-earth/master/images/fair_clouds_4k.png';
 
-    // کرهٔ داخلی شیشه‌ای برای انعکاس
-    const innerGlobe = new THREE.Mesh(
-      new THREE.SphereGeometry(globeRadius - 0.02, 64, 64),
-      new THREE.MeshPhongMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.08, emissive: new THREE.Color(0x22d3ee), emissiveIntensity: 0.2 })
-    );
-    scene.add(innerGlobe);
-
-    // حلقه‌های مداری (orbit rings)
-    function createOrbitRing(radius, tiltX, tiltY, color, speed) {
-      const ringGeo = new THREE.TorusGeometry(radius, 0.005, 16, 100);
-      const ringMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.7 });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.rotation.x = tiltX;
-      ring.rotation.y = tiltY;
-      ring.userData = { speed };
-      scene.add(ring);
-      return ring;
-    }
-    const ring1 = createOrbitRing(globeRadius + 0.15, Math.PI/2.2, 0.3, 0x22d3ee, 0.0005);
-    const ring2 = createOrbitRing(globeRadius + 0.25, Math.PI/1.8, -0.5, 0x818cf8, -0.0003);
-    const ring3 = createOrbitRing(globeRadius + 0.35, Math.PI/2.5, 0.8, 0xc084fc, 0.0004);
-
-    // نقاط شهرها با درخشش
-    const cities3D = [
-      { name:'تهران', lat:35.689, lon:51.389 },
-      { name:'لندن', lat:51.507, lon:-0.128 },
-      { name:'نیویورک', lat:40.712, lon:-74.006 },
-      { name:'توکیو', lat:35.676, lon:139.650 },
-      { name:'دبی', lat:25.204, lon:55.270 },
-      { name:'پاریس', lat:48.856, lon:2.352 },
-      { name:'برلین', lat:52.520, lon:13.405 },
-      { name:'مسکو', lat:55.755, lon:37.617 },
-      { name:'سیدنی', lat:-33.868, lon:151.209 },
-      { name:'تورنتو', lat:43.653, lon:-79.383 },
-      { name:'بمبئی', lat:19.076, lon:72.877 },
-      { name:'شانگهای', lat:31.230, lon:121.473 }
-    ];
-
-    const cityMarkers = [];
-    cities3D.forEach(c => {
-      const phi = (90 - c.lat) * Math.PI/180;
-      const theta = (c.lon + 180) * Math.PI/180;
-      const r = globeRadius + 0.03;
-      const x = -r * Math.sin(phi) * Math.cos(theta);
-      const y = r * Math.cos(phi);
-      const z = r * Math.sin(phi) * Math.sin(theta);
-
-      // نقطهٔ اصلی
-      const dotGeo = new THREE.SphereGeometry(0.025, 8, 8);
-      const dotMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const dot = new THREE.Mesh(dotGeo, dotMat);
-      dot.position.set(x, y, z);
-      scene.add(dot);
-      cityMarkers.push({ mesh: dot, name: c.name });
-
-      // هالهٔ درخشان دور نقطه
-      const glowGeo = new THREE.SphereGeometry(0.045, 16, 16);
-      const glowMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.5 });
-      const glow = new THREE.Mesh(glowGeo, glowMat);
-      glow.position.copy(dot.position);
-      scene.add(glow);
+    const earthGeo = new THREE.SphereGeometry(1.2, 128, 128);
+    const earthMat = new THREE.MeshPhongMaterial({
+      map: loader.load(earthMapUrl),
+      specular: new THREE.Color('grey'),
+      shininess: 5
     });
+    const earth = new THREE.Mesh(earthGeo, earthMat);
+    scene.add(earth);
 
-    // ذرات شناور در فضا
-    const particlesGeo = new THREE.BufferGeometry();
-    const particlesCount = 800;
-    const particlesPos = new Float32Array(particlesCount * 3);
-    for (let i = 0; i < particlesCount * 3; i += 3) {
-      particlesPos[i] = (Math.random() - 0.5) * 10;
-      particlesPos[i+1] = (Math.random() - 0.5) * 8;
-      particlesPos[i+2] = (Math.random() - 0.5) * 6;
+    // ابرها
+    const cloudGeo = new THREE.SphereGeometry(1.21, 64, 64);
+    const cloudMat = new THREE.MeshPhongMaterial({
+      map: loader.load(cloudMapUrl),
+      transparent: true,
+      opacity: 0.4,
+      blending: THREE.AdditiveBlending
+    });
+    const clouds = new THREE.Mesh(cloudGeo, cloudMat);
+    scene.add(clouds);
+
+    // ستاره‌ها
+    const starsGeo = new THREE.BufferGeometry();
+    const starsCount = 2000;
+    const starsPos = new Float32Array(starsCount * 3);
+    for (let i = 0; i < starsCount * 3; i += 3) {
+      starsPos[i] = (Math.random() - 0.5) * 20;
+      starsPos[i+1] = (Math.random() - 0.5) * 12;
+      starsPos[i+2] = (Math.random() - 0.5) * 8;
     }
-    particlesGeo.setAttribute('position', new THREE.BufferAttribute(particlesPos, 3));
-    const particlesMat = new THREE.PointsMaterial({ color: 0x22d3ee, size: 0.015, transparent: true, opacity: 0.6 });
-    const particles = new THREE.Points(particlesGeo, particlesMat);
-    scene.add(particles);
+    starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
+    const starsMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.02 });
+    const stars = new THREE.Points(starsGeo, starsMat);
+    scene.add(stars);
 
-    // نورپردازی ملایم
-    scene.add(new THREE.AmbientLight(0x334466));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    dirLight.position.set(1, 1, 1);
-    scene.add(dirLight);
-
-    // کنترل چرخش (غیرفعال)
+    // کنترل چرخش
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.3;
-    controls.enableZoom = false;
+    controls.autoRotateSpeed = 0.25;
+    controls.enableZoom = true;
+    controls.minDistance = 1.8;
+    controls.maxDistance = 5;
     controls.enablePan = false;
 
     // انیمیشن
-    const clock = new THREE.Clock();
     function animate() {
       requestAnimationFrame(animate);
-      const dt = clock.getDelta();
-      
-      // چرخش حلقه‌ها
-      ring1.rotation.z += ring1.userData.speed;
-      ring2.rotation.z += ring2.userData.speed;
-      ring3.rotation.z += ring3.userData.speed;
-      
-      // چرخش ذرات
-      particles.rotation.y += 0.0001;
-      particles.rotation.x += 0.00005;
-      
-      // pulsating city markers
-      const time = Date.now() * 0.001;
-      cityMarkers.forEach((cm, i) => {
-        const scale = 1 + Math.sin(time * 3 + i) * 0.3;
-        cm.mesh.scale.setScalar(scale);
-        cm.mesh.material.color.setHSL((time * 0.1 + i * 0.1) % 1, 0.8, 0.7);
-      });
-
+      clouds.rotation.y += 0.0002;
+      stars.rotation.y -= 0.00005;
       controls.update();
-      composer.render();
+      renderer.render(scene, camera);
     }
     animate();
 
@@ -448,7 +328,6 @@
       camera.aspect = container.clientWidth / container.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(container.clientWidth, container.clientHeight);
-      composer.setSize(container.clientWidth, container.clientHeight);
     });
 
     // ==================== پنل ساعت ====================
@@ -537,10 +416,10 @@
         document.body.setAttribute('data-theme', dot.dataset.theme === 'default' ? '' : dot.dataset.theme);
         document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
         dot.classList.add('active');
-        localStorage.setItem('aeternum-theme', dot.dataset.theme);
+        localStorage.setItem('aion-theme', dot.dataset.theme);
       });
     });
-    const savedTheme = localStorage.getItem('aeternum-theme');
+    const savedTheme = localStorage.getItem('aion-theme');
     if (savedTheme && savedTheme !== 'default') {
       document.body.setAttribute('data-theme', savedTheme);
       document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
