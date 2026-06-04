@@ -1,1 +1,729 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>my time ✧ Memento Mori</title>
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cinzel:wght@400;500;600;700&family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --deep-space: #0a0a18;
+            --star-gold: #d4af37;
+            --luxury-purple: #1e1330;
+            --glass-blur: blur(12px);
+            --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Vazirmatn', 'Cormorant Garamond', sans-serif;
+            min-height: 100vh;
+            background: var(--deep-space);
+            color: #e8e4f0;
+            overflow-x: hidden;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ─── لایه پس‌زمینه ─── */
+        .bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: opacity 1.8s ease-in-out;
+        }
+        .bg-layer.layer-a { z-index: -3; opacity: 1; }
+        .bg-layer.layer-b { z-index: -2; opacity: 0; }
+        .bg-layer.fading-out { opacity: 0; }
+        .bg-layer.fading-in { opacity: 1; }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at center,
+                    rgba(18, 10, 30, 0.25) 0%,
+                    rgba(8, 4, 20, 0.55) 50%,
+                    rgba(2, 2, 10, 0.78) 100%);
+            pointer-events: none;
+        }
+
+        /* ─── ذرات کیهانی ─── */
+        #particles-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ─── دکمه گرامافون ─── */
+        .gramophone-toggle {
+            position: fixed;
+            bottom: 28px;
+            left: 28px;
+            z-index: 100;
+            width: 56px;
+            height: 56px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            outline: none;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+        }
+        .record {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #1a1a1a 0%, #0a0a0a 70%);
+            border: 2px solid #333;
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.4), 0 0 15px rgba(0,0,0,0.8);
+            transition: transform 0.1s linear;
+            animation: none;
+            overflow: hidden;
+        }
+        .record.playing {
+            animation: spinRecord 2s linear infinite;
+        }
+        @keyframes spinRecord {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .record-label {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 35%;
+            height: 35%;
+            background: radial-gradient(circle, #d4af37 0%, #8b6914 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #0a0a0a;
+            font-weight: bold;
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.5);
+        }
+        .tonearm {
+            position: absolute;
+            top: 5px;
+            right: -6px;
+            width: 16px;
+            height: 50px;
+            background: #ccc;
+            border-radius: 2px 2px 0 0;
+            transform: rotate(35deg);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease;
+            box-shadow: 0 0 5px rgba(0,0,0,0.4);
+        }
+        .tonearm::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: #d4af37;
+            border-radius: 50%;
+        }
+        .gramophone-toggle.playing .tonearm {
+            transform: rotate(25deg);
+        }
+
+        /* ─── کانتینر اصلی ─── */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 18px 20px 30px;
+        }
+
+        /* ─── هدر و لوگو ─── */
+        .header {
+            text-align: center;
+            padding: 22px 20px 8px;
+        }
+        .logo-text {
+            font-family: 'Playfair Display', 'Cinzel', serif;
+            font-size: 3.4rem;
+            font-weight: 700;
+            letter-spacing: 6px;
+            background: linear-gradient(180deg, #f5e6c8 0%, #d4af37 40%, #b8922e 70%, #d4af37 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            filter: drop-shadow(0 4px 10px rgba(180, 130, 40, 0.5));
+            font-style: italic;
+            line-height: 1.1;
+            animation: logoGlow 4s ease-in-out infinite;
+        }
+        @keyframes logoGlow {
+            0%, 100% { filter: drop-shadow(0 4px 10px rgba(180, 130, 40, 0.5)); }
+            50% { filter: drop-shadow(0 4px 22px rgba(212, 175, 55, 0.9)); }
+        }
+        .logo-subtitle {
+            font-family: 'Playfair Display', 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            letter-spacing: 8px;
+            color: #c4a86c;
+            text-transform: uppercase;
+            margin-top: 2px;
+            font-style: italic;
+            font-weight: 500;
+        }
+        .logo-divider {
+            width: 130px;
+            height: 1.5px;
+            background: linear-gradient(90deg, transparent, #d4af37, transparent);
+            margin: 8px auto 0;
+            border-radius: 2px;
+        }
+
+        /* ─── باکس نقل‌قول لاکچری ─── */
+        .quote-section {
+            margin: 16px auto 12px;
+            padding: 0 8px;
+        }
+        .quote-container {
+            width: 100%;
+            background: rgba(20, 15, 35, 0.4);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(200, 170, 100, 0.25);
+            border-radius: 12px;
+            padding: 14px 22px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(212, 175, 55, 0.1) inset;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .quote-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.6), transparent);
+        }
+        .quote-container:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        }
+        .quote-text {
+            font-family: 'Vazirmatn', 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            font-style: italic;
+            color: #ede5d0;
+            letter-spacing: 0.3px;
+            line-height: 1.8;
+            text-align: center;
+            min-height: 40px;
+            transition: opacity 0.4s ease;
+        }
+        .quote-fade { animation: quoteFadeIn 0.5s ease; }
+        @keyframes quoteFadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .quote-counter {
+            font-size: 0.6rem;
+            color: #9e8b72;
+            letter-spacing: 2px;
+            margin-top: 6px;
+            text-align: center;
+            opacity: 0.6;
+        }
+
+        /* ─── شبکه ساعت‌ها ─── */
+        .clocks-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 6px;
+            padding: 0 4px;
+        }
+
+        .clock-card {
+            position: relative;
+            border-radius: 16px;
+            padding: 14px 8px 10px;
+            text-align: center;
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            transition: all var(--transition-smooth);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* حالت روز */
+        .clock-card.day-mode {
+            background: linear-gradient(145deg, rgba(245, 242, 235, 0.65) 0%, rgba(255, 252, 245, 0.7) 100%);
+            border: 1px solid rgba(200, 170, 110, 0.5);
+            color: #2a241a;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.12), 0 0 12px rgba(212, 175, 55, 0.1);
+        }
+        .clock-card.day-mode:hover {
+            box-shadow: 0 12px 32px rgba(0,0,0,0.2), 0 0 20px rgba(212, 175, 55, 0.25);
+            transform: translateY(-4px);
+        }
+
+        /* حالت شب */
+        .clock-card.night-mode {
+            background: linear-gradient(145deg, rgba(16, 14, 35, 0.6) 0%, rgba(28, 22, 50, 0.7) 100%);
+            border: 1px solid rgba(140, 160, 220, 0.4);
+            color: #e0dbef;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.45), 0 0 12px rgba(100, 140, 220, 0.15);
+        }
+        .clock-card.night-mode:hover {
+            box-shadow: 0 12px 32px rgba(0,0,0,0.6), 0 0 22px rgba(100, 150, 220, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .city-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+        .time-display {
+            font-family: 'Cinzel', serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: rgba(255,255,255,0.05);
+            padding: 2px 10px;
+            border-radius: 8px;
+        }
+        .country-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.65rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-style: italic;
+            opacity: 0.75;
+            margin-top: 1px;
+        }
+        .date-display {
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 0.6rem;
+            opacity: 0.7;
+            direction: ltr;
+            margin-top: 2px;
+        }
+        .date-display .shamsi-date {
+            display: block;
+            font-size: 0.55rem;
+            opacity: 0.7;
+        }
+
+        /* کارت ویژه ایران */
+        .clock-card.iran-featured {
+            border: 1.5px solid rgba(212, 175, 55, 0.7) !important;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3) !important;
+        }
+
+        /* ─── فوتر ─── */
+        .footer {
+            text-align: center;
+            padding: 14px;
+            font-size: 0.62rem;
+            color: #8e8a80;
+            letter-spacing: 2px;
+            opacity: 0.5;
+            margin-top: 10px;
+        }
+
+        /* ─── ریسپانسیو ─── */
+        @media (max-width: 1200px) {
+            .clocks-grid { grid-template-columns: repeat(4, 1fr); }
+            .logo-text { font-size: 2.8rem; }
+            .time-display { font-size: 1.4rem; }
+        }
+        @media (max-width: 900px) {
+            .clocks-grid { grid-template-columns: repeat(3, 1fr); }
+            .time-display { font-size: 1.3rem; }
+            .logo-text { font-size: 2.2rem; }
+        }
+        @media (max-width: 600px) {
+            .clocks-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .clock-card { padding: 8px 4px; min-height: 90px; border-radius: 12px; }
+            .time-display { font-size: 1.1rem; }
+            .city-name { font-size: 0.7rem; }
+            .logo-text { font-size: 1.8rem; }
+            .quote-text { font-size: 1rem; }
+            .gramophone-toggle { width: 44px; height: 44px; bottom: 18px; left: 18px; }
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0a18; }
+        ::-webkit-scrollbar-thumb { background: #3a3040; border-radius: 2px; }
+
+        .bg-fallback {
+            background: radial-gradient(ellipse at 30% 40%, #1e1330 0%, #0a0a18 50%, #020210 100%) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- موزیک پس‌زمینه -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://dl.musicviral.ir/Music/04-04/Emilio%20Piano%20x%20Lucie%20-%20Maison.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- دکمه گرامافون -->
+    <button class="gramophone-toggle playing" id="gramophoneToggle" title="پخش/قطع موسیقی">
+        <div class="record playing" id="recordDisc">
+            <div class="record-label">♪</div>
+        </div>
+        <div class="tonearm"></div>
+    </button>
+
+    <!-- لایه‌های پس‌زمینه -->
+    <div class="bg-layer layer-a" id="bgLayerA"></div>
+    <div class="bg-layer layer-b" id="bgLayerB"></div>
+    <div class="bg-overlay"></div>
+
+    <!-- ذرات کیهانی -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- کانتینر اصلی -->
+    <div class="main-container">
+
+        <!-- هدر -->
+        <header class="header">
+            <h1 class="logo-text">my time</h1>
+            <p class="logo-subtitle">Memento Mori</p>
+            <div class="logo-divider"></div>
+        </header>
+
+        <!-- باکس نقل‌قول -->
+        <div class="quote-section">
+            <div class="quote-container" id="quoteContainer">
+                <div class="quote-text" id="quoteText"></div>
+                <div class="quote-counter" id="quoteCounter"></div>
+            </div>
+        </div>
+
+        <!-- شبکه ساعت‌ها -->
+        <div class="clocks-grid" id="clocksGrid"></div>
+
+        <footer class="footer">
+            ✦ my time ✦ Memento Mori ✦
+        </footer>
+    </div>
+
+    <!-- فایل quotes.js -->
+    <script src="quotes.js"></script>
+
+    <script>
+        (function() {
+            const BACKGROUND_INTERVAL = 90 * 1000;
+            const QUOTE_INTERVAL = 20000;
+            const CLOCK_INTERVAL = 1000;
+
+            const countries = [
+                { city: 'تهران', country: 'ایران', timezone: 'Asia/Tehran', featured: true, useShamsi: true },
+                { city: 'New York', country: 'USA', timezone: 'America/New_York', featured: false, useShamsi: false },
+                { city: 'London', country: 'UK', timezone: 'Europe/London', featured: false, useShamsi: false },
+                { city: 'Paris', country: 'France', timezone: 'Europe/Paris', featured: false, useShamsi: false },
+                { city: 'Berlin', country: 'Germany', timezone: 'Europe/Berlin', featured: false, useShamsi: false },
+                { city: 'Tokyo', country: 'Japan', timezone: 'Asia/Tokyo', featured: false, useShamsi: false },
+                { city: 'Beijing', country: 'China', timezone: 'Asia/Shanghai', featured: false, useShamsi: false },
+                { city: 'Sydney', country: 'Australia', timezone: 'Australia/Sydney', featured: false, useShamsi: false },
+                { city: 'Moscow', country: 'Russia', timezone: 'Europe/Moscow', featured: false, useShamsi: false },
+                { city: 'Brasília', country: 'Brazil', timezone: 'America/Sao_Paulo', featured: false, useShamsi: false },
+                { city: 'New Delhi', country: 'India', timezone: 'Asia/Kolkata', featured: false, useShamsi: false },
+                { city: 'Toronto', country: 'Canada', timezone: 'America/Toronto', featured: false, useShamsi: false },
+                { city: 'Seoul', country: 'South Korea', timezone: 'Asia/Seoul', featured: false, useShamsi: false },
+                { city: 'Dubai', country: 'UAE', timezone: 'Asia/Dubai', featured: false, useShamsi: false },
+                { city: 'Johannesburg', country: 'South Africa', timezone: 'Africa/Johannesburg', featured: false, useShamsi: false }
+            ];
+
+            const DEFAULT_NASA_IMAGES = [
+                'https://apod.nasa.gov/apod/image/2312/ConeNebula_Hubble_960.jpg',
+                'https://apod.nasa.gov/apod/image/2310/OrionNebula_Jones_960.jpg',
+                'https://apod.nasa.gov/apod/image/2309/VeilNebula_Hubble_960.jpg',
+                'https://apod.nasa.gov/apod/image/2308/RingNebula_Webb_960.jpg',
+                'https://apod.nasa.gov/apod/image/2307/EagleNebula_Hubble_960.jpg',
+                'https://apod.nasa.gov/apod/image/2306/M51_Webb_960.jpg'
+            ];
+
+            const bgLayerA = document.getElementById('bgLayerA');
+            const bgLayerB = document.getElementById('bgLayerB');
+            const clocksGrid = document.getElementById('clocksGrid');
+            const quoteText = document.getElementById('quoteText');
+            const quoteCounter = document.getElementById('quoteCounter');
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            const bgMusic = document.getElementById('bgMusic');
+            const gramophoneBtn = document.getElementById('gramophoneToggle');
+            const recordDisc = document.getElementById('recordDisc');
+
+            let activeLayer = 'A';
+            let quoteIndex = 0;
+            let clockCards = [];
+            let allBgImages = [...DEFAULT_NASA_IMAGES];
+            let currentBgIndex = 0;
+            let isPlaying = true;
+
+            // تبدیل تاریخ شمسی
+            function gregorianToJalali(date) {
+                const gYear = date.getFullYear(), gMonth = date.getMonth()+1, gDay = date.getDate();
+                const gDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+                const jDays = [31,31,31,31,31,31,30,29,29,29,29,29];
+                let gy = gYear-1600, gm = gMonth-1, gd = gDay-1;
+                let gDayNo = 365*gy + Math.floor((gy+3)/4) - Math.floor((gy+99)/100) + Math.floor((gy+399)/400);
+                for(let i=0;i<gm;i++) gDayNo += gDays[i];
+                if(gm>1 && ((gy%4===0 && gy%100!==0) || gy%400===0)) gDayNo++;
+                gDayNo += gd;
+                let jDayNo = gDayNo - 79;
+                let jNp = Math.floor(jDayNo/12053);
+                jDayNo %= 12053;
+                let jy = 979 + 33*jNp + 4*Math.floor(jDayNo/1461);
+                jDayNo %= 1461;
+                if(jDayNo >= 366) { jy += Math.floor((jDayNo-1)/365); jDayNo = (jDayNo-1)%365; }
+                let jm=0;
+                for(let i=0;i<11;i++) {
+                    if(jDayNo >= jDays[i]) { jDayNo -= jDays[i]; jm++; }
+                    else break;
+                }
+                const months = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+                return `${jDayNo+1} ${months[jm]} ${jy}`;
+            }
+
+            function setBackground(url, layer) {
+                layer.style.backgroundImage = url ? `url('${url}')` : '';
+                layer.style.backgroundSize = 'cover';
+                layer.style.backgroundPosition = 'center';
+                if(!url) layer.classList.add('bg-fallback');
+                else layer.classList.remove('bg-fallback');
+            }
+
+            function rotateBackground() {
+                if(!allBgImages.length) return;
+                currentBgIndex = (currentBgIndex+1) % allBgImages.length;
+                const img = allBgImages[currentBgIndex];
+                if(activeLayer === 'A') {
+                    setBackground(img, bgLayerB);
+                    bgLayerB.classList.add('fading-in'); bgLayerB.classList.remove('fading-out');
+                    bgLayerA.classList.add('fading-out'); bgLayerA.classList.remove('fading-in');
+                    activeLayer = 'B';
+                } else {
+                    setBackground(img, bgLayerA);
+                    bgLayerA.classList.add('fading-in'); bgLayerA.classList.remove('fading-out');
+                    bgLayerB.classList.add('fading-out'); bgLayerB.classList.remove('fading-in');
+                    activeLayer = 'A';
+                }
+            }
+
+            function getLocalTimeData(tz, shamsi) {
+                try {
+                    const now = new Date();
+                    const timeOpts = { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false };
+                    const dateOpts = { timeZone: tz, weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+                    const timeStr = now.toLocaleString('en-US', timeOpts);
+                    const dateStr = now.toLocaleString('en-US', dateOpts);
+                    const [h, m] = timeStr.split(':');
+                    const hour = parseInt(h);
+                    let shamsiDate = '';
+                    if(shamsi) {
+                        try { const d = new Date(now.toLocaleString('en-US',{timeZone:tz})); shamsiDate = gregorianToJalali(d); } catch(e){}
+                    }
+                    return { hours: h, minutes: m, timeStr: `${h}:${m}`, dateStr, shamsiDate, isDay: hour>=6 && hour<18 };
+                } catch(e) {
+                    const now = new Date();
+                    return {
+                        hours: String(now.getHours()).padStart(2,'0'),
+                        minutes: String(now.getMinutes()).padStart(2,'0'),
+                        timeStr: `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
+                        dateStr: now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}),
+                        shamsiDate: shamsi ? gregorianToJalali(now) : '',
+                        isDay: now.getHours()>=6 && now.getHours()<18
+                    };
+                }
+            }
+
+            function createClockCards() {
+                clocksGrid.innerHTML = '';
+                clockCards = [];
+                countries.forEach(c => {
+                    const card = document.createElement('div');
+                    card.className = 'clock-card';
+                    if(c.featured) card.classList.add('iran-featured');
+                    card.innerHTML = `
+                        <div class="city-name">${c.city}</div>
+                        <div class="time-display"><span class="time-main">--:--</span></div>
+                        <div class="country-name">${c.country}</div>
+                        <div class="date-display">
+                            <span class="gregorian-date">---</span>
+                            ${c.useShamsi ? '<span class="shamsi-date"></span>' : ''}
+                        </div>`;
+                    clocksGrid.appendChild(card);
+                    clockCards.push({
+                        el: card,
+                        tz: c.timezone,
+                        shamsi: c.useShamsi,
+                        timeMain: card.querySelector('.time-main'),
+                        gDate: card.querySelector('.gregorian-date'),
+                        sDate: card.querySelector('.shamsi-date')
+                    });
+                });
+            }
+
+            function updateClocks() {
+                clockCards.forEach(c => {
+                    const d = getLocalTimeData(c.tz, c.shamsi);
+                    c.timeMain.textContent = d.timeStr;
+                    c.el.classList.remove('day-mode','night-mode');
+                    c.el.classList.add(d.isDay ? 'day-mode' : 'night-mode');
+                    if(c.gDate) c.gDate.textContent = d.dateStr;
+                    if(c.sDate && c.shamsi) c.sDate.textContent = d.shamsiDate || '';
+                });
+            }
+
+            function updateQuote() {
+                if(!window.quotes || !window.quotes.length) {
+                    quoteText.textContent = 'فایل quotes.js یافت نشد';
+                    quoteCounter.textContent = '';
+                    return;
+                }
+                if(quoteIndex >= window.quotes.length) quoteIndex = 0;
+                quoteText.textContent = window.quotes[quoteIndex];
+                quoteText.classList.remove('quote-fade');
+                void quoteText.offsetWidth;
+                quoteText.classList.add('quote-fade');
+                quoteCounter.textContent = `${quoteIndex+1} / ${window.quotes.length}`;
+                quoteIndex++;
+            }
+
+            // ذرات
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            let particles = [];
+            function createParticles() {
+                particles = Array.from({ length: Math.min(80, Math.floor(window.innerWidth*0.05)) }, () => ({
+                    x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+                    r: Math.random()*1.8+0.3, vx: (Math.random()-0.5)*0.2, vy: -(Math.random()*0.3+0.1),
+                    op: Math.random()*0.6+0.2, ts: Math.random()*0.01+0.004, to: Math.random()*Math.PI*2
+                }));
+            }
+            function animateParticles(ts) {
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx; p.y += p.vy;
+                    p.op += Math.sin(ts*p.ts + p.to)*0.006;
+                    p.op = Math.max(0.05, Math.min(0.8, p.op));
+                    if(p.y < -5) { p.y = canvas.height+5; p.x = Math.random()*canvas.width; }
+                    if(p.x < -5) p.x = canvas.width+5;
+                    if(p.x > canvas.width+5) p.x = -5;
+                    ctx.beginPath();
+                    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+                    const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*3);
+                    g.addColorStop(0,`rgba(230,220,255,${p.op})`);
+                    g.addColorStop(0.5,`rgba(170,160,220,${p.op*0.5})`);
+                    g.addColorStop(1,'rgba(80,70,140,0)');
+                    ctx.fillStyle = g;
+                    ctx.fill();
+                });
+                requestAnimationFrame(animateParticles);
+            }
+
+            // موزیک و گرامافون
+            function toggleMusic() {
+                if(isPlaying) {
+                    bgMusic.pause();
+                    recordDisc.classList.remove('playing');
+                    gramophoneBtn.classList.remove('playing');
+                    isPlaying = false;
+                } else {
+                    bgMusic.play().catch(()=>{});
+                    recordDisc.classList.add('playing');
+                    gramophoneBtn.classList.add('playing');
+                    isPlaying = true;
+                }
+            }
+            gramophoneBtn.addEventListener('click', toggleMusic);
+
+            function tryAutoplay() {
+                bgMusic.play().then(() => {
+                    isPlaying = true;
+                    recordDisc.classList.add('playing');
+                    gramophoneBtn.classList.add('playing');
+                }).catch(() => {
+                    isPlaying = false;
+                    recordDisc.classList.remove('playing');
+                    gramophoneBtn.classList.remove('playing');
+                });
+            }
+
+            // راه‌اندازی
+            function init() {
+                setBackground(DEFAULT_NASA_IMAGES[0], bgLayerA);
+                bgLayerA.classList.add('fading-in');
+                resizeCanvas();
+                createParticles();
+                requestAnimationFrame(animateParticles);
+
+                createClockCards();
+                updateClocks();
+
+                if(window.quotes && window.quotes.length) updateQuote();
+                else { quoteText.textContent = 'فایل quotes.js را کنار index.html قرار دهید'; quoteCounter.textContent = ''; }
+
+                setInterval(updateClocks, CLOCK_INTERVAL);
+                setInterval(updateQuote, QUOTE_INTERVAL);
+                setInterval(rotateBackground, BACKGROUND_INTERVAL);
+
+                tryAutoplay();
+                setTimeout(() => { if(bgMusic.paused) tryAutoplay(); }, 1200);
+
+                // عکس‌های بیشتر
+                fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&count=6&thumbs=true')
+                    .then(r => r.json())
+                    .then(data => {
+                        const imgs = data.filter(i => i.media_type==='image' && (i.hdurl||i.url)).map(i => i.hdurl||i.url);
+                        if(imgs.length) allBgImages = [...DEFAULT_NASA_IMAGES, ...imgs];
+                    }).catch(()=>{});
+
+                window.addEventListener('resize', ()=>{ resizeCanvas(); createParticles(); });
+            }
+
+            if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+            else init();
+        })();
+    </script>
+</body>
+</html>
