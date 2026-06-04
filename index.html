@@ -1,531 +1,1202 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GOOD TIME | ساعت لوکس جهانی</title>
-  <meta name="description" content="ساعت لوکس جهانی با طراحی منحصربه‌فرد – زمان را هنرمندانه ببینید">
-  <meta property="og:title" content="GOOD TIME | ساعت لوکس جهانی">
-  <meta property="og:description" content="یک تجربهٔ ناب از زمان">
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "GOOD TIME",
-    "applicationCategory": "Lifestyle",
-    "description": "ساعت لوکس جهانی با طراحی هنری و نمایش زمان شهرهای مختلف"
-  }
-  </script>
-  <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #050508;
-      --glass: rgba(20, 20, 28, 0.5);
-      --border: rgba(212, 175, 55, 0.3);
-      --text: #e0d5c0;
-      --accent: #d4af37;
-      --accent-glow: rgba(212, 175, 55, 0.7);
-    }
-    [data-theme="ice"] { --accent: #7ec8e3; --border: rgba(126,200,227,0.4); --accent-glow: rgba(126,200,227,0.7); }
-    [data-theme="emerald"] { --accent: #6ee7b7; --border: rgba(110,231,183,0.4); --accent-glow: rgba(110,231,183,0.7); }
-    [data-theme="rose"] { --accent: #fb7185; --border: rgba(251,113,133,0.4); --accent-glow: rgba(251,113,133,0.7); }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>my time ✧ ساعت من</title>
 
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      font-family: 'Vazirmatn', serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
+    <!-- Google Fonts: Playfair Display (French/elegant style) + Cormorant Garamond -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    /* پس‌زمینهٔ ذرات (Canvas) */
-    #particlesCanvas {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
-      pointer-events: none;
-    }
+    <style>
+        :root {
+            --deep-space: #0a0a14;
+            --nebula-purple: #1a0a2e;
+            --star-gold: #d4a853;
+            --cosmic-blue: #1a3a5c;
+            --mystic-lavender: #6b5b8a;
+            --day-card-bg: #fafaf8;
+            --day-card-text: #1a1a2e;
+            --day-card-accent: #8b7355;
+            --night-card-bg: #0d0d1a;
+            --night-card-text: #e8e4f0;
+            --night-card-accent: #7b9ec7;
+            --glow-amber: rgba(212, 168, 83, 0.5);
+            --glow-blue: rgba(100, 150, 220, 0.4);
+            --card-shadow-day: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --card-shadow-night: 0 8px 32px rgba(100, 140, 220, 0.25);
+            --transition-smooth: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-    /* محتوا */
-    .content {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.5rem;
-      width: 100%;
-      max-width: 600px;
-      padding: 1rem;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* لوگو */
-    .logo {
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: 6px;
-      background: linear-gradient(180deg, var(--accent) 0%, #fff 80%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-shadow: 0 0 30px var(--accent-glow);
-    }
+        body {
+            font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+            min-height: 100vh;
+            background: var(--deep-space);
+            color: #e8e4f0;
+            overflow-x: hidden;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+            transition: background-color 1.5s ease;
+        }
 
-    /* حلقهٔ شهرها + ساعت مرکزی */
-    .clock-container {
-      position: relative;
-      width: 320px;
-      height: 320px;
-      margin: 1rem auto;
-    }
+        /* ─── لایه پس‌زمینه ─── */
+        .bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: opacity 2s ease-in-out;
+            will-change: opacity, background-image;
+        }
+        .bg-layer.layer-a {
+            z-index: -3;
+            opacity: 1;
+        }
+        .bg-layer.layer-b {
+            z-index: -2;
+            opacity: 0;
+        }
+        .bg-layer.fading-out {
+            opacity: 0;
+        }
+        .bg-layer.fading-in {
+            opacity: 1;
+        }
 
-    canvas#mainClock {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      filter: drop-shadow(0 0 20px var(--accent-glow));
-    }
+        /* overlay تیره برای خوانایی */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(ellipse at center,
+                    rgba(10, 10, 25, 0.55) 0%,
+                    rgba(5, 5, 18, 0.78) 40%,
+                    rgba(2, 2, 10, 0.92) 100%);
+            pointer-events: none;
+        }
 
-    /* شهرهای دور حلقه */
-    .city-ring {
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 0; height: 0;
-      pointer-events: auto;
-    }
-    .city-node {
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transform: translate(-50%, -50%);
-      transition: 0.3s;
-      box-shadow: 0 0 15px rgba(0,0,0,0.5);
-    }
-    .city-node:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: var(--accent);
-      box-shadow: 0 0 25px var(--accent-glow);
-    }
-    .city-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 10px var(--accent-glow);
-    }
-    .city-dot.night {
-      background: #3b5998;
-      box-shadow: 0 0 10px rgba(59,89,152,0.7);
-    }
+        /* ─── ذرات شناور کیهانی ─── */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
 
-    /* برچسب شهر */
-    .city-label {
-      position: absolute;
-      white-space: nowrap;
-      font-size: 0.7rem;
-      transform: translate(-50%, 20px);
-      opacity: 0.8;
-      pointer-events: none;
-    }
+        /* ─── کانتینر اصلی ─── */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 24px 40px;
+        }
 
-    /* ساعت دیجیتال ایران */
-    .iran-time {
-      text-align: center;
-      font-size: 1.8rem;
-      font-weight: 300;
-      letter-spacing: 2px;
-      text-shadow: 0 0 15px var(--accent-glow);
-    }
-    .iran-date {
-      font-size: 0.8rem;
-      opacity: 0.8;
-    }
+        /* ─── هدر و لوگو ─── */
+        .header {
+            text-align: center;
+            padding: 28px 20px 18px;
+            position: relative;
+        }
+        .logo-wrapper {
+            display: inline-block;
+            position: relative;
+            cursor: default;
+        }
+        .logo-symbols {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 4px;
+            font-size: 2.2rem;
+            letter-spacing: 6px;
+            animation: logoPulse 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 18px var(--glow-amber));
+        }
+        .logo-symbols .sym {
+            display: inline-block;
+            animation: floatSym 3s ease-in-out infinite;
+        }
+        .logo-symbols .sym:nth-child(1) {
+            animation-delay: 0s;
+        }
+        .logo-symbols .sym:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+        .logo-symbols .sym:nth-child(3) {
+            animation-delay: 1s;
+        }
+        .logo-symbols .sym:nth-child(4) {
+            animation-delay: 1.5s;
+        }
+        .logo-symbols .sym:nth-child(5) {
+            animation-delay: 2s;
+        }
 
-    /* نقل‌قول */
-    .quote-box {
-      background: var(--glass);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 1rem 1.5rem;
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-    }
-    .quote-text { font-style: italic; font-size: 0.9rem; line-height: 1.7; }
-    .quote-author { font-size: 0.7rem; opacity: 0.6; margin-top: 0.5rem; }
-    .next-quote-btn {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0.3rem 1rem;
-      border-radius: 15px;
-      margin-top: 0.5rem;
-      cursor: pointer;
-      font-family: inherit;
-      transition: 0.3s;
-    }
-    .next-quote-btn:hover { background: rgba(255,255,255,0.1); }
+        @keyframes floatSym {
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        @keyframes logoPulse {
+            0%,
+            100% {
+                filter: drop-shadow(0 0 18px var(--glow-amber));
+            }
+            50% {
+                filter: drop-shadow(0 0 32px rgba(212, 168, 83, 0.85));
+            }
+        }
 
-    /* مدال جزئیات شهر */
-    .modal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(15px);
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: 0.4s;
-    }
-    .modal.active { opacity: 1; pointer-events: auto; }
-    .modal-card {
-      background: var(--glass);
-      backdrop-filter: blur(30px);
-      border: 1px solid var(--border);
-      border-radius: 30px;
-      padding: 2rem;
-      text-align: center;
-      width: 280px;
-    }
-    .modal-city { font-size: 1.8rem; margin-bottom: 1rem; }
-    canvas#modalClock { width: 130px; height: 130px; }
-    .modal-time { font-size: 2rem; margin: 0.5rem 0; }
-    .modal-date { opacity: 0.8; font-size: 0.8rem; }
-    .modal-close {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0.4rem 1.2rem;
-      border-radius: 20px;
-      margin-top: 1rem;
-      cursor: pointer;
-      font-family: inherit;
-    }
+        .logo-text {
+            font-family: 'Playfair Display', 'Cinzel', serif;
+            font-size: 3.4rem;
+            font-weight: 700;
+            letter-spacing: 5px;
+            background: linear-gradient(180deg,
+                    #f0e0c0 0%, #d4a853 35%, #b8923e 60%, #d4a853 80%, #f0e0c0 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            text-shadow: none;
+            filter: drop-shadow(0 2px 8px rgba(180, 140, 70, 0.5));
+            font-style: italic;
+            line-height: 1.1;
+        }
+        .logo-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.95rem;
+            letter-spacing: 8px;
+            color: #b8a080;
+            text-transform: uppercase;
+            margin-top: 2px;
+            font-style: italic;
+        }
+        .logo-divider {
+            width: 120px;
+            height: 1.5px;
+            background: linear-gradient(90deg, transparent, #d4a853, transparent);
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
 
-    /* دکمهٔ تغییر تم */
-    .theme-toggle {
-      position: fixed;
-      top: 1rem; right: 1rem;
-      z-index: 50;
-      background: var(--glass);
-      backdrop-filter: blur(10px);
-      border: 1px solid var(--border);
-      color: var(--text);
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 1.2rem;
-    }
-  </style>
+        /* ─── شبکه ساعت‌ها ─── */
+        .clocks-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 18px;
+            margin-top: 30px;
+            padding: 0 8px;
+        }
+
+        /* کارت ساعت */
+        .clock-card {
+            position: relative;
+            border-radius: 18px;
+            padding: 20px 16px 16px;
+            text-align: center;
+            transition: all var(--transition-smooth);
+            cursor: default;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* حالت روز */
+        .clock-card.day-mode {
+            background: linear-gradient(160deg,
+                    rgba(252, 250, 245, 0.92) 0%,
+                    rgba(245, 240, 232, 0.88) 40%,
+                    rgba(255, 252, 248, 0.94) 100%);
+            color: #1a1a2e;
+            border: 1.5px solid rgba(180, 150, 110, 0.5);
+            box-shadow: var(--card-shadow-day),
+                0 0 0 1px rgba(200, 170, 120, 0.25) inset;
+        }
+        .clock-card.day-mode .city-name {
+            color: #3a3028;
+        }
+        .clock-card.day-mode .time-display {
+            color: #1a1a2e;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        .clock-card.day-mode .country-name {
+            color: #6b5d4f;
+        }
+        .clock-card.day-mode .daynight-indicator {
+            background: #fdf5e6;
+            color: #8b6914;
+            border: 1px solid #e8d5a3;
+        }
+
+        /* حالت شب */
+        .clock-card.night-mode {
+            background: linear-gradient(160deg,
+                    rgba(12, 12, 28, 0.9) 0%,
+                    rgba(8, 8, 22, 0.88) 40%,
+                    rgba(15, 15, 35, 0.92) 100%);
+            color: #e8e4f0;
+            border: 1.5px solid rgba(120, 150, 200, 0.4);
+            box-shadow: var(--card-shadow-night),
+                0 0 0 1px rgba(100, 140, 200, 0.2) inset,
+                0 0 40px rgba(80, 120, 200, 0.1);
+        }
+        .clock-card.night-mode .city-name {
+            color: #c8d8f0;
+        }
+        .clock-card.night-mode .time-display {
+            color: #f0ecff;
+            text-shadow: 0 0 20px rgba(150, 180, 230, 0.5);
+        }
+        .clock-card.night-mode .country-name {
+            color: #8899bb;
+        }
+        .clock-card.night-mode .daynight-indicator {
+            background: #1a1a35;
+            color: #aac4ee;
+            border: 1px solid #334466;
+        }
+
+        /* افکت hover */
+        .clock-card:hover {
+            transform: translateY(-4px);
+            z-index: 5;
+        }
+        .clock-card.day-mode:hover {
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18),
+                0 0 0 2px rgba(200, 160, 100, 0.4) inset;
+        }
+        .clock-card.night-mode:hover {
+            box-shadow: 0 16px 40px rgba(80, 130, 210, 0.35),
+                0 0 0 2px rgba(120, 160, 220, 0.35) inset,
+                0 0 60px rgba(80, 120, 200, 0.2);
+        }
+
+        /* تنوع طراحی کارت‌ها */
+        .card-style-a {
+            border-radius: 18px;
+        }
+        .card-style-b {
+            border-radius: 50% 12px 50% 12px;
+        }
+        .card-style-c {
+            border-radius: 8px 28px 8px 28px;
+        }
+        .card-style-d {
+            border-radius: 24px 6px 24px 6px;
+        }
+        .card-style-e {
+            border-radius: 14px;
+            border-style: double;
+            border-width: 3px;
+        }
+        .card-style-f {
+            border-radius: 20px 4px 20px 4px;
+        }
+        .card-style-g {
+            border-radius: 30px 8px 30px 8px;
+        }
+        .card-style-h {
+            border-radius: 10px 24px 10px 24px;
+        }
+        .card-style-i {
+            border-radius: 16px;
+            border-style: dashed;
+        }
+        .card-style-j {
+            border-radius: 22px 6px 22px 6px;
+            border-width: 2.5px;
+        }
+        .card-style-k {
+            border-radius: 12px 28px 12px 28px;
+        }
+        .card-style-l {
+            border-radius: 26px 8px 26px 8px;
+            border-style: double;
+            border-width: 3px;
+        }
+        .card-style-m {
+            border-radius: 15px 5px 25px 5px;
+        }
+        .card-style-n {
+            border-radius: 20px;
+            border-style: dotted;
+            border-width: 2px;
+        }
+        .card-style-o {
+            border-radius: 8px 22px 8px 22px;
+            border-width: 2.5px;
+        }
+
+        /* کارت ویژه ایران */
+        .clock-card.iran-featured {
+            position: relative;
+        }
+        .clock-card.iran-featured::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: inherit;
+            padding: 3px;
+            background: linear-gradient(135deg,
+                    #d4a853, #f0d080, #b8923e, #d4a853, #f0d080);
+            background-size: 300% 300%;
+            animation: goldenBorder 4s linear infinite;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: -1;
+            opacity: 0.8;
+        }
+        @keyframes goldenBorder {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .city-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            transition: color var(--transition-smooth);
+        }
+        .time-display {
+            font-family: 'Cinzel', 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            transition: all var(--transition-smooth);
+            line-height: 1;
+        }
+        .time-seconds {
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            vertical-align: super;
+            margin-left: 2px;
+        }
+        .country-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-style: italic;
+            transition: color var(--transition-smooth);
+        }
+        .daynight-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            transition: all var(--transition-smooth);
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 500;
+        }
+        .daynight-icon {
+            font-size: 1.1rem;
+        }
+
+        /* ─── بخش نقل‌قول ─── */
+        .quote-section {
+            margin-top: 36px;
+            text-align: center;
+            padding: 20px 30px;
+            position: relative;
+        }
+        .quote-container {
+            display: inline-block;
+            max-width: 700px;
+            background: rgba(15, 15, 35, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(180, 160, 120, 0.3);
+            border-radius: 40px 8px 40px 8px;
+            padding: 24px 36px;
+            position: relative;
+            transition: all 0.8s ease;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+        }
+        .quote-container:hover {
+            border-color: rgba(200, 170, 130, 0.55);
+            box-shadow: 0 12px 50px rgba(100, 130, 200, 0.2);
+        }
+        .quote-mark {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: #d4a853;
+            line-height: 0.5;
+            opacity: 0.7;
+            display: block;
+        }
+        .quote-mark.open {
+            text-align: left;
+            margin-bottom: -8px;
+        }
+        .quote-mark.close {
+            text-align: right;
+            margin-top: -8px;
+        }
+        .quote-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.35rem;
+            font-style: italic;
+            color: #e8e0d8;
+            letter-spacing: 1px;
+            line-height: 1.7;
+            transition: opacity 0.5s ease;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .quote-fade {
+            animation: quoteFadeIn 0.7s ease;
+        }
+        @keyframes quoteFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .quote-counter {
+            font-size: 0.7rem;
+            color: #887766;
+            letter-spacing: 3px;
+            margin-top: 8px;
+        }
+
+        /* ─── فوتر ─── */
+        .footer {
+            text-align: center;
+            padding: 16px;
+            font-size: 0.7rem;
+            color: #665544;
+            letter-spacing: 3px;
+            opacity: 0.6;
+        }
+
+        /* ─── ریسپانسیو ─── */
+        @media (max-width: 1200px) {
+            .clocks-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 14px;
+            }
+            .logo-text {
+                font-size: 2.6rem;
+                letter-spacing: 3px;
+            }
+            .time-display {
+                font-size: 1.6rem;
+            }
+        }
+        @media (max-width: 900px) {
+            .clocks-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+            .clock-card {
+                padding: 14px 10px 12px;
+                min-height: 130px;
+                border-radius: 14px;
+            }
+            .time-display {
+                font-size: 1.35rem;
+            }
+            .city-name {
+                font-size: 0.9rem;
+            }
+            .logo-text {
+                font-size: 2.2rem;
+            }
+            .logo-symbols {
+                font-size: 1.6rem;
+                gap: 8px;
+            }
+            .quote-text {
+                font-size: 1.1rem;
+            }
+            .quote-container {
+                padding: 18px 22px;
+                border-radius: 30px 6px 30px 6px;
+            }
+        }
+        @media (max-width: 600px) {
+            .clocks-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .clock-card {
+                padding: 10px 8px 10px;
+                min-height: 110px;
+                border-radius: 12px;
+            }
+            .time-display {
+                font-size: 1.15rem;
+                letter-spacing: 1px;
+            }
+            .city-name {
+                font-size: 0.78rem;
+                letter-spacing: 1px;
+            }
+            .country-name {
+                font-size: 0.65rem;
+                letter-spacing: 1px;
+            }
+            .logo-text {
+                font-size: 1.8rem;
+                letter-spacing: 2px;
+            }
+            .logo-symbols {
+                font-size: 1.3rem;
+                gap: 5px;
+            }
+            .logo-subtitle {
+                font-size: 0.7rem;
+                letter-spacing: 4px;
+            }
+            .quote-text {
+                font-size: 1rem;
+            }
+            .quote-container {
+                padding: 14px 16px;
+                border-radius: 24px 4px 24px 4px;
+            }
+            .daynight-indicator {
+                font-size: 0.65rem;
+                padding: 3px 10px;
+            }
+        }
+        @media (max-width: 380px) {
+            .clocks-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 7px;
+            }
+            .time-display {
+                font-size: 1rem;
+            }
+            .clock-card {
+                min-height: 95px;
+                padding: 8px 5px;
+            }
+        }
+
+        /* ─── اسکرول‌بار سفارشی ─── */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a18;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3a3040;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5a4a60;
+        }
+
+        /* ─── حالت خطا برای تصاویر پس‌زمینه ─── */
+        .bg-fallback {
+            background: radial-gradient(ellipse at 30% 40%, #1a1030 0%, #0a0a18 50%, #020210 100%) !important;
+        }
+    </style>
 </head>
 <body>
 
-  <canvas id="particlesCanvas"></canvas>
+    <!-- لایه‌های پس‌زمینه -->
+    <div class="bg-layer layer-a" id="bgLayerA"></div>
+    <div class="bg-layer layer-b" id="bgLayerB"></div>
+    <div class="bg-overlay"></div>
 
-  <div class="content">
-    <div class="logo">GOOD TIME</div>
+    <!-- ذرات کیهانی -->
+    <canvas id="particles-canvas"></canvas>
 
-    <div class="clock-container" id="clockContainer">
-      <canvas id="mainClock" width="320" height="320"></canvas>
-      <!-- داینامیک: شهرها اینجا با JS اضافه می‌شوند -->
+    <!-- کانتینر اصلی -->
+    <div class="main-container">
+
+        <!-- هدر و لوگو -->
+        <header class="header">
+            <div class="logo-wrapper">
+                <div class="logo-symbols">
+                    <span class="sym">⌚</span>
+                    <span class="sym">⏱️</span>
+                    <span class="sym">🕐</span>
+                    <span class="sym">⏰</span>
+                    <span class="sym">⌛</span>
+                </div>
+                <h1 class="logo-text">my time</h1>
+                <p class="logo-subtitle">l'horloge du monde</p>
+                <div class="logo-divider"></div>
+            </div>
+        </header>
+
+        <!-- شبکه ساعت‌ها -->
+        <div class="clocks-grid" id="clocksGrid">
+            <!-- کارت‌ها با جاوااسکریپت پر می‌شوند -->
+        </div>
+
+        <!-- بخش نقل‌قول -->
+        <div class="quote-section">
+            <div class="quote-container" id="quoteContainer">
+                <span class="quote-mark open">"</span>
+                <div class="quote-text" id="quoteText">زمان، معما‌ترین هدیه‌ی کیهان است...</div>
+                <span class="quote-mark close">"</span>
+                <div class="quote-counter" id="quoteCounter"></div>
+            </div>
+        </div>
+
+        <!-- فوتر -->
+        <footer class="footer">
+            ✦ my time ✦ l'horloge du monde ✦
+        </footer>
     </div>
 
-    <div class="iran-time" id="iranDigital">--:--</div>
-    <div class="iran-date" id="iranDate">...</div>
+    <!-- فایل quotes.js (نمونه) -->
+    <script>
+        // ─── نقل‌قول‌های پیش‌فرض (در صورتی که quotes.js لود نشود) ───
+        window.fallbackQuotes = [
+            "زمان، رودخانه‌ایست که نمی‌توان دو بار در آن قدم گذاشت. 🌊",
+            "Time is the wisest counselor of all. — Pericles",
+            "در میان ستارگان، زمان معنایی دیگر دارد... ✨",
+            "The cosmos is within us. We are made of star-stuff. — Carl Sagan",
+            "هر ثانیه، هدیه‌ایست از سوی کیهان. 🎁",
+            "Time flies over us, but leaves its shadow behind. — Hawthorne",
+            "کهکشان‌ها می‌رقصند و زمان نظاره‌گر است. 🌌",
+            "Lost time is never found again. — Benjamin Franklin",
+            "سکوت میان ستارگان، عمیق‌ترین راز زمان است. 🔭",
+            "We are time's subjects, and time bids be gone. — Shakespeare",
+            "در عمق فضا، گذشته و آینده یکی می‌شوند... 🕳️",
+            "Time is a created thing. To say 'I don't have time' is to say 'I don't want to.' — Lao Tzu",
+            "هر نفس، گامیست به سوی ابدیت. 🪐",
+            "The only reason for time is so that everything doesn't happen at once. — Einstein",
+            "ماه و خورشید، ساعت‌سازانِ آسمانند. 🌙☀️",
+            "Time is the longest distance between two places. — Tennessee Williams",
+            "نبض کیهان در هر تیک‌تاک ساعت می‌طپد. 💫",
+            "Dost thou love life? Then do not squander time. — Benjamin Franklin",
+            "در میان nebula ها، زمان به آرامی می‌خزد... 🌠",
+            "Time changes everything except something within us. — Thomas Hardy",
+            "ساعت‌ها می‌آیند و می‌روند، اما زمان باقیست. ⏳",
+            "The future is something which everyone reaches at the rate of 60 minutes an hour. — C.S. Lewis",
+            "راز کیهان در یک لحظه نهفته است. ✦",
+            "Time is a storm in which we are all lost. — William Carlos Williams",
+            "ستارگان، ساعت‌های ابدیت هستند. ⭐",
+            "Better three hours too soon than a minute too late. — Shakespeare",
+            "فضا و زمان، بوم نقاشیِ هستی‌اند. 🎨",
+            "Time is the coin of your life. — Carl Sandburg",
+            "در سکوت شب، صدای گذر زمان را می‌شنوی... 🌃",
+            "The two most powerful warriors are patience and time. — Leo Tolstoy",
+            "هر کهکشان، داستانی در دل زمان دارد. 📖",
+            "Time is a dressmaker specializing in alterations. — Faith Baldwin",
+            "جاودانگی در همین لحظه است، نه در فردا. 🔮",
+            "Punctuality is the thief of time. — Oscar Wilde",
+            "نور ستارگان، پیک زمان‌های دور است. 💡",
+            "Time is an illusion. Lunchtime doubly so. — Douglas Adams",
+            "در گرداب زمان، تنها عشق پایدار می‌ماند. ❤️",
+            "The past is a ghost, the future a dream. All we ever have is now. — Bill Cosby",
+            "زمان، بهترین نویسنده است؛ پایان‌ها را او می‌نویسد. ✍️",
+            "Time is the school in which we learn. — Joan Didion",
+        ];
+    </script>
 
-    <div class="quote-box">
-      <div class="quote-text" id="quoteText">...</div>
-      <div class="quote-author" id="quoteAuthor"></div>
-      <button class="next-quote-btn" id="nextQuoteBtn">جمله بعدی</button>
-    </div>
-  </div>
+    <!-- بارگذاری quotes.js (اگر فایل وجود داشته باشد) -->
+    <script src="quotes.js" onerror="console.log('quotes.js not found, using fallback quotes.'); window.quotesLoaded=false;"></script>
 
-  <!-- مدال شهر -->
-  <div class="modal" id="cityModal">
-    <div class="modal-card">
-      <div class="modal-city" id="modalCityName"></div>
-      <canvas id="modalClock" width="130" height="130"></canvas>
-      <div class="modal-time" id="modalTime"></div>
-      <div class="modal-date" id="modalDate"></div>
-      <button class="modal-close" id="modalClose">بستن</button>
-    </div>
-  </div>
+    <script>
+        // ─── بررسی لود شدن quotes.js ───
+        window.addEventListener('DOMContentLoaded', () => {
+            if (typeof window.quotes === 'undefined' || !Array.isArray(window.quotes) || window
+                .quotes.length === 0) {
+                window.quotes = window.fallbackQuotes || ["زمان، راز جاودانگی است."];
+                console.log('Using fallback quotes (' + window.quotes.length + ' quotes loaded).');
+            } else {
+                console.log('quotes.js loaded successfully (' + window.quotes.length + ' quotes).');
+            }
+            window.quotesLoaded = true;
+        });
+    </script>
 
-  <button class="theme-toggle" id="themeToggle">🎨</button>
+    <script>
+        (function() {
+            // ─── تنظیمات ───
+            const BACKGROUND_CHANGE_INTERVAL = 3 * 60 * 1000; // هر ۳ دقیقه
+            const QUOTE_CHANGE_INTERVAL = 20000; // هر ۲۰ ثانیه
+            const CLOCK_UPDATE_INTERVAL = 1000; // هر ثانیه
 
-  <script src="quotes.js"></script>
-  <script>
-    // ==================== پس‌زمینهٔ ذرات ====================
-    const pCanvas = document.getElementById('particlesCanvas');
-    const pCtx = pCanvas.getContext('2d');
-    pCanvas.width = window.innerWidth;
-    pCanvas.height = window.innerHeight;
-    const particles = [];
-    for (let i = 0; i < 200; i++) {
-      particles.push({
-        x: Math.random() * pCanvas.width,
-        y: Math.random() * pCanvas.height,
-        r: Math.random() * 1.5 + 0.5,
-        speedX: (Math.random() - 0.5) * 0.5,
-        speedY: (Math.random() - 0.5) * 0.5,
-        opacity: Math.random() * 0.8 + 0.2
-      });
-    }
-    function animateParticles() {
-      pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
-      particles.forEach(p => {
-        p.x += p.speedX;
-        p.y += p.speedY;
-        if (p.x < 0) p.x = pCanvas.width;
-        if (p.x > pCanvas.width) p.x = 0;
-        if (p.y < 0) p.y = pCanvas.height;
-        if (p.y > pCanvas.height) p.y = 0;
-        pCtx.beginPath();
-        pCtx.arc(p.x, p.y, p.r, 0, 2*Math.PI);
-        pCtx.fillStyle = `rgba(255,255,255,${p.opacity})`;
-        pCtx.fill();
-      });
-      requestAnimationFrame(animateParticles);
-    }
-    animateParticles();
-    window.addEventListener('resize', () => {
-      pCanvas.width = window.innerWidth;
-      pCanvas.height = window.innerHeight;
-    });
+            // ─── کشورها و زمان‌بندی‌ها ───
+            const countries = [
+                { city: 'تهران', country: 'ایران', timezone: 'Asia/Tehran', style: 'card-style-a',
+                    featured: true, id: 'iran' },
+                { city: 'New York', country: 'USA', timezone: 'America/New_York', style: 'card-style-b',
+                    featured: false },
+                { city: 'London', country: 'United Kingdom', timezone: 'Europe/London',
+                    style: 'card-style-c', featured: false },
+                { city: 'Paris', country: 'France', timezone: 'Europe/Paris', style: 'card-style-d',
+                    featured: false },
+                { city: 'Berlin', country: 'Germany', timezone: 'Europe/Berlin', style: 'card-style-e',
+                    featured: false },
+                { city: 'Tokyo', country: 'Japan', timezone: 'Asia/Tokyo', style: 'card-style-f',
+                    featured: false },
+                { city: 'Beijing', country: 'China', timezone: 'Asia/Shanghai', style: 'card-style-g',
+                    featured: false },
+                { city: 'Sydney', country: 'Australia', timezone: 'Australia/Sydney',
+                    style: 'card-style-h', featured: false },
+                { city: 'Moscow', country: 'Russia', timezone: 'Europe/Moscow', style: 'card-style-i',
+                    featured: false },
+                { city: 'Brasília', country: 'Brazil', timezone: 'America/Sao_Paulo',
+                    style: 'card-style-j', featured: false },
+                { city: 'New Delhi', country: 'India', timezone: 'Asia/Kolkata', style: 'card-style-k',
+                    featured: false },
+                { city: 'Toronto', country: 'Canada', timezone: 'America/Toronto', style: 'card-style-l',
+                    featured: false },
+                { city: 'Seoul', country: 'South Korea', timezone: 'Asia/Seoul', style: 'card-style-m',
+                    featured: false },
+                { city: 'Dubai', country: 'UAE', timezone: 'Asia/Dubai', style: 'card-style-n',
+                    featured: false },
+                { city: 'Johannesburg', country: 'South Africa', timezone: 'Africa/Johannesburg',
+                    style: 'card-style-o', featured: false },
+            ];
 
-    // ==================== داده‌های شهرها ====================
-    const cities = [
-      { name: 'تهران', tz: 'Asia/Tehran' },
-      { name: 'لندن', tz: 'Europe/London' },
-      { name: 'نیویورک', tz: 'America/New_York' },
-      { name: 'توکیو', tz: 'Asia/Tokyo' },
-      { name: 'دبی', tz: 'Asia/Dubai' },
-      { name: 'پاریس', tz: 'Europe/Paris' },
-      { name: 'برلین', tz: 'Europe/Berlin' },
-      { name: 'مسکو', tz: 'Europe/Moscow' },
-      { name: 'سیدنی', tz: 'Australia/Sydney' },
-      { name: 'تورنتو', tz: 'America/Toronto' },
-      { name: 'بمبئی', tz: 'Asia/Kolkata' },
-      { name: 'شانگهای', tz: 'Asia/Shanghai' }
-    ];
+            // ─── تصاویر پس‌زمینه فضایی 4K از Unsplash ───
+            const spaceImages = [
+                'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=1920&q=80',
+                'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=1920&q=80',
+                'https://images.unsplash.com/photo-1504333638930-c8787321eee0?w=1920&q=80',
+                'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1920&q=80',
+                'https://images.unsplash.com/photo-1464802686167-b939a6910659?w=1920&q=80',
+                'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=1920&q=80',
+                'https://images.unsplash.com/photo-1502481851512-e9e2529bfbf9?w=1920&q=80',
+                'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1920&q=80',
+                'https://images.unsplash.com/photo-1506703719100-b0a16c38a1ab?w=1920&q=80',
+                'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1920&q=80',
+                'https://images.unsplash.com/photo-1454789548928-9efd52dc4031?w=1920&q=80',
+                'https://images.unsplash.com/photo-1516339901601-2e1b62dc0c45?w=1920&q=80',
+                'https://images.unsplash.com/photo-1543722530-d2c3201371e7?w=1920&q=80',
+                'https://images.unsplash.com/photo-1578574577019-21a19307b20e?w=1920&q=80',
+                'https://images.unsplash.com/photo-1610296669221-602fa827a5ed?w=1920&q=80',
+            ];
 
-    // ==================== رسم ساعت اصلی (Canvas) ====================
-    const mainCanvas = document.getElementById('mainClock');
-    const mainCtx = mainCanvas.getContext('2d');
-    const clockRadius = 140;
-    const centerX = 160, centerY = 160;
+            // ─── DOM References ───
+            const bgLayerA = document.getElementById('bgLayerA');
+            const bgLayerB = document.getElementById('bgLayerB');
+            const clocksGrid = document.getElementById('clocksGrid');
+            const quoteText = document.getElementById('quoteText');
+            const quoteCounter = document.getElementById('quoteCounter');
+            const quoteContainer = document.getElementById('quoteContainer');
+            const particlesCanvas = document.getElementById('particles-canvas');
+            const ctx = particlesCanvas.getContext('2d');
 
-    function drawClockFace(ctx, now, isModal = false) {
-      const r = isModal ? 60 : clockRadius;
-      const cx = isModal ? 65 : centerX;
-      const cy = isModal ? 65 : centerY;
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      
-      // حلقهٔ بیرونی
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, 2*Math.PI);
-      ctx.strokeStyle = 'rgba(212,175,55,0.4)';
-      ctx.lineWidth = isModal ? 2 : 3;
-      ctx.stroke();
-      
-      // اعداد رومی ساده (فقط خطوط)
-      for (let i = 0; i < 12; i++) {
-        const angle = (i * 30 - 90) * Math.PI / 180;
-        const outerX = cx + (r - 15) * Math.cos(angle);
-        const outerY = cy + (r - 15) * Math.sin(angle);
-        const innerX = cx + (r - 25) * Math.cos(angle);
-        const innerY = cy + (r - 25) * Math.sin(angle);
-        ctx.beginPath();
-        ctx.moveTo(innerX, innerY);
-        ctx.lineTo(outerX, outerY);
-        ctx.strokeStyle = 'rgba(255,255,255,0.6)';
-        ctx.lineWidth = isModal ? 1.5 : 2;
-        ctx.stroke();
-      }
+            // ─── state ───
+            let currentBgIndex = 0;
+            let activeLayer = 'A';
+            let quoteIndex = 0;
+            let clockCards = [];
+            let imageCache = [];
+            let bgRotationTimer = null;
+            let quoteTimer = null;
+            let clockTimer = null;
+            let animationFrameId = null;
+            let particles = [];
 
-      const h = now.getHours() % 12;
-      const m = now.getMinutes();
-      const s = now.getSeconds();
-      
-      // عقربه‌ها
-      function drawHand(angle, length, width, color, glow = false) {
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        const rad = (angle * Math.PI / 180) - (Math.PI / 2);
-        ctx.lineTo(cx + length * Math.cos(rad), cy + length * Math.sin(rad));
-        ctx.strokeStyle = color;
-        ctx.lineWidth = width;
-        if (glow) {
-          ctx.shadowColor = color;
-          ctx.shadowBlur = 8;
-        }
-        ctx.stroke();
-        ctx.shadowBlur = 0;
-      }
-      
-      drawHand((h * 30) + (m * 0.5), r * 0.5, 4, '#f8fafc');
-      drawHand(m * 6, r * 0.7, 2.5, '#e2e8f0');
-      drawHand(s * 6, r * 0.8, 1, '#d4af37', true);
-      
-      // نقطهٔ مرکز
-      ctx.beginPath();
-      ctx.arc(cx, cy, 5, 0, 2*Math.PI);
-      ctx.fillStyle = '#d4af37';
-      ctx.fill();
-    }
+            // ─── پیش‌بارگذاری تصاویر ───
+            function preloadImages(urls) {
+                const promises = urls.map((url, index) => {
+                    return new Promise((resolve) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            imageCache[index] = url;
+                            resolve();
+                        };
+                        img.onerror = () => {
+                            // در صورت خطا، URL را هم نگه می‌داریم (با fallback CSS)
+                            imageCache[index] = null;
+                            console.warn('Failed to load image: ' + url.substring(0, 50) +
+                                '...');
+                            resolve();
+                        };
+                        img.src = url;
+                        // تایم‌اوت ۱۰ ثانیه‌ای
+                        setTimeout(() => {
+                            if (imageCache[index] === undefined) {
+                                imageCache[index] = null;
+                                resolve();
+                            }
+                        }, 10000);
+                    });
+                });
+                return Promise.all(promises);
+            }
 
-    function updateMainClock() {
-      const now = new Date();
-      drawClockFace(mainCtx, now);
-      document.getElementById('iranDigital').textContent = now.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit' });
-      document.getElementById('iranDate').textContent = new Intl.DateTimeFormat('fa-IR', { dateStyle:'full' }).format(now);
-    }
-    updateMainClock();
-    setInterval(updateMainClock, 1000);
+            // ─── تنظیم پس‌زمینه ───
+            function setBackground(imageUrl, layerElement) {
+                if (imageUrl) {
+                    layerElement.style.backgroundImage = `url('${imageUrl}')`;
+                    layerElement.classList.remove('bg-fallback');
+                } else {
+                    layerElement.style.backgroundImage = '';
+                    layerElement.classList.add('bg-fallback');
+                }
+            }
 
-    // ==================== حلقهٔ شهرها ====================
-    const container = document.getElementById('clockContainer');
-    const ringRadius = 130; // فاصلهٔ مرکز تا شهرها
-    cities.forEach((city, i) => {
-      const angle = (i * 30 - 90) * Math.PI / 180; // هر شهر ۳۰ درجه فاصله
-      const x = 160 + ringRadius * Math.cos(angle);
-      const y = 160 + ringRadius * Math.sin(angle);
-      
-      const node = document.createElement('div');
-      node.className = 'city-node';
-      node.style.left = x + 'px';
-      node.style.top = y + 'px';
-      node.innerHTML = '<div class="city-dot"></div>';
-      node.addEventListener('click', () => showCityModal(city));
-      
-      const label = document.createElement('div');
-      label.className = 'city-label';
-      label.style.left = x + 'px';
-      label.style.top = y + 'px';
-      label.textContent = city.name;
-      
-      container.appendChild(node);
-      container.appendChild(label);
-      
-      // به‌روزرسانی رنگ نقطه بر اساس روز/شب
-      setInterval(() => {
-        const now = new Date();
-        const cityTime = new Date(now.toLocaleString('en-US', { timeZone: city.tz }));
-        const hour = cityTime.getHours();
-        const dot = node.querySelector('.city-dot');
-        if (hour >= 6 && hour < 18) {
-          dot.classList.remove('night');
-        } else {
-          dot.classList.add('night');
-        }
-      }, 60000);
-      // اجرای اولیه
-      (function() {
-        const now = new Date();
-        const cityTime = new Date(now.toLocaleString('en-US', { timeZone: city.tz }));
-        const hour = cityTime.getHours();
-        const dot = node.querySelector('.city-dot');
-        if (hour >= 6 && hour < 18) {
-          dot.classList.remove('night');
-        } else {
-          dot.classList.add('night');
-        }
-      })();
-    });
+            function rotateBackground() {
+                const validImages = imageCache.filter(url => url !== null && url !== undefined);
+                if (validImages.length === 0) {
+                    // استفاده از گرادینت fallback
+                    bgLayerA.classList.add('bg-fallback');
+                    bgLayerB.classList.add('bg-fallback');
+                    return;
+                }
 
-    // ==================== مدال شهر ====================
-    const modal = document.getElementById('cityModal');
-    const modalClose = document.getElementById('modalClose');
-    let modalInterval;
+                currentBgIndex = (currentBgIndex + 1) % validImages.length;
+                const nextImage = validImages[currentBgIndex];
 
-    function showCityModal(city) {
-      document.getElementById('modalCityName').textContent = city.name;
-      modal.classList.add('active');
-      function updateModal() {
-        const now = new Date();
-        const cityTime = new Date(now.toLocaleString('en-US', { timeZone: city.tz }));
-        document.getElementById('modalTime').textContent = cityTime.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-        document.getElementById('modalDate').textContent = 
-          new Intl.DateTimeFormat('fa-IR', { dateStyle:'full' }).format(cityTime) + ' | ' +
-          cityTime.toLocaleDateString('en-US', { dateStyle:'full' });
-        drawClockFace(document.getElementById('modalClock').getContext('2d'), cityTime, true);
-      }
-      updateModal();
-      modalInterval = setInterval(updateModal, 1000);
-    }
+                if (activeLayer === 'A') {
+                    setBackground(nextImage, bgLayerB);
+                    bgLayerB.classList.add('fading-in');
+                    bgLayerB.classList.remove('fading-out');
+                    bgLayerA.classList.add('fading-out');
+                    bgLayerA.classList.remove('fading-in');
+                    activeLayer = 'B';
+                } else {
+                    setBackground(nextImage, bgLayerA);
+                    bgLayerA.classList.add('fading-in');
+                    bgLayerA.classList.remove('fading-out');
+                    bgLayerB.classList.add('fading-out');
+                    bgLayerB.classList.remove('fading-in');
+                    activeLayer = 'A';
+                }
+            }
 
-    function closeModal() {
-      modal.classList.remove('active');
-      clearInterval(modalInterval);
-    }
-    modalClose.addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) closeModal();
-    });
+            // ─── تشخیص روز/شب ───
+            function isDaytime(timezone) {
+                try {
+                    const now = new Date();
+                    const options = { timeZone: timezone, hour: '2-digit', hour12: false };
+                    const hourStr = now.toLocaleString('en-US', options);
+                    const hour = parseInt(hourStr.replace(/\D/g, ''), 10);
+                    return hour >= 6 && hour < 18;
+                } catch (e) {
+                    return true; // fallback: روز
+                }
+            }
 
-    // ==================== نقل‌قول‌ها ====================
-    let quoteIndex = -1, remainingQuotes = [];
-    function resetQuotes() {
-      if (typeof quotes !== 'undefined' && Array.isArray(quotes)) {
-        remainingQuotes = [...quotes].sort(() => Math.random() - 0.5);
-      } else {
-        remainingQuotes = [{ text:'هر لحظه، آغازی تازه است.', author:'ناشناس' }];
-      }
-      quoteIndex = 0;
-    }
-    function getNextQuote() {
-      if (quoteIndex >= remainingQuotes.length) {
-        remainingQuotes = [...remainingQuotes].sort(() => Math.random() - 0.5);
-        quoteIndex = 0;
-      }
-      return remainingQuotes[quoteIndex++];
-    }
-    function showQuote() {
-      const q = getNextQuote();
-      document.getElementById('quoteText').textContent = q.text;
-      document.getElementById('quoteAuthor').textContent = q.author && q.author !== 'ناشناس' ? `— ${q.author}` : '';
-    }
-    resetQuotes();
-    showQuote();
-    setInterval(showQuote, 60000);
-    document.getElementById('nextQuoteBtn').addEventListener('click', showQuote);
+            // ─── دریافت زمان محلی برای timezone ───
+            function getLocalTimeData(timezone) {
+                try {
+                    const now = new Date();
+                    const optionsTime = {
+                        timeZone: timezone,
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                    };
+                    const optionsDate = {
+                        timeZone: timezone,
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    };
 
-    // ==================== تغییر تم ====================
-    const themes = ['default', 'ice', 'emerald', 'rose'];
-    let currentTheme = localStorage.getItem('goodtime-theme') || 'default';
-    function setTheme(t) {
-      document.body.setAttribute('data-theme', t === 'default' ? '' : t);
-      localStorage.setItem('goodtime-theme', t);
-    }
-    setTheme(currentTheme);
-    document.getElementById('themeToggle').addEventListener('click', () => {
-      const idx = themes.indexOf(currentTheme);
-      currentTheme = themes[(idx + 1) % themes.length];
-      setTheme(currentTheme);
-    });
-  </script>
+                    const timeStr = now.toLocaleString('en-US', optionsTime);
+                    const dateStr = now.toLocaleString('en-US', optionsDate);
+                    const parts = timeStr.split(':');
+                    const hours = parts[0].padStart(2, '0');
+                    const minutes = parts[1].padStart(2, '0');
+                    const seconds = parts[2] ? parts[2].padStart(2, '0') : '00';
+                    const hourNum = parseInt(hours, 10);
+
+                    return {
+                        hours,
+                        minutes,
+                        seconds,
+                        hourNum,
+                        timeStr: `${hours}:${minutes}`,
+                        fullTimeStr: `${hours}:${minutes}:${seconds}`,
+                        dateStr,
+                        isDay: hourNum >= 6 && hourNum < 18,
+                    };
+                } catch (e) {
+                    const now = new Date();
+                    return {
+                        hours: String(now.getHours()).padStart(2, '0'),
+                        minutes: String(now.getMinutes()).padStart(2, '0'),
+                        seconds: String(now.getSeconds()).padStart(2, '0'),
+                        hourNum: now.getHours(),
+                        timeStr: `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
+                        fullTimeStr: `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`,
+                        dateStr: now.toLocaleDateString('en-US', { weekday: 'short', month: 'short',
+                            day: 'numeric' }),
+                        isDay: now.getHours() >= 6 && now.getHours() < 18,
+                    };
+                }
+            }
+
+            // ─── ساخت کارت‌های ساعت ───
+            function createClockCards() {
+                clocksGrid.innerHTML = '';
+                clockCards = [];
+
+                countries.forEach((country, index) => {
+                    const card = document.createElement('div');
+                    card.className = `clock-card ${country.style}`;
+                    if (country.featured) {
+                        card.classList.add('iran-featured');
+                    }
+                    card.setAttribute('data-timezone', country.timezone);
+                    card.setAttribute('data-index', index);
+
+                    card.innerHTML = `
+                        <div class="city-name">${country.city}</div>
+                        <div class="time-display">
+                            <span class="time-main">--:--</span><span class="time-seconds">:--</span>
+                        </div>
+                        <div class="country-name">${country.country}</div>
+                        <div class="daynight-indicator">
+                            <span class="daynight-icon">☀️</span>
+                            <span class="daynight-label">---</span>
+                        </div>
+                    `;
+
+                    clocksGrid.appendChild(card);
+                    clockCards.push({
+                        element: card,
+                        timezone: country.timezone,
+                        city: country.city,
+                        country: country.country,
+                        featured: country.featured,
+                        timeMainEl: card.querySelector('.time-main'),
+                        timeSecondsEl: card.querySelector('.time-seconds'),
+                        daynightIcon: card.querySelector('.daynight-icon'),
+                        daynightLabel: card.querySelector('.daynight-label'),
+                        cityNameEl: card.querySelector('.city-name'),
+                    });
+                });
+            }
+
+            // ─── به‌روزرسانی همه ساعت‌ها ───
+            function updateAllClocks() {
+                clockCards.forEach(card => {
+                    const data = getLocalTimeData(card.timezone);
+                    card.timeMainEl.textContent = `${data.hours}:${data.minutes}`;
+                    card.timeSecondsEl.textContent = `:${data.seconds}`;
+
+                    const wasDay = card.element.classList.contains('day-mode');
+                    const isDay = data.isDay;
+
+                    if (wasDay !== isDay) {
+                        card.element.classList.remove('day-mode', 'night-mode');
+                        card.element.classList.add(isDay ? 'day-mode' : 'night-mode');
+                    } else if (!card.element.classList.contains('day-mode') && !card.element
+                        .classList.contains('night-mode')) {
+                        card.element.classList.add(isDay ? 'day-mode' : 'night-mode');
+                    }
+
+                    if (isDay) {
+                        card.daynightIcon.textContent = '☀️';
+                        card.daynightLabel.textContent = 'روز · Day';
+                    } else {
+                        card.daynightIcon.textContent = '🌙';
+                        card.daynightLabel.textContent = 'شب · Night';
+                    }
+                });
+            }
+
+            // ─── نقل‌قول‌ها ───
+            function updateQuote() {
+                if (!window.quotes || window.quotes.length === 0) {
+                    window.quotes = window.fallbackQuotes || ["زمان، راز جاودانگی است."];
+                }
+                const quotes = window.quotes;
+                if (quoteIndex >= quotes.length) {
+                    quoteIndex = 0;
+                }
+                const currentQuote = quotes[quoteIndex];
+                quoteText.textContent = currentQuote;
+                quoteText.classList.remove('quote-fade');
+                void quoteText.offsetWidth;
+                quoteText.classList.add('quote-fade');
+                quoteCounter.textContent = `${quoteIndex + 1} / ${quotes.length}`;
+                quoteIndex++;
+            }
+
+            // ─── ذرات کیهانی ───
+            function resizeCanvas() {
+                particlesCanvas.width = window.innerWidth;
+                particlesCanvas.height = window.innerHeight;
+            }
+
+            function createParticles() {
+                const count = Math.min(Math.floor(window.innerWidth * 0.08), 120);
+                particles = [];
+                for (let i = 0; i < count; i++) {
+                    particles.push({
+                        x: Math.random() * particlesCanvas.width,
+                        y: Math.random() * particlesCanvas.height,
+                        radius: Math.random() * 2.2 + 0.4,
+                        speedX: (Math.random() - 0.5) * 0.25,
+                        speedY: -(Math.random() * 0.4 + 0.15),
+                        opacity: Math.random() * 0.7 + 0.15,
+                        twinkleSpeed: Math.random() * 0.015 + 0.005,
+                        twinkleOffset: Math.random() * Math.PI * 2,
+                    });
+                }
+            }
+
+            function animateParticles(timestamp) {
+                ctx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+
+                particles.forEach(p => {
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                    p.opacity += Math.sin(timestamp * p.twinkleSpeed + p.twinkleOffset) * 0.008;
+                    p.opacity = Math.max(0.08, Math.min(0.85, p.opacity));
+
+                    if (p.y < -10) {
+                        p.y = particlesCanvas.height + 10;
+                        p.x = Math.random() * particlesCanvas.width;
+                    }
+                    if (p.x < -10) p.x = particlesCanvas.width + 10;
+                    if (p.x > particlesCanvas.width + 10) p.x = -10;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius * 3);
+                    gradient.addColorStop(0, `rgba(220,210,255,${p.opacity})`);
+                    gradient.addColorStop(0.4, `rgba(180,170,220,${p.opacity * 0.6})`);
+                    gradient.addColorStop(1, 'rgba(100,90,160,0)');
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+                });
+
+                animationFrameId = requestAnimationFrame(animateParticles);
+            }
+
+            // ─── راه‌اندازی ───
+            async function init() {
+                resizeCanvas();
+                createParticles();
+                animationFrameId = requestAnimationFrame(animateParticles);
+
+                // پیش‌بارگذاری تصاویر
+                await preloadImages(spaceImages);
+                const validImages = imageCache.filter(url => url !== null && url !== undefined);
+                if (validImages.length > 0) {
+                    setBackground(validImages[0], bgLayerA);
+                    bgLayerA.classList.add('fading-in');
+                    currentBgIndex = 0;
+                } else {
+                    bgLayerA.classList.add('bg-fallback');
+                    bgLayerB.classList.add('bg-fallback');
+                }
+
+                // ساخت کارت‌ها
+                createClockCards();
+                updateAllClocks();
+
+                // نقل‌قول اولیه
+                updateQuote();
+
+                // تایمرها
+                clockTimer = setInterval(updateAllClocks, CLOCK_UPDATE_INTERVAL);
+                quoteTimer = setInterval(updateQuote, QUOTE_CHANGE_INTERVAL);
+                bgRotationTimer = setInterval(rotateBackground, BACKGROUND_CHANGE_INTERVAL);
+
+                // رویداد resize
+                window.addEventListener('resize', () => {
+                    resizeCanvas();
+                    createParticles();
+                });
+
+                console.log('✨ my time — سایت با موفقیت راه‌اندازی شد');
+                console.log(`   ${countries.length} کشور | ${validImages.length} تصویر پس‌زمینه | ${window.quotes ? window.quotes.length : 0} نقل‌قول`);
+                console.log('   تم کهکشانی رازآلود فعال است 🌌');
+            }
+
+            // ─── پاک‌سازی ───
+            function cleanup() {
+                if (clockTimer) clearInterval(clockTimer);
+                if (quoteTimer) clearInterval(quoteTimer);
+                if (bgRotationTimer) clearInterval(bgRotationTimer);
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            }
+
+            // ─── شروع ───
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    // کمی تأخیر برای اطمینان از لود quotes.js
+                    setTimeout(init, 300);
+                });
+            } else {
+                setTimeout(init, 300);
+            }
+
+            // پاک‌سازی هنگام خروج
+            window.addEventListener('beforeunload', cleanup);
+            window.addEventListener('pagehide', cleanup);
+
+            // ─── نمایش خطاهای background image در کنسول (فقط یک بار) ───
+            let bgErrorLogged = false;
+            window.addEventListener('error', function(e) {
+                if (e.target && e.target.tagName === 'IMG' && !bgErrorLogged) {
+                    // خطای لود تصویر - بی‌صدا مدیریت می‌شود
+                    bgErrorLogged = true;
+                }
+            }, true);
+
+            console.log('🌌 my time — Initializing galactic time experience...');
+        })();
+    </script>
 </body>
 </html>
