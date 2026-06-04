@@ -3,36 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aion | گوی کریستالی زمان</title>
-  <meta name="description" content="کره زمین 4K با ساعت هوشمند – تلفیق هنر و مهندسی">
+  <title>AION | پنجره‌ای به کیهان</title>
+  <meta name="description" content="کره زمین ۴K با پس‌زمینهٔ کیهانی زنده و ساعت هوشمند – قدرت DeepSeek">
   <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
   <style>
     :root {
-      --bg: #020408;
-      --glass: rgba(15, 15, 25, 0.4);
-      --border: rgba(255, 255, 255, 0.1);
+      --bg: #010205;
+      --glass: rgba(10, 12, 22, 0.45);
+      --border: rgba(255, 255, 255, 0.12);
       --text: #f0f0f5;
       --accent: #d4af37;
-      --accent-glow: rgba(212, 175, 55, 0.4);
+      --accent-glow: rgba(212, 175, 55, 0.5);
     }
-    [data-theme="ice"] { --accent: #7ec8e3; --accent-glow: rgba(126,200,227,0.4); }
-    [data-theme="purple"] { --accent: #b388ff; --accent-glow: rgba(179,136,255,0.4); }
-    [data-theme="emerald"] { --accent: #6ee7b7; --accent-glow: rgba(110,231,183,0.4); }
+    [data-theme="ice"] { --accent: #7ec8e3; --accent-glow: rgba(126,200,227,0.5); }
+    [data-theme="purple"] { --accent: #b388ff; --accent-glow: rgba(179,136,255,0.5); }
+    [data-theme="emerald"] { --accent: #6ee7b7; --accent-glow: rgba(110,231,183,0.5); }
 
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: 'Vazirmatn', sans-serif;
-      background: var(--bg);
-      background-image: radial-gradient(ellipse at 50% 30%, rgba(212,175,55,0.06) 0%, transparent 70%);
+      background: #000;
       color: var(--text);
       height: 100vh;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      transition: background 1s;
     }
 
-    /* کره سه‌بعدی */
+    /* پس‌زمینهٔ کیهانی (اسلایدشو) */
+    #cosmic-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -2;
+      background-size: cover;
+      background-position: center;
+      transition: opacity 2s ease-in-out;
+      opacity: 0;
+    }
+    #cosmic-bg.active { opacity: 1; }
+
+    /* کرهٔ سه‌بعدی */
     #globe-container {
       position: absolute;
       top: 0; right: 0;
@@ -50,7 +63,7 @@
       min-width: 380px;
       height: 100vh;
       padding: 2rem;
-      background: rgba(10, 12, 20, 0.4);
+      background: var(--glass);
       backdrop-filter: blur(40px);
       -webkit-backdrop-filter: blur(40px);
       border-right: 1px solid var(--border);
@@ -70,7 +83,7 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       text-align: center;
-      filter: drop-shadow(0 0 15px var(--accent-glow));
+      filter: drop-shadow(0 0 20px var(--accent-glow));
     }
 
     .digital-clock {
@@ -151,7 +164,14 @@
     }
     .city-name { font-size: 0.7rem; opacity: 0.7; }
     .city-time { font-size: 0.95rem; font-weight: 500; }
-    .day-night { font-size: 0.65rem; opacity: 0.6; }
+    .business-indicator {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+    .business-green { background: #10b981; box-shadow: 0 0 6px #10b981; }
+    .business-orange { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
 
     .quote-box {
       background: rgba(255,255,255,0.02);
@@ -198,10 +218,13 @@
 </head>
 <body>
 
+  <!-- پس‌زمینهٔ کیهانی -->
+  <div id="cosmic-bg" class="active"></div>
+
   <div id="globe-container"></div>
 
   <div class="panel">
-    <div class="logo">Aion</div>
+    <div class="logo">AION</div>
 
     <div class="digital-clock">
       <div class="time-main" id="digitalTime">--:--</div>
@@ -219,7 +242,7 @@
     </div>
 
     <div>
-      <div style="font-size:0.8rem; opacity:0.7; margin-bottom:0.5rem;">🌍 زمان در جهان</div>
+      <div style="font-size:0.8rem; opacity:0.7; margin-bottom:0.5rem;">🌍 شهرهای جهان</div>
       <div class="cities-grid" id="citiesGrid"></div>
     </div>
 
@@ -244,111 +267,152 @@
   <script type="module">
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-    // ==================== کره زمین 4K ====================
+    // ==================== کره زمین ۴K ====================
     const container = document.getElementById('globe-container');
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, container.clientWidth / container.clientHeight, 0.1, 100);
-    camera.position.set(0, 0.2, 3.0);
-    camera.lookAt(0, 0, 0);
-
+    camera.position.set(0, 0.3, 2.8);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
+    // Post-processing
+    const composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(container.clientWidth, container.clientHeight), 0.5, 0.4, 0.1);
+    bloomPass.threshold = 0.1;
+    bloomPass.strength = 0.9;
+    bloomPass.radius = 0.6;
+    composer.addPass(bloomPass);
+
     // نورپردازی
-    const ambientLight = new THREE.AmbientLight(0x334466);
-    scene.add(ambientLight);
-    const sunLight = new THREE.DirectionalLight(0xffffff, 1.3);
+    scene.add(new THREE.AmbientLight(0x334466));
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1.4);
     sunLight.position.set(5, 2, 5);
     scene.add(sunLight);
 
-    // بافت‌های 4K
+    // بافت‌ها
     const loader = new THREE.TextureLoader();
-    const earthMapUrl = 'https://raw.githubusercontent.com/turban/webgl-earth/master/images/2_no_clouds_4k.jpg';
-    const cloudMapUrl = 'https://raw.githubusercontent.com/turban/webgl-earth/master/images/fair_clouds_4k.png';
+    const earthMap = loader.load('https://raw.githubusercontent.com/turban/webgl-earth/master/images/2_no_clouds_4k.jpg');
+    const cityLights = loader.load('https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Earth%27s_city_lights_at_night_%282002%29.jpg/1280px-Earth%27s_city_lights_at_night_%282002%29.jpg');
+    const cloudMap = loader.load('https://raw.githubusercontent.com/turban/webgl-earth/master/images/fair_clouds_4k.png');
 
     const earthGeo = new THREE.SphereGeometry(1.2, 128, 128);
-    const earthMat = new THREE.MeshPhongMaterial({
-      map: loader.load(earthMapUrl),
-      specular: new THREE.Color('grey'),
-      shininess: 5
-    });
+    const earthMat = new THREE.MeshPhongMaterial({ map: earthMap, specular: 0x333333, shininess: 5 });
     const earth = new THREE.Mesh(earthGeo, earthMat);
     scene.add(earth);
 
+    // شب (city lights) – لایه اضافی
+    const nightGeo = new THREE.SphereGeometry(1.21, 64, 64);
+    const nightMat = new THREE.MeshPhongMaterial({ map: cityLights, transparent: true, blending: THREE.AdditiveBlending, opacity: 0.8 });
+    const nightGlobe = new THREE.Mesh(nightGeo, nightMat);
+    scene.add(nightGlobe);
+
     // ابرها
-    const cloudGeo = new THREE.SphereGeometry(1.21, 64, 64);
-    const cloudMat = new THREE.MeshPhongMaterial({
-      map: loader.load(cloudMapUrl),
-      transparent: true,
-      opacity: 0.4,
-      blending: THREE.AdditiveBlending
-    });
+    const cloudGeo = new THREE.SphereGeometry(1.22, 64, 64);
+    const cloudMat = new THREE.MeshPhongMaterial({ map: cloudMap, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending });
     const clouds = new THREE.Mesh(cloudGeo, cloudMat);
     scene.add(clouds);
 
     // ستاره‌ها
     const starsGeo = new THREE.BufferGeometry();
-    const starsCount = 2000;
-    const starsPos = new Float32Array(starsCount * 3);
-    for (let i = 0; i < starsCount * 3; i += 3) {
+    const starsPos = new Float32Array(3000 * 3);
+    for (let i = 0; i < starsPos.length; i += 3) {
       starsPos[i] = (Math.random() - 0.5) * 20;
       starsPos[i+1] = (Math.random() - 0.5) * 12;
       starsPos[i+2] = (Math.random() - 0.5) * 8;
     }
     starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
-    const starsMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.02 });
-    const stars = new THREE.Points(starsGeo, starsMat);
-    scene.add(stars);
+    scene.add(new THREE.Points(starsGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.02 })));
 
-    // کنترل چرخش
+    // حلقه‌های مداری
+    function createRing(radius, color, rotationSpeed) {
+      const ringGeo = new THREE.TorusGeometry(radius, 0.004, 16, 100);
+      const ringMat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.5 });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.rotation.x = Math.PI / 2;
+      ring.rotation.y = Math.random() * Math.PI;
+      ring.userData = { speed: rotationSpeed };
+      scene.add(ring);
+      return ring;
+    }
+    const ring1 = createRing(1.4, 0xd4af37, 0.0004);
+    const ring2 = createRing(1.5, 0x7ec8e3, -0.0003);
+    const ring3 = createRing(1.6, 0xb388ff, 0.0005);
+
+    // کنترل
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.25;
-    controls.enableZoom = true;
+    controls.autoRotateSpeed = 0.3;
     controls.minDistance = 1.8;
     controls.maxDistance = 5;
     controls.enablePan = false;
 
-    // انیمیشن
+    // حلقه انیمیشن
     function animate() {
       requestAnimationFrame(animate);
       clouds.rotation.y += 0.0002;
-      stars.rotation.y -= 0.00005;
+      nightGlobe.rotation.y += 0.0001;
+      ring1.rotation.z += ring1.userData.speed;
+      ring2.rotation.z += ring2.userData.speed;
+      ring3.rotation.z += ring3.userData.speed;
       controls.update();
-      renderer.render(scene, camera);
+      composer.render();
     }
     animate();
-
     window.addEventListener('resize', () => {
       camera.aspect = container.clientWidth / container.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(container.clientWidth, container.clientHeight);
+      composer.setSize(container.clientWidth, container.clientHeight);
     });
 
-    // ==================== پنل ساعت ====================
+    // ==================== پس‌زمینه کیهانی (اسلایدشو) ====================
+    const cosmicBg = document.getElementById('cosmic-bg');
+    const spaceImages = [
+      'https://www.nasa.gov/wp-content/uploads/2023/03/pillars_of_creation.jpg',
+      'https://www.nasa.gov/wp-content/uploads/2023/06/orion_nebula.jpg',
+      'https://www.nasa.gov/wp-content/uploads/2023/01/hubble_deep_field.jpg',
+      'https://www.nasa.gov/wp-content/uploads/2022/07/james_webb_carina_nebula.jpg',
+      'https://www.nasa.gov/wp-content/uploads/2021/06/milky_way_center.jpg'
+    ];
+    let currentBgIndex = 0;
+    function changeBackground() {
+      currentBgIndex = (currentBgIndex + 1) % spaceImages.length;
+      cosmicBg.style.opacity = '0';
+      setTimeout(() => {
+        cosmicBg.style.backgroundImage = `url('${spaceImages[currentBgIndex]}')`;
+        cosmicBg.style.opacity = '1';
+      }, 1000);
+    }
+    // شروع با اولین تصویر
+    cosmicBg.style.backgroundImage = `url('${spaceImages[0]}')`;
+    cosmicBg.style.opacity = '1';
+    setInterval(changeBackground, 20000);
+
+    // ==================== ساعت هوشمند ====================
     function updateClock() {
       const now = new Date();
-      // دیجیتال
       document.getElementById('digitalTime').textContent = now.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit' });
       document.getElementById('digitalDate').textContent = new Intl.DateTimeFormat('fa-IR', { dateStyle:'full' }).format(now);
-      
-      // آنالوگ کوچک
       const h = now.getHours() % 12;
       const m = now.getMinutes();
       const s = now.getSeconds();
-      document.getElementById('miniHour').style.transform = `rotate(${h * 30 + m * 0.5}deg)`;
-      document.getElementById('miniMinute').style.transform = `rotate(${m * 6}deg)`;
-      document.getElementById('miniSecond').style.transform = `rotate(${s * 6}deg)`;
+      document.getElementById('miniHour').style.transform = `rotate(${h*30 + m*0.5}deg)`;
+      document.getElementById('miniMinute').style.transform = `rotate(${m*6}deg)`;
+      document.getElementById('miniSecond').style.transform = `rotate(${s*6}deg)`;
     }
     updateClock();
     setInterval(updateClock, 1000);
 
-    // ==================== شهرهای جهان ====================
+    // ==================== شهرهای جهان + ساعات اداری ====================
     const worldCities = [
       { name:'تهران', tz:'Asia/Tehran' },
       { name:'لندن', tz:'Europe/London' },
@@ -369,12 +433,12 @@
       document.getElementById('citiesGrid').innerHTML = worldCities.map(c => {
         const cityTime = new Date(now.toLocaleString('en-US', { timeZone: c.tz }));
         const hour = cityTime.getHours();
-        const isDay = hour >= 6 && hour < 18;
+        const isBusiness = hour >= 9 && hour < 17;
+        const cls = isBusiness ? 'business-green' : 'business-orange';
         return `
           <div class="city-chip">
             <div class="city-name">${c.name}</div>
-            <div class="city-time">${cityTime.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit' })}</div>
-            <div class="day-night">${isDay ? '☀️ روز' : '🌙 شب'}</div>
+            <div class="city-time"><span class="business-indicator ${cls}"></span>${cityTime.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit' })}</div>
           </div>
         `;
       }).join('');
@@ -389,7 +453,7 @@
       if (typeof quotes !== 'undefined' && Array.isArray(quotes)) {
         remainingQuotes = [...quotes].sort(() => Math.random() - 0.5);
       } else {
-        remainingQuotes = [{ text: 'هر لحظه، آغازی تازه است.', author: 'ناشناس' }];
+        remainingQuotes = [{ text:'هر لحظه، آغازی تازه است.', author:'ناشناس' }];
       }
       quoteIndex = 0;
     }
@@ -419,11 +483,11 @@
         localStorage.setItem('aion-theme', dot.dataset.theme);
       });
     });
-    const savedTheme = localStorage.getItem('aion-theme');
-    if (savedTheme && savedTheme !== 'default') {
-      document.body.setAttribute('data-theme', savedTheme);
+    const saved = localStorage.getItem('aion-theme');
+    if (saved && saved !== 'default') {
+      document.body.setAttribute('data-theme', saved);
       document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
-      document.querySelector(`[data-theme="${savedTheme}"]`).classList.add('active');
+      document.querySelector(`[data-theme="${saved}"]`).classList.add('active');
     }
   </script>
 </body>
