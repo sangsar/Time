@@ -1,1 +1,377 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Æternum Ultra | داشبورد کیهانی هوشمند</title>
+    <meta name="description" content="پیشرفته‌ترین ساعت جهان با هوش مصنوعی، دستیار صوتی، آب‌وهوا، فضا و تحلیل زمان تماس">
+    <meta property="og:title" content="Æternum Ultra">
+    <meta property="og:description" content="داشبوردی که آینده را می‌بیند">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Aeternum Ultra",
+      "applicationCategory": "Utilities",
+      "description": "داشبورد کیهانی با هوش مصنوعی، دستیار صوتی و داده‌های فضایی زنده"
+    }
+    </script>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a14;
+            --card: rgba(20,20,35,0.75);
+            --text: #f0f0f5;
+            --accent: #7e8fff;
+            --good: #10b981;
+            --warn: #f59e0b;
+            --bad: #ef4444;
+            --shadow: 0 12px 40px rgba(0,0,0,0.5);
+            --radius: 24px;
+        }
+        [data-theme="whitegold"]{ --bg:#181510;--card:rgba(35,28,20,0.8);--accent:#e5d5b0;--text:#f5efe0; }
+        [data-theme="ocean"]{ --bg:#050a14;--card:rgba(16,22,38,0.8);--accent:#38bdf8; }
+        [data-theme="cyberpunk"]{ --bg:#0a0010;--card:rgba(20,5,30,0.8);--accent:#ff2a6d; }
+        [data-theme="coral"]{ --bg:#140c0e;--card:rgba(30,18,22,0.8);--accent:#ff7e67; }
+        [data-theme="velvet"]{ --bg:#0a0c14;--card:rgba(16,18,30,0.8);--accent:#8b9dc3; }
+        .ultra-dark { filter: sepia(0.6) hue-rotate(180deg) invert(0.85); }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background 0.5s, color 0.5s;
+        }
+        canvas#globe { position: fixed; top:0; left:0; z-index:0; pointer-events:none; }
+        .container { max-width:1400px; margin:0 auto; padding:1.5rem; position:relative; z-index:2; }
+        .glass {
+            background: var(--card);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border:1px solid rgba(255,255,255,0.12);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding:1.5rem;
+            margin-bottom:1.5rem;
+        }
+        h1 { font-size:3rem; font-weight:700; background:linear-gradient(135deg, var(--accent), #c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-align:center; margin-bottom:1rem; }
+        .row { display:flex; flex-wrap:wrap; gap:1.5rem; }
+        .col { flex:1; min-width:280px; }
+        button, select, .btn {
+            background: var(--card);
+            border:1px solid rgba(255,255,255,0.2);
+            color:var(--text);
+            padding:0.6rem 1.2rem;
+            border-radius:12px;
+            cursor:pointer;
+            font:inherit;
+            transition:0.3s;
+            backdrop-filter: blur(10px);
+        }
+        button:hover { background: var(--accent); color:#000; }
+        .cities-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); gap:0.8rem; }
+        .city-mini { padding:0.8rem; text-align:center; background:rgba(255,255,255,0.03); border-radius:14px; }
+        .timeline { display:flex; gap:2px; margin:1rem 0; overflow-x:auto; }
+        .hour-slot { min-width:32px; height:45px; background:#334155; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.65rem; }
+        .hour-slot.good { background: var(--good); }
+        .hour-slot.warn { background: var(--warn); }
+        .hour-slot.bad { background: var(--bad); }
+        .quote-text { font-style:italic; font-size:1.1rem; opacity:0.9; }
+        @media (max-width:600px) { h1 { font-size:2rem; } }
+    </style>
+</head>
+<body>
+    <canvas id="globe"></canvas>
+    <div class="container">
+        <h1>Æternum Ultra</h1>
 
+        <!-- ردیف ۱: ساعت + نقل‌قول -->
+        <div class="row">
+            <div class="col glass">
+                <div style="display:flex; align-items:center; gap:2rem;">
+                    <div id="analogClock" style="width:130px; height:130px; border-radius:50%; border:4px solid var(--accent); position:relative;">
+                        <div class="hand hour" style="position:absolute; bottom:50%; left:50%; width:4px; height:40px; background:var(--text); transform-origin:bottom center; border-radius:4px;"></div>
+                        <div class="hand minute" style="position:absolute; bottom:50%; left:50%; width:3px; height:55px; background:var(--text); transform-origin:bottom center; border-radius:4px;"></div>
+                        <div class="hand second" style="position:absolute; bottom:50%; left:50%; width:1px; height:65px; background:var(--accent); transform-origin:bottom center;"></div>
+                    </div>
+                    <div>
+                        <div style="font-size:2.5rem; font-weight:300;" id="digitalClock">--:--:--</div>
+                        <div id="iranDate" style="opacity:0.8;"></div>
+                    </div>
+                </div>
+                <div class="quote-text glass" id="quoteBox" style="margin-top:1rem;">...</div>
+            </div>
+        </div>
+
+        <!-- ردیف ۲: شهرهای جهان + برنامه‌ریز تماس -->
+        <div class="row">
+            <div class="col glass">
+                <h3>شهرهای جهان</h3>
+                <div class="cities-grid" id="cityCards"></div>
+            </div>
+            <div class="col glass">
+                <h3>برنامه‌ریز هوشمند تماس</h3>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                    <select id="cityA"></select>
+                    <span>↔</span>
+                    <select id="cityB"></select>
+                    <button id="voiceBtn">🎤</button>
+                </div>
+                <div class="timeline" id="timeline"></div>
+                <div style="display:flex; gap:1rem; margin:0.5rem 0;">
+                    <span style="color:var(--good);">● عالی</span>
+                    <span style="color:var(--warn);">● متوسط</span>
+                    <span style="color:var(--bad);">● ضعیف</span>
+                </div>
+                <canvas id="heatmapCanvas" width="300" height="100" style="width:100%; border-radius:12px; background:rgba(0,0,0,0.2);"></canvas>
+                <button id="reminderBtn" style="margin-top:0.5rem;">⏰ یادآوری بهترین زمان</button>
+            </div>
+        </div>
+
+        <!-- ردیف ۳: فضا + نمودار -->
+        <div class="row">
+            <div class="col glass">
+                <h3>🛰️ ایستگاه فضایی (ISS)</h3>
+                <div id="issInfo">در حال دریافت...</div>
+            </div>
+            <div class="col glass">
+                <h3>🌌 تصویر روز ناسا</h3>
+                <img id="apodImg" src="" style="width:100%; border-radius:16px; display:none;">
+                <div id="apodTitle"></div>
+            </div>
+        </div>
+
+        <!-- کنترل‌ها -->
+        <div class="glass" style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center;">
+            <button id="themeToggle">🎨 تم</button>
+            <button id="ultraDarkBtn">🌙 حالت شب عمیق</button>
+            <button id="refreshQuoteBtn">🔄 نقل‌قول جدید</button>
+            <select id="themeSelect">
+                <option value="purple">کهکشانی</option>
+                <option value="whitegold">طلای سفید</option>
+                <option value="ocean">اقیانوسی</option>
+                <option value="cyberpunk">سایبرپانک</option>
+                <option value="coral">مرجان</option>
+                <option value="velvet">مخمل</option>
+            </select>
+        </div>
+    </div>
+
+    <script src="quotes.js"></script>
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.128.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/" } }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // === GLOBE ===
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 1000);
+        camera.position.z = 3;
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('globe'), alpha: true });
+        renderer.setSize(innerWidth, innerHeight);
+        const globe = new THREE.Mesh(new THREE.SphereGeometry(1.2, 64, 64), new THREE.MeshBasicMaterial({ color:0x1a1a3e, wireframe:true, transparent:true, opacity:0.4 }));
+        scene.add(globe);
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.autoRotate = true;
+        controls.enableZoom = false;
+
+        // City markers
+        const cityCoords = [
+            { name:'تهران', lat:35.689, lon:51.389 }, { name:'لندن', lat:51.507, lon:-0.128 },
+            { name:'نیویورک', lat:40.712, lon:-74.006 }, { name:'توکیو', lat:35.676, lon:139.650 },
+            { name:'دبی', lat:25.204, lon:55.270 }, { name:'پاریس', lat:48.856, lon:2.352 },
+            { name:'برلین', lat:52.520, lon:13.405 }, { name:'مسکو', lat:55.755, lon:37.617 },
+            { name:'سیدنی', lat:-33.868, lon:151.209 }, { name:'تورنتو', lat:43.653, lon:-79.383 },
+            { name:'بمبئی', lat:19.076, lon:72.877 }, { name:'شانگهای', lat:31.230, lon:121.473 }
+        ];
+        const markers = [];
+        cityCoords.forEach((c,i) => {
+            const phi = (90 - c.lat) * Math.PI/180;
+            const theta = (c.lon + 180) * Math.PI/180;
+            const x = -1.2 * Math.sin(phi) * Math.cos(theta);
+            const y = 1.2 * Math.cos(phi);
+            const z = 1.2 * Math.sin(phi) * Math.sin(theta);
+            const dot = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8,8), new THREE.MeshBasicMaterial({ color: new THREE.Color(`hsl(${i*30},80%,60%)`) }));
+            dot.position.set(x,y,z);
+            globe.add(dot);
+            markers.push({ name:c.name, mesh:dot });
+        });
+
+        // Animated connection line (Shader)
+        let connectionLine;
+        function updateConnection(city1, city2) {
+            if(connectionLine) globe.remove(connectionLine);
+            const c1 = cityCoords.find(c=>c.name===city1);
+            const c2 = cityCoords.find(c=>c.name===city2);
+            if(!c1||!c2) return;
+            const phi1 = (90-c1.lat)*Math.PI/180, theta1 = (c1.lon+180)*Math.PI/180;
+            const phi2 = (90-c2.lat)*Math.PI/180, theta2 = (c2.lon+180)*Math.PI/180;
+            const p1 = new THREE.Vector3(-1.2*Math.sin(phi1)*Math.cos(theta1), 1.2*Math.cos(phi1), 1.2*Math.sin(phi1)*Math.sin(theta1));
+            const p2 = new THREE.Vector3(-1.2*Math.sin(phi2)*Math.cos(theta2), 1.2*Math.cos(phi2), 1.2*Math.sin(phi2)*Math.sin(theta2));
+            const curve = new THREE.CubicBezierCurve3(p1, new THREE.Vector3(p1.x*2,p1.y*2,p1.z*2), new THREE.Vector3(p2.x*2,p2.y*2,p2.z*2), p2);
+            const points = curve.getPoints(50);
+            const geom = new THREE.BufferGeometry().setFromPoints(points);
+            const mat = new THREE.ShaderMaterial({
+                uniforms: { color: { value: new THREE.Color('#4af') } },
+                vertexShader: 'void main() { gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+                fragmentShader: 'uniform vec3 color; void main() { gl_FragColor = vec4(color, 0.8); }',
+                transparent: true
+            });
+            connectionLine = new THREE.Line(geom, mat);
+            globe.add(connectionLine);
+        }
+
+        scene.add(new THREE.AmbientLight(0x404080));
+        function animate() { requestAnimationFrame(animate); controls.update(); renderer.render(scene,camera); }
+        animate();
+        window.addEventListener('resize', ()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); });
+
+        // === APP LOGIC ===
+        const $ = s=>document.querySelector(s);
+        const $$ = s=>document.querySelectorAll(s);
+
+        // Quotes
+        let quoteIndex = -1, remainingQuotes = [];
+        function resetQuotes() { if(typeof quotes!=='undefined') remainingQuotes = [...quotes].sort(()=>Math.random()-0.5); else remainingQuotes=[{text:'نقل‌قول در دسترس نیست',author:''}]; quoteIndex=0; }
+        function nextQuote() { if(quoteIndex>=remainingQuotes.length){ remainingQuotes=[...remainingQuotes].sort(()=>Math.random()-0.5); quoteIndex=0; } return remainingQuotes[quoteIndex++]; }
+
+        // Time
+        function updateClocks() {
+            const now = new Date();
+            const h = now.getHours()%12, m = now.getMinutes(), s = now.getSeconds();
+            document.querySelector('#analogClock .hour').style.transform = `rotate(${h*30+m*0.5}deg)`;
+            document.querySelector('#analogClock .minute').style.transform = `rotate(${m*6}deg)`;
+            document.querySelector('#analogClock .second').style.transform = `rotate(${s*6}deg)`;
+            $('#digitalClock').textContent = now.toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+            $('#iranDate').textContent = new Intl.DateTimeFormat('fa-IR',{dateStyle:'full'}).format(now);
+        }
+
+        // Cities
+        const cityList = [
+            { name:'لندن', tz:'Europe/London', country:'UK' }, { name:'نیویورک', tz:'America/New_York', country:'US' },
+            { name:'توکیو', tz:'Asia/Tokyo', country:'JP' }, { name:'دبی', tz:'Asia/Dubai', country:'AE' },
+            { name:'پاریس', tz:'Europe/Paris', country:'FR' }, { name:'برلین', tz:'Europe/Berlin', country:'DE' },
+            { name:'مسکو', tz:'Europe/Moscow', country:'RU' }, { name:'سیدنی', tz:'Australia/Sydney', country:'AU' },
+            { name:'تورنتو', tz:'America/Toronto', country:'CA' }, { name:'بمبئی', tz:'Asia/Kolkata', country:'IN' }
+        ];
+        function updateCityCards() {
+            const now = new Date();
+            $('#cityCards').innerHTML = cityList.map(c=>`<div class="city-mini"><b>${c.name}</b><br>${now.toLocaleTimeString('fa-IR',{timeZone:c.tz, hour:'2-digit',minute:'2-digit'})}</div>`).join('');
+        }
+
+        // Planner
+        function calcScore(date, tzA, countryA, tzB, countryB) {
+            const hA = parseInt(date.toLocaleString('en',{timeZone:tzA, hour:'2-digit', hourCycle:'h23'}));
+            const hB = parseInt(date.toLocaleString('en',{timeZone:tzB, hour:'2-digit', hourCycle:'h23'}));
+            let score=100;
+            if(hA<9||hA>=17) score-=30;
+            if(hB<9||hB>=17) score-=30;
+            const dayA = date.toLocaleString('en',{timeZone:tzA, weekday:'long'});
+            const dayB = date.toLocaleString('en',{timeZone:tzB, weekday:'long'});
+            if(dayA==='Friday'&&countryA==='IR') score-=40;
+            if((dayB==='Saturday'||dayB==='Sunday')&&['US','UK','CA','DE','FR'].includes(countryB)) score-=40;
+            return Math.max(0,score);
+        }
+
+        function updatePlanner() {
+            const selA = $('#cityA'), selB = $('#cityB');
+            if(selA.options.length===0) {
+                const all = [{name:'تهران',tz:'Asia/Tehran',country:'IR'},...cityList];
+                all.forEach(c=>{ selA.add(new Option(c.name,`${c.tz}|${c.country}`)); selB.add(new Option(c.name,`${c.tz}|${c.country}`)); });
+            }
+            const [tzA,coA] = selA.value.split('|'), [tzB,coB] = selB.value.split('|');
+            const now = new Date();
+            const timeline = $('#timeline');
+            timeline.innerHTML = '';
+            const scores = [];
+            for(let h=0; h<24; h++) {
+                const d = new Date(now); d.setHours(h,0,0,0);
+                const sc = calcScore(d, tzA, coA, tzB, coB);
+                scores.push(sc);
+                const cls = sc>70?'good':sc>40?'warn':'bad';
+                timeline.innerHTML += `<div class="hour-slot ${cls}">${h}</div>`;
+            }
+            // AI suggestion (simple)
+            const bestHour = scores.indexOf(Math.max(...scores));
+            const bestTime = `${bestHour}:00 - ${bestHour+1}:00`;
+            localStorage.setItem('lastBest', bestTime);
+            // Connection line
+            updateConnection(selA.options[selA.selectedIndex].text, selB.options[selB.selectedIndex].text);
+            // Heatmap
+            drawHeatmap(scores);
+        }
+
+        function drawHeatmap(scores) {
+            const canvas = $('#heatmapCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            const w = canvas.width/24;
+            scores.forEach((s,i)=>{
+                ctx.fillStyle = s>70?'#10b981':s>40?'#f59e0b':'#ef4444';
+                ctx.fillRect(i*w,0,w-1,canvas.height);
+            });
+        }
+
+        // Voice
+        $('#voiceBtn').addEventListener('click',()=>{
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if(!SpeechRecognition) return alert('مرورگر شما پشتیبانی نمی‌کند');
+            const recog = new SpeechRecognition();
+            recog.lang = 'fa-IR';
+            recog.onresult = e => {
+                const transcript = e.results[0][0].transcript;
+                const match = transcript.match(/بهترین زمان تماس با ([\u0600-\u06FF\s]+)/);
+                if(match) {
+                    const cityName = match[1].trim();
+                    const sel = $('#cityB');
+                    for(let i=0; i<sel.options.length; i++) if(sel.options[i].text.includes(cityName)) { sel.selectedIndex = i; updatePlanner(); break; }
+                }
+            };
+            recog.start();
+        });
+
+        // Reminder
+        $('#reminderBtn').addEventListener('click',()=>{
+            if(!('Notification' in window)) return alert('اعلان پشتیبانی نمی‌شود');
+            Notification.requestPermission().then(p=>{
+                if(p==='granted') {
+                    const best = localStorage.getItem('lastBest')||'9:00';
+                    new Notification('Æternum',{body:`بهترین زمان تماس امروز: ${best}`});
+                }
+            });
+        });
+
+        // NASA APOD + ISS
+        fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY').then(r=>r.json()).then(d=>{
+            if(d.url) { $('#apodImg').src=d.url; $('#apodImg').style.display='block'; $('#apodTitle').textContent=d.title; }
+        });
+        function updateISS() {
+            fetch('https://api.wheretheiss.at/v1/satellites/25544').then(r=>r.json()).then(d=>{
+                $('#issInfo').innerHTML = `طول: ${d.longitude.toFixed(2)} | عرض: ${d.latitude.toFixed(2)} | ارتفاع: ${d.altitude.toFixed(2)} km`;
+            });
+        }
+        setInterval(updateISS, 5000); updateISS();
+
+        // Ultra Dark
+        $('#ultraDarkBtn').addEventListener('click',()=> document.body.classList.toggle('ultra-dark'));
+
+        // Theme
+        $('#themeSelect').addEventListener('change',e=> document.body.setAttribute('data-theme', e.target.value));
+
+        // Init
+        resetQuotes();
+        updateClocks(); setInterval(updateClocks,1000);
+        updateCityCards(); setInterval(updateCityCards,60000);
+        updatePlanner();
+        $('#cityA').addEventListener('change',updatePlanner);
+        $('#cityB').addEventListener('change',updatePlanner);
+        $('#quoteBox').innerHTML = (()=>{ const q=nextQuote(); return `${q.text} — ${q.author}`; })();
+        setInterval(()=>{ const q=nextQuote(); $('#quoteBox').innerHTML = `${q.text} — ${q.author}`; }, 60000);
+        $('#refreshQuoteBtn').addEventListener('click',()=>{ const q=nextQuote(); $('#quoteBox').innerHTML = `${q.text} — ${q.author}`; });
+    </script>
+</body>
+</html>
