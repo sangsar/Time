@@ -4,16 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Æternum | داشبورد کیهانی</title>
-  <meta name="description" content="داشبورد کیهانی با کره زمین سه‌بعدی، ساعت هوشمند و نقل‌قول‌های ادبی">
+  <meta name="description" content="ساعت هوشمند جهانی با کره زمین سه‌بعدی و نقل‌قول‌های ادبی">
   <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
   <style>
     :root {
       --bg: #02040a;
-      --glass: rgba(15, 15, 25, 0.6);
+      --glass: rgba(15, 15, 25, 0.55);
       --border: rgba(255, 255, 255, 0.08);
       --text: #e0e0e0;
       --accent: #60a5fa;
-      --shadow: 0 20px 50px rgba(0,0,0,0.6);
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
@@ -25,130 +24,130 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
     }
-    /* کرۀ سه‌بعدی پس‌زمینه */
+    /* کرهٔ سه‌بعدی بزرگ پس‌زمینه */
     #globe-container {
       position: fixed;
-      top: 0; right: 0; width: 65%; height: 100vh;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       z-index: 0;
     }
-    /* لایه اصلی UI */
+    /* UI لایه شیشه‌ای */
     .ui-layer {
       position: relative;
       z-index: 10;
       width: 100%;
+      max-width: 1400px;
       height: 100vh;
-      display: flex;
       padding: 2rem;
-      gap: 2rem;
-      pointer-events: none;
-    }
-    .left-panel {
-      width: 35%;
-      min-width: 380px;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
-      pointer-events: auto;
+      align-items: flex-start;
+      justify-content: space-between;
+      pointer-events: none;
     }
-    .glass-card {
+    /* پنل سمت چپ: ساعت هوشمند + نقل‌قول */
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2rem;
+      pointer-events: auto;
+      margin-top: auto;
+      margin-bottom: auto;
+      margin-right: 5vw;
+    }
+    /* حلقهٔ هوشمند ۲۴ ساعته */
+    .smart-ring {
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(0,0,0,0.4) 0%, rgba(10,10,20,0.6) 70%);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border: 2px solid rgba(255,255,255,0.12);
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ring-time {
+      font-size: 2.8rem;
+      font-weight: 300;
+      letter-spacing: 2px;
+      text-shadow: 0 0 20px rgba(255,255,255,0.3);
+      z-index: 2;
+    }
+    .ring-date {
+      font-size: 0.85rem;
+      opacity: 0.7;
+      position: absolute;
+      top: 35%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+    }
+    /* نقاط شهرها روی حلقه */
+    .city-marker {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 12px #4ade80;
+      transform: translate(-50%, -50%);
+      transition: all 0.3s;
+      cursor: pointer;
+      z-index: 5;
+    }
+    .city-marker:hover {
+      transform: translate(-50%, -50%) scale(1.8);
+      box-shadow: 0 0 20px #4ade80;
+    }
+    .city-label {
+      position: absolute;
+      font-size: 0.65rem;
+      white-space: nowrap;
+      transform: translate(-50%, 12px);
+      opacity: 0.8;
+      pointer-events: none;
+    }
+    /* قوس رنگین شبانه‌روز */
+    .day-arc {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 90deg,
+        #0f172a 0deg,    /* شب */
+        #1e293b 60deg,    /* شب عمیق */
+        #f59e0b 90deg,    /* طلوع */
+        #fbbf24 110deg,   /* طلوع */
+        #60a5fa 150deg,   /* صبح */
+        #93c5fd 200deg,   /* ظهر */
+        #60a5fa 250deg,   /* بعد از ظهر */
+        #f59e0b 280deg,   /* غروب */
+        #fbbf24 300deg,   /* غروب */
+        #1e293b 340deg,   /* شب */
+        #0f172a 360deg
+      );
+      mask: radial-gradient(circle, transparent 62%, black 63%);
+      -webkit-mask: radial-gradient(circle, transparent 62%, black 63%);
+      opacity: 0.35;
+    }
+    /* نقل‌قول */
+    .quote-box {
       background: var(--glass);
       backdrop-filter: blur(30px);
       -webkit-backdrop-filter: blur(30px);
       border: 1px solid var(--border);
-      border-radius: 32px;
-      padding: 1.8rem;
-      box-shadow: var(--shadow);
-      transition: all 0.3s ease;
-    }
-    /* ساعت */
-    .clock-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-    }
-    .analog-clock {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.03);
-      border: 2px solid rgba(255,255,255,0.15);
-      position: relative;
-      flex-shrink: 0;
-      box-shadow: 0 0 30px rgba(96, 165, 250, 0.1);
-    }
-    .hand {
-      position: absolute;
-      bottom: 50%;
-      left: 50%;
-      transform-origin: bottom center;
-      border-radius: 4px;
-    }
-    .hour-hand {
-      width: 4px;
-      height: 35px;
-      background: #f1f5f9;
-      margin-left: -2px;
-    }
-    .minute-hand {
-      width: 2.5px;
-      height: 50px;
-      background: #94a3b8;
-      margin-left: -1.25px;
-    }
-    .second-hand {
-      width: 1px;
-      height: 60px;
-      background: var(--accent);
-      box-shadow: 0 0 6px var(--accent);
-    }
-    .center-dot {
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 10px; height: 10px;
-      background: white;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 5;
-    }
-    .digital-time {
-      font-size: 2.8rem;
-      font-weight: 300;
-      letter-spacing: 2px;
-      line-height: 1.2;
-    }
-    .date-text {
-      font-size: 0.9rem;
-      opacity: 0.7;
-      margin-top: 4px;
-    }
-    /* کارت شهرها */
-    .cities-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-    }
-    .city-item {
-      text-align: center;
-      padding: 0.6rem;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.02);
-    }
-    .city-name {
-      font-size: 0.8rem;
-      opacity: 0.7;
-      margin-bottom: 4px;
-    }
-    .city-time {
-      font-size: 1.2rem;
-      font-weight: 500;
-    }
-    /* نقل قول */
-    .quote-card {
-      margin-top: auto;
-      background: rgba(255,255,255,0.02);
-      border-left: 3px solid var(--accent);
-      padding: 1rem 1.5rem;
+      border-radius: 24px;
+      padding: 1.5rem;
+      max-width: 350px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     }
     .quote-text {
       font-style: italic;
@@ -161,28 +160,43 @@
       opacity: 0.6;
       text-align: left;
     }
-    .refresh-btn {
-      background: none;
+    .next-btn {
+      background: rgba(255,255,255,0.05);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 0.4rem 1rem;
+      padding: 0.4rem 1.2rem;
       border-radius: 20px;
       cursor: pointer;
       font-family: inherit;
       font-size: 0.75rem;
-      margin-top: 0.5rem;
+      margin-top: 0.8rem;
       transition: 0.3s;
       backdrop-filter: blur(10px);
-      background: rgba(255,255,255,0.05);
     }
-    .refresh-btn:hover {
+    .next-btn:hover {
       background: rgba(255,255,255,0.2);
       border-color: white;
     }
     @media (max-width: 900px) {
-      body { flex-direction: column; overflow-y: auto; }
-      #globe-container { width: 100%; height: 50vh; position: relative; }
-      .left-panel { width: 100%; min-width: auto; }
+      .ui-layer {
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      .left-panel {
+        align-items: center;
+        margin: 0;
+      }
+      .smart-ring {
+        width: 220px;
+        height: 220px;
+      }
+      .ring-time {
+        font-size: 2.2rem;
+      }
+      .quote-box {
+        max-width: 90vw;
+      }
     }
   </style>
 </head>
@@ -191,33 +205,18 @@
 
   <div class="ui-layer">
     <div class="left-panel">
-      <!-- کارت ساعت -->
-      <div class="glass-card">
-        <div class="clock-wrapper">
-          <div class="analog-clock" id="analogClock">
-            <div class="hand hour-hand" id="hourHand"></div>
-            <div class="hand minute-hand" id="minuteHand"></div>
-            <div class="hand second-hand" id="secondHand"></div>
-            <div class="center-dot"></div>
-          </div>
-          <div>
-            <div class="digital-time" id="digitalTime">--:--</div>
-            <div class="date-text" id="iranDate">...</div>
-          </div>
-        </div>
+      <!-- حلقه هوشمند -->
+      <div class="smart-ring" id="smartRing">
+        <div class="day-arc"></div>
+        <div class="ring-date" id="ringDate"></div>
+        <div class="ring-time" id="ringTime">--:--</div>
       </div>
 
-      <!-- کارت شهرهای جهان -->
-      <div class="glass-card">
-        <h3 style="margin-bottom:1rem; font-weight:400; opacity:0.8;">زمان در جهان</h3>
-        <div class="cities-grid" id="cityGrid"></div>
-      </div>
-
-      <!-- کارت نقل قول -->
-      <div class="glass-card quote-card">
+      <!-- نقل‌قول -->
+      <div class="quote-box">
         <div class="quote-text" id="quoteText">...</div>
         <div class="quote-author" id="quoteAuthor"></div>
-        <button class="refresh-btn" id="nextQuoteBtn">جمله بعدی ←</button>
+        <button class="next-btn" id="nextQuoteBtn">جملهٔ بعدی ←</button>
       </div>
     </div>
   </div>
@@ -230,107 +229,74 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    // ==================== کرهٔ سه‌بعدی واقعی ====================
+    // ==================== کرهٔ بزرگ سه‌بعدی ====================
     const container = document.getElementById('globe-container');
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 100);
-    camera.position.set(0, 0.5, 3.2);
-    
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+    camera.position.set(2.5, 0.2, 2.8);
+    camera.lookAt(0, 0, 0);
+
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
 
     // نورپردازی
-    const ambientLight = new THREE.AmbientLight(0x333344);
-    scene.add(ambientLight);
+    scene.add(new THREE.AmbientLight(0x333355));
     const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    sunLight.position.set(5, 3, 5);
+    sunLight.position.set(5, 2, 5);
     scene.add(sunLight);
 
-    // کره زمین با تکسچر ناسا
-    const textureLoader = new THREE.TextureLoader();
-    const earthMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
-    const earthSpecular = textureLoader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
-    const earthBump = textureLoader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
-    const cloudMap = textureLoader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
+    // تکسچرهای زمین
+    const loader = new THREE.TextureLoader();
+    const earthMap = loader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg');
+    const earthSpecular = loader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg');
+    const earthBump = loader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg');
+    const cloudMap = loader.load('https://threejs.org/examples/textures/planets/earth_clouds_1024.png');
 
-    const earthGeo = new THREE.SphereGeometry(1.2, 64, 64);
-    const earthMat = new THREE.MeshPhongMaterial({
-      map: earthMap,
-      specularMap: earthSpecular,
-      specular: new THREE.Color('grey'),
-      shininess: 10,
-      bumpMap: earthBump,
-      bumpScale: 0.03
-    });
-    const earth = new THREE.Mesh(earthGeo, earthMat);
+    const earth = new THREE.Mesh(
+      new THREE.SphereGeometry(1.5, 64, 64),
+      new THREE.MeshPhongMaterial({
+        map: earthMap,
+        specularMap: earthSpecular,
+        specular: new THREE.Color('grey'),
+        shininess: 5,
+        bumpMap: earthBump,
+        bumpScale: 0.04
+      })
+    );
     scene.add(earth);
 
-    // ابرها (لایه شفاف)
-    const cloudGeo = new THREE.SphereGeometry(1.21, 64, 64);
-    const cloudMat = new THREE.MeshPhongMaterial({
-      map: cloudMap,
-      transparent: true,
-      opacity: 0.4,
-      blending: THREE.AdditiveBlending
-    });
-    const clouds = new THREE.Mesh(cloudGeo, cloudMat);
+    // ابرهای شناور
+    const clouds = new THREE.Mesh(
+      new THREE.SphereGeometry(1.52, 64, 64),
+      new THREE.MeshPhongMaterial({ map: cloudMap, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending })
+    );
     scene.add(clouds);
 
-    // ستاره‌های پس‌زمینه
+    // ستاره‌ها
     const starsGeo = new THREE.BufferGeometry();
-    const starsCount = 1000;
-    const starsPositions = new Float32Array(starsCount * 3);
-    for (let i = 0; i < starsCount * 3; i += 3) {
-      starsPositions[i] = (Math.random() - 0.5) * 30;
-      starsPositions[i+1] = (Math.random() - 0.5) * 20;
-      starsPositions[i+2] = (Math.random() - 0.5) * 15;
+    const starsPos = new Float32Array(1500 * 3);
+    for (let i = 0; i < starsPos.length; i += 3) {
+      starsPos[i] = (Math.random() - 0.5) * 20;
+      starsPos[i+1] = (Math.random() - 0.5) * 12;
+      starsPos[i+2] = (Math.random() - 0.5) * 10 - 2;
     }
-    starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
-    const starsMat = new THREE.PointsMaterial({color: 0xffffff, size: 0.02});
-    const stars = new THREE.Points(starsGeo, starsMat);
-    scene.add(stars);
+    starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
+    scene.add(new THREE.Points(starsGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.02 })));
 
-    // نشانگرهای شهرها
-    const cityCoords = [
-      { name:'تهران', lat:35.689, lon:51.389 },
-      { name:'لندن', lat:51.507, lon:-0.128 },
-      { name:'نیویورک', lat:40.712, lon:-74.006 },
-      { name:'توکیو', lat:35.676, lon:139.650 },
-      { name:'دبی', lat:25.204, lon:55.270 },
-      { name:'پاریس', lat:48.856, lon:2.352 }
-    ];
-    
-    cityCoords.forEach(c => {
-      const phi = (90 - c.lat) * Math.PI/180;
-      const theta = (c.lon + 180) * Math.PI/180;
-      const r = 1.22;
-      const x = -r * Math.sin(phi) * Math.cos(theta);
-      const y = r * Math.cos(phi);
-      const z = r * Math.sin(phi) * Math.sin(theta);
-      
-      const dotGeo = new THREE.SphereGeometry(0.02, 8, 8);
-      const dotMat = new THREE.MeshBasicMaterial({ color: 0x4ade80 });
-      const dot = new THREE.Mesh(dotGeo, dotMat);
-      dot.position.set(x, y, z);
-      scene.add(dot);
-    });
-
-    // کنترل چرخش
+    // چرخش آرام
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.2;
+    controls.autoRotateSpeed = 0.15;
     controls.enableZoom = false;
     controls.enablePan = false;
 
-    // انیمیشن
     function animate() {
       requestAnimationFrame(animate);
-      clouds.rotation.y += 0.0001;
-      stars.rotation.y -= 0.00005;
+      clouds.rotation.y += 0.0002;
       controls.update();
       renderer.render(scene, camera);
     }
@@ -342,51 +308,60 @@
       renderer.setSize(container.clientWidth, container.clientHeight);
     });
 
-    // ==================== منطق برنامه ====================
-    const $ = (s) => document.querySelector(s);
-    
-    // ساعت
-    function updateClock() {
-      const now = new Date();
-      const h = now.getHours() % 12;
-      const m = now.getMinutes();
-      const s = now.getSeconds();
-      
-      document.getElementById('hourHand').style.transform = `rotate(${h * 30 + m * 0.5}deg)`;
-      document.getElementById('minuteHand').style.transform = `rotate(${m * 6}deg)`;
-      document.getElementById('secondHand').style.transform = `rotate(${s * 6}deg)`;
-      document.getElementById('digitalTime').textContent = now.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit' });
-      document.getElementById('iranDate').textContent = new Intl.DateTimeFormat('fa-IR', { dateStyle:'full' }).format(now);
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    // شهرهای جهان
-    const worldCities = [
-      { name:'لندن', tz:'Europe/London' },
-      { name:'نیویورک', tz:'America/New_York' },
-      { name:'توکیو', tz:'Asia/Tokyo' },
-      { name:'دبی', tz:'Asia/Dubai' },
-      { name:'پاریس', tz:'Europe/Paris' },
-      { name:'برلین', tz:'Europe/Berlin' }
+    // ==================== حلقهٔ هوشمند ۲۴ ساعته ====================
+    const cities = [
+      { name: 'تهران', tz: 'Asia/Tehran', lon: 51.4 },
+      { name: 'لندن', tz: 'Europe/London', lon: -0.1 },
+      { name: 'نیویورک', tz: 'America/New_York', lon: -74 },
+      { name: 'توکیو', tz: 'Asia/Tokyo', lon: 139.7 },
+      { name: 'دبی', tz: 'Asia/Dubai', lon: 55.3 },
+      { name: 'پاریس', tz: 'Europe/Paris', lon: 2.3 },
+      { name: 'برلین', tz: 'Europe/Berlin', lon: 13.4 },
+      { name: 'مسکو', tz: 'Europe/Moscow', lon: 37.6 },
+      { name: 'سیدنی', tz: 'Australia/Sydney', lon: 151.2 },
+      { name: 'تورنتو', tz: 'America/Toronto', lon: -79.4 },
+      { name: 'بمبئی', tz: 'Asia/Kolkata', lon: 72.9 },
+      { name: 'شانگهای', tz: 'Asia/Shanghai', lon: 121.5 }
     ];
-    
-    function updateWorldCities() {
-      const now = new Date();
-      document.getElementById('cityGrid').innerHTML = worldCities.map(c => `
-        <div class="city-item">
-          <div class="city-name">${c.name}</div>
-          <div class="city-time">${now.toLocaleTimeString('fa-IR', { timeZone: c.tz, hour:'2-digit', minute:'2-digit' })}</div>
-        </div>
-      `).join('');
-    }
-    updateWorldCities();
-    setInterval(updateWorldCities, 60000);
 
-    // نقل‌قول‌ها
+    const ring = document.getElementById('smartRing');
+    const radius = 115; // نصف اندازه حلقه منهای حاشیه
+
+    cities.forEach(c => {
+      // موقعیت هر شهر بر اساس طول جغرافیایی روی دایره
+      const lon = c.lon;
+      // تبدیل طول جغرافیایی به درجه روی دایره (۰ درجه = بالای حلقه = نصف‌النهار مبدأ)
+      const angle = (lon + 90) * (Math.PI / 180); 
+      const x = radius * Math.cos(angle);
+      const y = radius * Math.sin(angle);
+
+      const marker = document.createElement('div');
+      marker.className = 'city-marker';
+      marker.style.left = `calc(50% + ${x}px)`;
+      marker.style.top = `calc(50% + ${y}px)`;
+      marker.title = c.name;
+      ring.appendChild(marker);
+
+      const label = document.createElement('div');
+      label.className = 'city-label';
+      label.style.left = `calc(50% + ${x}px)`;
+      label.style.top = `calc(50% + ${y}px)`;
+      label.textContent = c.name;
+      ring.appendChild(label);
+    });
+
+    // به‌روزرسانی زمان ایران
+    function updateRingTime() {
+      const now = new Date();
+      document.getElementById('ringTime').textContent = now.toLocaleTimeString('fa-IR', { hour:'2-digit', minute:'2-digit' });
+      document.getElementById('ringDate').textContent = new Intl.DateTimeFormat('fa-IR', { dateStyle:'full' }).format(now);
+    }
+    updateRingTime();
+    setInterval(updateRingTime, 1000);
+
+    // ==================== نقل‌قول‌ها ====================
     let quoteIndex = -1;
     let remainingQuotes = [];
-    
     function resetQuotes() {
       if (typeof quotes !== 'undefined' && Array.isArray(quotes)) {
         remainingQuotes = [...quotes].sort(() => Math.random() - 0.5);
@@ -395,22 +370,18 @@
       }
       quoteIndex = 0;
     }
-    
     function getNextQuote() {
       if (quoteIndex >= remainingQuotes.length) {
         remainingQuotes = [...remainingQuotes].sort(() => Math.random() - 0.5);
         quoteIndex = 0;
       }
-      const q = remainingQuotes[quoteIndex++];
-      return q;
+      return remainingQuotes[quoteIndex++];
     }
-    
     function showQuote() {
       const q = getNextQuote();
       document.getElementById('quoteText').textContent = q.text;
       document.getElementById('quoteAuthor').textContent = q.author && q.author !== 'ناشناس' ? `— ${q.author}` : '';
     }
-    
     resetQuotes();
     showQuote();
     setInterval(showQuote, 60000);
