@@ -13,6 +13,11 @@
     <style>
         :root {
             --glass-blur: blur(10px);
+            --card-day-bg: linear-gradient(145deg, rgba(245,242,235,0.7), rgba(255,252,245,0.75));
+            --card-night-bg: linear-gradient(145deg, rgba(16,14,35,0.65), rgba(28,22,50,0.75));
+            --quote-bg: rgba(20, 15, 35, 0.4);
+            --overlay-color: rgba(0,0,0,0.35);
+            --star-color: rgba(230,220,255,0.9);
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -25,7 +30,6 @@
             overflow-x: hidden;
             position: relative;
             -webkit-font-smoothing: antialiased;
-            transition: background 0.8s ease;
         }
 
         /* لایهٔ عکس‌های پس‌زمینه */
@@ -37,16 +41,20 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            transition: background-image 1s ease-in-out;
+            /* بدون ترنزیشن برای جلوگیری از پرش */
+            transition: none;
+            transform: translate3d(0,0,0);
+            will-change: background-image;
         }
 
-        /* بوم ستاره‌ها و ابرها */
+        /* بوم ستاره‌ها */
         #background-canvas {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -2;
             pointer-events: none;
+            transform: translate3d(0,0,0);
         }
 
         .bg-overlay {
@@ -54,8 +62,9 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -1;
-            background: radial-gradient(ellipse at center, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.35) 100%);
             pointer-events: none;
+            transition: background 0.6s ease;
+            transform: translate3d(0,0,0);
         }
 
         /* دکمه تغییر تم (پایین راست) */
@@ -78,6 +87,7 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             transition: transform 0.3s, box-shadow 0.3s;
             user-select: none;
+            transform: translate3d(0,0,0);
         }
         .theme-switch:hover {
             transform: scale(1.12);
@@ -97,6 +107,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transform: translate3d(0,0,0);
         }
         .record-disc {
             width: 100%; height: 100%;
@@ -165,7 +176,7 @@
         }
         .quote-container {
             width: 100%;
-            background: rgba(20, 15, 35, 0.4);
+            background: var(--quote-bg);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(200, 170, 100, 0.25);
@@ -173,6 +184,7 @@
             padding: 14px 20px;
             box-shadow: 0 8px 30px rgba(0,0,0,0.4);
             position: relative; overflow: hidden;
+            transition: background 0.5s;
         }
         .quote-container::before {
             content: ''; position: absolute; top:0; left:0; right:0;
@@ -224,16 +236,16 @@
             align-items: center;
             gap: 3px;
             box-shadow: 0 6px 20px rgba(0,0,0,0.35);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.5s;
             border: 1px solid rgba(255,255,255,0.08);
         }
         .clock-card.day-mode {
-            background: linear-gradient(145deg, rgba(245,242,235,0.7), rgba(255,252,245,0.75));
+            background: var(--card-day-bg);
             border: 1px solid rgba(200,170,110,0.5);
             color: #2a241a;
         }
         .clock-card.night-mode {
-            background: linear-gradient(145deg, rgba(16,14,35,0.65), rgba(28,22,50,0.75));
+            background: var(--card-night-bg);
             border: 1px solid rgba(140,160,220,0.4);
             color: #e0dbef;
         }
@@ -312,9 +324,9 @@
         </div>
     </button>
 
-    <!-- بوم ستاره‌ها و ابرها -->
+    <!-- بوم ستاره‌ها -->
     <canvas id="background-canvas"></canvas>
-    <div class="bg-overlay"></div>
+    <div class="bg-overlay" id="bgOverlay"></div>
 
     <!-- کانتینر اصلی -->
     <div class="main-container">
@@ -327,7 +339,7 @@
 
         <!-- نقل‌قول -->
         <div class="quote-section">
-            <div class="quote-container">
+            <div class="quote-container" id="quoteContainer">
                 <div class="quote-text" id="quoteText"></div>
                 <div class="quote-author" id="quoteAuthor"></div>
             </div>
@@ -347,11 +359,10 @@
     <script>
         (function() {
             // ---------- تنظیمات ----------
-            const QUOTE_INTERVAL = 10000; // هر 10 ثانیه
+            const QUOTE_INTERVAL = 10000;
             const CLOCK_INTERVAL = 1_000;
-            const IMAGE_CHANGE_INTERVAL = 30000; // هر 30 ثانیه
+            const IMAGE_CHANGE_INTERVAL = 30000;
 
-            // لیست عکس‌های داده شده
             const backgroundImages = [
                 'https://img2.taw-bio.ir/2023/159777/1jk1lmtb.jpeg',
                 'https://img2.taw-bio.ir/2023/121972/1j9e58kd.jpeg',
@@ -389,35 +400,39 @@
                 { city: 'Johannesburg', timezone: 'Africa/Johannesburg', featured: false, useShamsi: false }
             ];
 
-            // تم‌ها (فقط برای تغییر رنگ پس‌زمینه در صورت نبود عکس)
+            // تم‌های رنگی (overlay و تغییر رنگ المان‌ها)
             const themes = [
                 {
                     name: 'کهکشانی',
-                    bg: '#0a0a18',
-                    starColor: 'rgba(230,220,255,0.9)',
-                    cloudColor: 'rgba(255, 255, 255, 0.9)',
-                    gradient: ['#1a1030', '#0a0a18', '#020210']
+                    overlayColor: 'rgba(10,0,20,0.3)',
+                    quoteBg: 'rgba(20, 15, 35, 0.4)',
+                    cardDayBg: 'linear-gradient(145deg, rgba(245,242,235,0.7), rgba(255,252,245,0.75))',
+                    cardNightBg: 'linear-gradient(145deg, rgba(16,14,35,0.65), rgba(28,22,50,0.75))',
+                    starColor: 'rgba(230,220,255,0.9)'
                 },
                 {
                     name: 'صورتی رؤیایی',
-                    bg: '#1f0e1a',
-                    starColor: 'rgba(255,200,220,0.9)',
-                    cloudColor: 'rgba(255, 255, 255, 0.9)',
-                    gradient: ['#2c1324', '#1f0e1a', '#10060c']
+                    overlayColor: 'rgba(30,5,20,0.3)',
+                    quoteBg: 'rgba(35, 15, 30, 0.4)',
+                    cardDayBg: 'linear-gradient(145deg, rgba(252,240,245,0.7), rgba(255,245,250,0.75))',
+                    cardNightBg: 'linear-gradient(145deg, rgba(40,15,30,0.65), rgba(50,20,35,0.75))',
+                    starColor: 'rgba(255,200,220,0.9)'
                 },
                 {
                     name: 'آبی دریایی',
-                    bg: '#0a1628',
-                    starColor: 'rgba(180,220,255,0.9)',
-                    cloudColor: 'rgba(255, 255, 255, 0.9)',
-                    gradient: ['#10243c', '#0a1628', '#040b14']
+                    overlayColor: 'rgba(0,10,25,0.3)',
+                    quoteBg: 'rgba(15, 20, 35, 0.4)',
+                    cardDayBg: 'linear-gradient(145deg, rgba(235,242,252,0.7), rgba(245,248,255,0.75))',
+                    cardNightBg: 'linear-gradient(145deg, rgba(15,20,35,0.65), rgba(22,28,50,0.75))',
+                    starColor: 'rgba(180,220,255,0.9)'
                 },
                 {
                     name: 'سفید مهتابی',
-                    bg: '#1c1c2a',
-                    starColor: 'rgba(255,255,255,0.9)',
-                    cloudColor: 'rgba(255, 255, 255, 0.9)',
-                    gradient: ['#2a2a3a', '#1c1c2a', '#101018']
+                    overlayColor: 'rgba(20,20,30,0.3)',
+                    quoteBg: 'rgba(30, 30, 40, 0.4)',
+                    cardDayBg: 'linear-gradient(145deg, rgba(245,245,250,0.7), rgba(255,255,255,0.75))',
+                    cardNightBg: 'linear-gradient(145deg, rgba(25,25,35,0.65), rgba(35,35,50,0.75))',
+                    starColor: 'rgba(255,255,255,0.9)'
                 }
             ];
             let currentThemeIndex = 0;
@@ -425,11 +440,13 @@
 
             // DOM
             const bgImageLayer = document.getElementById('bgImageLayer');
+            const bgOverlay = document.getElementById('bgOverlay');
             const bgCanvas = document.getElementById('background-canvas');
             const ctx = bgCanvas.getContext('2d');
             const clocksGrid = document.getElementById('clocksGrid');
             const quoteText = document.getElementById('quoteText');
             const quoteAuthor = document.getElementById('quoteAuthor');
+            const quoteContainer = document.getElementById('quoteContainer');
             const bgMusic = document.getElementById('bgMusic');
             const gramophoneBtn = document.getElementById('gramophoneToggle');
             const recordDisc = document.getElementById('recordDisc');
@@ -440,10 +457,7 @@
             let isPlaying = true;
             let quotesArray = [];
             let currentImageIndex = 0;
-
-            // ذرات
             let stars = [];
-            let clouds = [];
 
             // ---------- مدیریت عکس‌ها ----------
             function changeBackgroundImage() {
@@ -452,26 +466,11 @@
                 bgImageLayer.style.backgroundImage = `url('${backgroundImages[currentImageIndex]}')`;
             }
 
-            // پیش‌بارگذاری عکس‌ها
             function preloadImages(urls) {
                 urls.forEach(url => {
                     const img = new Image();
                     img.src = url;
                 });
-            }
-
-            // ---------- رسم ابر کوچک ----------
-            function drawCloud(cx, cy, w, h) {
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                ctx.beginPath();
-                ctx.ellipse(cx, cy, w/2, h/2, 0, 0, Math.PI*2);
-                ctx.fill();
-                ctx.beginPath();
-                ctx.ellipse(cx - w*0.25, cy - h*0.2, w*0.3, h*0.5, 0, 0, Math.PI*2);
-                ctx.fill();
-                ctx.beginPath();
-                ctx.ellipse(cx + w*0.25, cy - h*0.15, w*0.3, h*0.5, 0, 0, Math.PI*2);
-                ctx.fill();
             }
 
             // ---------- تاریخ شمسی ----------
@@ -604,29 +603,18 @@
                 bgCanvas.height = window.innerHeight;
             }
 
-            function createParticlesAndClouds() {
+            function createStars() {
                 stars = [];
-                clouds = [];
-                for (let i = 0; i < 30; i++) {
+                for (let i = 0; i < 50; i++) {
                     stars.push({
                         x: Math.random() * bgCanvas.width,
                         y: Math.random() * bgCanvas.height,
-                        size: Math.random() * 3 + 2,
+                        size: Math.random() * 3 + 3, // 3 تا 6 پیکسل (کمی بزرگتر)
                         speedY: -(Math.random() * 0.3 + 0.1),
                         speedX: (Math.random() - 0.5) * 0.2,
                         opacity: Math.random() * 0.5 + 0.4,
                         twinkleSpeed: Math.random() * 0.02 + 0.005,
                         twinkleOffset: Math.random() * Math.PI * 2
-                    });
-                }
-                for (let i = 0; i < 15; i++) {
-                    clouds.push({
-                        x: Math.random() * bgCanvas.width,
-                        y: Math.random() * bgCanvas.height,
-                        width: Math.random() * 30 + 20,
-                        height: Math.random() * 12 + 8,
-                        speedY: -(Math.random() * 0.2 + 0.1),
-                        opacity: 1
                     });
                 }
             }
@@ -650,17 +638,6 @@
             function drawBackground(timestamp) {
                 ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
 
-                // ابرها
-                clouds.forEach(cloud => {
-                    drawCloud(cloud.x, cloud.y, cloud.width, cloud.height);
-                    cloud.y += cloud.speedY;
-                    if (cloud.y < -50) {
-                        cloud.y = bgCanvas.height + 50;
-                        cloud.x = Math.random() * bgCanvas.width;
-                    }
-                });
-
-                // ستاره‌ها
                 stars.forEach(star => {
                     let currentOpacity = star.opacity + Math.sin(timestamp * star.twinkleSpeed + star.twinkleOffset) * 0.1;
                     currentOpacity = Math.max(0.3, Math.min(0.9, currentOpacity));
@@ -678,10 +655,14 @@
             function applyTheme(index) {
                 currentThemeIndex = index;
                 currentTheme = themes[index];
-                document.body.style.backgroundColor = currentTheme.bg;
+                // اعمال تغییرات رنگی
+                bgOverlay.style.background = `radial-gradient(ellipse at center, ${currentTheme.overlayColor} 0%, rgba(0,0,0,0.4) 100%)`;
+                quoteContainer.style.background = currentTheme.quoteBg;
+                document.documentElement.style.setProperty('--card-day-bg', currentTheme.cardDayBg);
+                document.documentElement.style.setProperty('--card-night-bg', currentTheme.cardNightBg);
             }
 
-            // تغییر تم با کلیک
+            // تغییر تم
             themeSwitch.addEventListener('click', () => {
                 let next = (currentThemeIndex + 1) % themes.length;
                 applyTheme(next);
@@ -709,7 +690,7 @@
                 setInterval(changeBackgroundImage, IMAGE_CHANGE_INTERVAL);
 
                 resizeCanvas();
-                createParticlesAndClouds();
+                createStars();
                 requestAnimationFrame(drawBackground);
 
                 createClockCards();
@@ -717,6 +698,9 @@
 
                 prepareQuotes();
                 updateQuote();
+
+                // اعمال تم اولیه
+                applyTheme(0);
 
                 setInterval(updateClocks, CLOCK_INTERVAL);
                 setInterval(updateQuote, QUOTE_INTERVAL);
@@ -726,7 +710,7 @@
 
                 window.addEventListener('resize', () => {
                     resizeCanvas();
-                    createParticlesAndClouds();
+                    createStars();
                 });
             }
 
