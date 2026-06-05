@@ -197,18 +197,6 @@
             user-select: none;
         }
         .theme-switch:hover { transform: scale(1.12); }
-        .theme-tooltip {
-            position: fixed; bottom: 68px; right: 10px;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(10px);
-            color: #fff; padding: 4px 12px;
-            border-radius: 14px; font-size: 0.7rem;
-            z-index: 110; opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.3s, transform 0.3s;
-            pointer-events: none;
-        }
-        .theme-tooltip.show { opacity:1; transform:translateY(0); }
 
         /* گرامافون */
         .gramophone-toggle {
@@ -430,7 +418,6 @@
 
     <!-- دکمه تم -->
     <button class="theme-switch" id="themeSwitch">🌙</button>
-    <div class="theme-tooltip" id="themeTooltip"></div>
 
     <!-- گرامافون -->
     <button class="gramophone-toggle" id="gramophoneToggle">
@@ -513,14 +500,62 @@
                 { city: 'Johannesburg', timezone: 'Africa/Johannesburg' }
             ];
 
-            // تعریف تم‌ها (حالا ۶ تم با فونت‌های مختلف)
+            // ۶ تم با رنگ‌های متفاوت برای کارت‌ها
             const themes = [
-                { name: 'کهکشانی', overlayColor: 'rgba(10,0,20,0.3)', quoteBg: 'rgba(20,15,35,0.4)', starColor: 'rgba(230,220,255,0.9)', bodyFont: "'Vazirmatn', 'Cormorant Garamond', sans-serif" },
-                { name: 'صورتی رؤیایی', overlayColor: 'rgba(30,5,20,0.3)', quoteBg: 'rgba(35,15,30,0.4)', starColor: 'rgba(255,200,220,0.9)', bodyFont: "'Vazirmatn', 'Cormorant Garamond', sans-serif" },
-                { name: 'آبی دریایی', overlayColor: 'rgba(0,10,25,0.3)', quoteBg: 'rgba(15,20,35,0.4)', starColor: 'rgba(180,220,255,0.9)', bodyFont: "'Vazirmatn', 'Cormorant Garamond', sans-serif" },
-                { name: 'سبز زمردی', overlayColor: 'rgba(0,20,10,0.3)', quoteBg: 'rgba(15,30,20,0.4)', starColor: 'rgba(180,255,200,0.9)', bodyFont: "'Vazirmatn', 'Cormorant Garamond', sans-serif" },
-                { name: 'طلایی مجلل', overlayColor: 'rgba(20,15,0,0.3)', quoteBg: 'rgba(35,25,10,0.4)', starColor: 'rgba(255,220,150,0.9)', bodyFont: "'Playfair Display', serif" },
-                { name: 'سفید مهتابی', overlayColor: 'rgba(20,20,30,0.3)', quoteBg: 'rgba(30,30,40,0.4)', starColor: 'rgba(255,255,255,0.9)', bodyFont: "'Cormorant Garamond', serif" }
+                {
+                    name: 'کهکشانی',
+                    overlayColor: 'rgba(10,0,20,0.3)',
+                    quoteBg: 'rgba(20,15,35,0.4)',
+                    starColor: 'rgba(230,220,255,0.9)',
+                    bodyFont: "'Vazirmatn', 'Cormorant Garamond', sans-serif",
+                    cardDayBg: 'linear-gradient(145deg, rgba(245,242,235,0.7), rgba(255,252,245,0.75))',
+                    cardNightBg: 'linear-gradient(145deg, rgba(16,14,35,0.65), rgba(28,22,50,0.75))'
+                },
+                {
+                    name: 'صورتی رؤیایی',
+                    overlayColor: 'rgba(30,5,20,0.3)',
+                    quoteBg: 'rgba(35,15,30,0.4)',
+                    starColor: 'rgba(255,200,220,0.9)',
+                    bodyFont: "'Vazirmatn', 'Cormorant Garamond', sans-serif",
+                    cardDayBg: 'linear-gradient(145deg, rgba(252,240,245,0.7), rgba(255,245,250,0.75))',
+                    cardNightBg: 'linear-gradient(145deg, rgba(40,15,30,0.65), rgba(50,20,35,0.75))'
+                },
+                {
+                    name: 'آبی دریایی',
+                    overlayColor: 'rgba(0,10,25,0.3)',
+                    quoteBg: 'rgba(15,20,35,0.4)',
+                    starColor: 'rgba(180,220,255,0.9)',
+                    bodyFont: "'Vazirmatn', 'Cormorant Garamond', sans-serif",
+                    cardDayBg: 'linear-gradient(145deg, rgba(235,242,252,0.7), rgba(245,248,255,0.75))',
+                    cardNightBg: 'linear-gradient(145deg, rgba(15,20,35,0.65), rgba(22,28,50,0.75))'
+                },
+                {
+                    name: 'سبز زمردی',
+                    overlayColor: 'rgba(0,20,10,0.3)',
+                    quoteBg: 'rgba(15,30,20,0.4)',
+                    starColor: 'rgba(180,255,200,0.9)',
+                    bodyFont: "'Vazirmatn', 'Cormorant Garamond', sans-serif",
+                    cardDayBg: 'linear-gradient(145deg, rgba(235,252,240,0.7), rgba(245,255,248,0.75))',
+                    cardNightBg: 'linear-gradient(145deg, rgba(15,30,20,0.65), rgba(20,40,28,0.75))'
+                },
+                {
+                    name: 'طلایی مجلل',
+                    overlayColor: 'rgba(20,15,0,0.3)',
+                    quoteBg: 'rgba(35,25,10,0.4)',
+                    starColor: 'rgba(255,220,150,0.9)',
+                    bodyFont: "'Playfair Display', serif",
+                    cardDayBg: 'linear-gradient(145deg, rgba(252,245,230,0.7), rgba(255,250,240,0.75))',
+                    cardNightBg: 'linear-gradient(145deg, rgba(40,30,15,0.65), rgba(50,40,20,0.75))'
+                },
+                {
+                    name: 'سفید مهتابی',
+                    overlayColor: 'rgba(20,20,30,0.3)',
+                    quoteBg: 'rgba(30,30,40,0.4)',
+                    starColor: 'rgba(255,255,255,0.9)',
+                    bodyFont: "'Cormorant Garamond', serif",
+                    cardDayBg: 'linear-gradient(145deg, rgba(245,245,250,0.7), rgba(255,255,255,0.75))',
+                    cardNightBg: 'linear-gradient(145deg, rgba(25,25,35,0.65), rgba(35,35,50,0.75))'
+                }
             ];
 
             const bgLayerA = document.getElementById('bgLayerA'), bgLayerB = document.getElementById('bgLayerB');
@@ -531,7 +566,7 @@
             const quoteContainer = document.getElementById('quoteContainer');
             const bgMusic = document.getElementById('bgMusic');
             const gramophoneBtn = document.getElementById('gramophoneToggle'), recordDisc = document.getElementById('recordDisc');
-            const themeSwitch = document.getElementById('themeSwitch'), themeTooltip = document.getElementById('themeTooltip');
+            const themeSwitch = document.getElementById('themeSwitch');
 
             let quoteIndex = 0, clockCards = [], isPlaying = true, quotesArray = [];
             let currentThemeIndex = 0, currentTheme = themes[0];
@@ -640,17 +675,16 @@
                 requestAnimationFrame(drawBackground);
             }
 
-            // تابع تغییر تم (global تا tools.js هم بتواند از آن استفاده کند)
+            // تابع تغییر تم (بدون نمایش نام)
             window.applyTheme = function(idx) {
                 currentThemeIndex = idx;
                 currentTheme = themes[idx];
                 bgOverlay.style.background = `radial-gradient(ellipse at center, ${currentTheme.overlayColor} 0%, rgba(0,0,0,0.4) 100%)`;
                 quoteContainer.style.background = currentTheme.quoteBg;
                 document.body.style.fontFamily = currentTheme.bodyFont;
-                themeTooltip.textContent = currentTheme.name;
-                themeTooltip.classList.add('show');
-                setTimeout(() => themeTooltip.classList.remove('show'), 1500);
-                console.log('تم تغییر کرد به: ' + currentTheme.name);
+                // اعمال رنگ‌های کارت‌ها با CSS variables
+                document.documentElement.style.setProperty('--card-day-bg', currentTheme.cardDayBg);
+                document.documentElement.style.setProperty('--card-night-bg', currentTheme.cardNightBg);
             };
 
             function toggleMusic() {
@@ -674,7 +708,7 @@
                 setTimeout(() => { if(bgMusic.paused) tryAutoplay(); }, 1000);
                 window.addEventListener('resize', () => { resizeCanvas(); createStars(); });
 
-                // اتصال دکمه تغییر تم
+                // کلیک روی دکمهٔ تغییر تم
                 themeSwitch.addEventListener('click', () => {
                     applyTheme((currentThemeIndex + 1) % themes.length);
                 });
@@ -685,7 +719,11 @@
         })();
     </script>
 
-    <!-- اسکریپت منوی همبرگری و ابزارها (tools.js) -->
-    <script src="tools.js"></script>
+    <!-- اسکریپت منو (موقتاً خالی - بعداً با tools.js پر می‌شود) -->
+    <script>
+        // این بخش بعداً با نسخهٔ جدید tools.js جایگزین می‌شود
+        // که هر ابزار صفحهٔ جداگانه خواهد داشت
+        document.getElementById('menuContent').innerHTML = '<div style="text-align:center; color:#d4af37; padding:20px;">⚡ ابزارهای حرفه‌ای در راهند...</div>';
+    </script>
 </body>
 </html>
