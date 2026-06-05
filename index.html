@@ -28,12 +28,25 @@
             transition: background 0.8s ease;
         }
 
-        /* بوم پس‌زمینه */
+        /* لایهٔ عکس‌های پس‌زمینه */
+        .bg-image-layer {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -4;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 1s ease-in-out;
+        }
+
+        /* بوم ستاره‌ها و ابرها */
         #background-canvas {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -2;
+            pointer-events: none;
         }
 
         .bg-overlay {
@@ -60,7 +73,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             color: #fff;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             transition: transform 0.3s, box-shadow 0.3s;
@@ -122,7 +135,7 @@
         .logo-text {
             font-family: 'Playfair Display', 'Cinzel', serif;
             font-size: 3.2rem; font-weight: 700;
-            letter-spacing: 2px; /* کاهش فاصله */
+            letter-spacing: 2px;
             background: linear-gradient(180deg, #f5e6c8, #d4af37 40%, #b8922e 70%, #d4af37);
             -webkit-background-clip: text; background-clip: text;
             -webkit-text-fill-color: transparent; color: transparent;
@@ -271,7 +284,7 @@
             .quote-text { font-size:1rem; }
             .gramophone-toggle, .theme-switch { width:34px; height:34px; bottom:12px; }
             .gramophone-toggle { left:12px; }
-            .theme-switch { right:12px; font-size:1.1rem; }
+            .theme-switch { right:12px; font-size:1rem; }
         }
 
         ::-webkit-scrollbar { width:4px; }
@@ -286,17 +299,20 @@
         <source src="https://dl.musicviral.ir/Music/04-04/Emilio%20Piano%20x%20Lucie%20-%20Maison.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- دکمه تغییر تم (پایین راست) -->
-    <button class="theme-switch" id="themeSwitch" title="تغییر تم">💡</button>
+    <!-- لایهٔ عکس‌های پس‌زمینه -->
+    <div class="bg-image-layer" id="bgImageLayer"></div>
 
-    <!-- گرامافون (پایین چپ) -->
+    <!-- دکمه تغییر تم (ماه) -->
+    <button class="theme-switch" id="themeSwitch" title="تغییر تم">🌙</button>
+
+    <!-- گرامافون -->
     <button class="gramophone-toggle" id="gramophoneToggle" title="پخش/قطع موسیقی">
         <div class="record-disc" id="recordDisc">
             <div class="record-label">♪</div>
         </div>
     </button>
 
-    <!-- بوم پس‌زمینه -->
+    <!-- بوم ستاره‌ها و ابرها -->
     <canvas id="background-canvas"></canvas>
     <div class="bg-overlay"></div>
 
@@ -331,8 +347,29 @@
     <script>
         (function() {
             // ---------- تنظیمات ----------
-            const QUOTE_INTERVAL = 20_000;
+            const QUOTE_INTERVAL = 10000; // هر 10 ثانیه
             const CLOCK_INTERVAL = 1_000;
+            const IMAGE_CHANGE_INTERVAL = 30000; // هر 30 ثانیه
+
+            // لیست عکس‌های داده شده
+            const backgroundImages = [
+                'https://img2.taw-bio.ir/2023/159777/1jk1lmtb.jpeg',
+                'https://img2.taw-bio.ir/2023/121972/1j9e58kd.jpeg',
+                'https://img2.taw-bio.ir/2025/145183/1l664r7r.jpeg',
+                'https://img1.taw-bio.ir/2024/229243/1klr78th.jpeg',
+                'https://img2.taw-bio.ir/2025/392630/1lc0oac4.jpeg',
+                'https://img2.taw-bio.ir/2025/205616/1l7t639j.jpeg',
+                'https://img1.taw-bio.ir/2024/168786/1kit38dk.jpeg',
+                'https://img2.taw-bio.ir/2024/287555/1l1elhf5.jpeg',
+                'https://img2.taw-bio.ir/2023/126393/1ja65qjg.jpeg',
+                'https://img2.taw-bio.ir/2025/334556/1l6enr81.jpeg',
+                'https://img2.taw-bio.ir/2024/252561/1l1d8ni9.jpeg',
+                'https://img2.taw-bio.ir/2026/740228/1lmt9jrd.jpeg',
+                'https://img2.taw-bio.ir/2025/293463/1l529lpq.jpeg',
+                'https://img1.taw-bio.ir/2024/149021/1kjfgp6r.jpeg',
+                'https://img1.taw-bio.ir/2024/246443/1knvm3k2.jpeg',
+                'https://img1.taw-bio.ir/2024/177700/1khrn9jt.jpeg'
+            ];
 
             const countries = [
                 { city: 'Tehran',   timezone: 'Asia/Tehran',       featured: true,  useShamsi: true },
@@ -352,34 +389,34 @@
                 { city: 'Johannesburg', timezone: 'Africa/Johannesburg', featured: false, useShamsi: false }
             ];
 
-            // ---------- تم‌ها ----------
+            // تم‌ها (فقط برای تغییر رنگ پس‌زمینه در صورت نبود عکس)
             const themes = [
                 {
                     name: 'کهکشانی',
                     bg: '#0a0a18',
                     starColor: 'rgba(230,220,255,0.9)',
-                    cloudColor: 'rgba(120, 100, 180, 0.25)',
+                    cloudColor: 'rgba(255, 255, 255, 0.9)',
                     gradient: ['#1a1030', '#0a0a18', '#020210']
                 },
                 {
                     name: 'صورتی رؤیایی',
                     bg: '#1f0e1a',
                     starColor: 'rgba(255,200,220,0.9)',
-                    cloudColor: 'rgba(220, 130, 160, 0.25)',
+                    cloudColor: 'rgba(255, 255, 255, 0.9)',
                     gradient: ['#2c1324', '#1f0e1a', '#10060c']
                 },
                 {
-                    name: 'آبی اقیانوسی',
+                    name: 'آبی دریایی',
                     bg: '#0a1628',
                     starColor: 'rgba(180,220,255,0.9)',
-                    cloudColor: 'rgba(90, 150, 210, 0.25)',
+                    cloudColor: 'rgba(255, 255, 255, 0.9)',
                     gradient: ['#10243c', '#0a1628', '#040b14']
                 },
                 {
                     name: 'سفید مهتابی',
                     bg: '#1c1c2a',
                     starColor: 'rgba(255,255,255,0.9)',
-                    cloudColor: 'rgba(200, 200, 220, 0.2)',
+                    cloudColor: 'rgba(255, 255, 255, 0.9)',
                     gradient: ['#2a2a3a', '#1c1c2a', '#101018']
                 }
             ];
@@ -387,6 +424,7 @@
             let currentTheme = themes[0];
 
             // DOM
+            const bgImageLayer = document.getElementById('bgImageLayer');
             const bgCanvas = document.getElementById('background-canvas');
             const ctx = bgCanvas.getContext('2d');
             const clocksGrid = document.getElementById('clocksGrid');
@@ -401,33 +439,38 @@
             let clockCards = [];
             let isPlaying = true;
             let quotesArray = [];
+            let currentImageIndex = 0;
 
             // ذرات
             let stars = [];
             let clouds = [];
 
-            // ---------- ابزار رسم ستاره پنج‌پر ----------
-            function drawStar(cx, cy, spikes, outerRadius, innerRadius, opacity) {
-                let rot = Math.PI / 2 * 3;
-                let x = cx;
-                let y = cy;
-                let step = Math.PI / spikes;
+            // ---------- مدیریت عکس‌ها ----------
+            function changeBackgroundImage() {
+                if (backgroundImages.length === 0) return;
+                currentImageIndex = (currentImageIndex + 1) % backgroundImages.length;
+                bgImageLayer.style.backgroundImage = `url('${backgroundImages[currentImageIndex]}')`;
+            }
 
+            // پیش‌بارگذاری عکس‌ها
+            function preloadImages(urls) {
+                urls.forEach(url => {
+                    const img = new Image();
+                    img.src = url;
+                });
+            }
+
+            // ---------- رسم ابر کوچک ----------
+            function drawCloud(cx, cy, w, h) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
                 ctx.beginPath();
-                ctx.moveTo(cx, cy - outerRadius);
-                for (let i = 0; i < spikes; i++) {
-                    x = cx + Math.cos(rot) * outerRadius;
-                    y = cy + Math.sin(rot) * outerRadius;
-                    ctx.lineTo(x, y);
-                    rot += step;
-                    x = cx + Math.cos(rot) * innerRadius;
-                    y = cy + Math.sin(rot) * innerRadius;
-                    ctx.lineTo(x, y);
-                    rot += step;
-                }
-                ctx.lineTo(cx, cy - outerRadius);
-                ctx.closePath();
-                ctx.fillStyle = currentTheme.starColor.replace('0.9', opacity);
+                ctx.ellipse(cx, cy, w/2, h/2, 0, 0, Math.PI*2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(cx - w*0.25, cy - h*0.2, w*0.3, h*0.5, 0, 0, Math.PI*2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(cx + w*0.25, cy - h*0.15, w*0.3, h*0.5, 0, 0, Math.PI*2);
                 ctx.fill();
             }
 
@@ -564,12 +607,11 @@
             function createParticlesAndClouds() {
                 stars = [];
                 clouds = [];
-                // 30 ستاره پنج‌پر
                 for (let i = 0; i < 30; i++) {
                     stars.push({
                         x: Math.random() * bgCanvas.width,
                         y: Math.random() * bgCanvas.height,
-                        size: Math.random() * 4 + 2,
+                        size: Math.random() * 3 + 2,
                         speedY: -(Math.random() * 0.3 + 0.1),
                         speedX: (Math.random() - 0.5) * 0.2,
                         opacity: Math.random() * 0.5 + 0.4,
@@ -577,56 +619,43 @@
                         twinkleOffset: Math.random() * Math.PI * 2
                     });
                 }
-                // 15 ابر
                 for (let i = 0; i < 15; i++) {
                     clouds.push({
                         x: Math.random() * bgCanvas.width,
                         y: Math.random() * bgCanvas.height,
-                        width: Math.random() * 160 + 80,
-                        height: Math.random() * 45 + 25,
-                        speedY: -(Math.random() * 0.3 + 0.1),
-                        opacity: Math.random() * 0.3 + 0.15,
-                        isPink: Math.random() > 0.5
+                        width: Math.random() * 30 + 20,
+                        height: Math.random() * 12 + 8,
+                        speedY: -(Math.random() * 0.2 + 0.1),
+                        opacity: 1
                     });
                 }
             }
 
+            function drawStar(cx, cy, spikes, outerRadius, innerRadius, opacity) {
+                let rot = Math.PI / 2 * 3;
+                let step = Math.PI / spikes;
+                ctx.beginPath();
+                ctx.moveTo(cx, cy - outerRadius);
+                for (let i = 0; i < spikes; i++) {
+                    ctx.lineTo(cx + Math.cos(rot) * outerRadius, cy + Math.sin(rot) * outerRadius);
+                    rot += step;
+                    ctx.lineTo(cx + Math.cos(rot) * innerRadius, cy + Math.sin(rot) * innerRadius);
+                    rot += step;
+                }
+                ctx.closePath();
+                ctx.fillStyle = currentTheme.starColor.replace('0.9', opacity);
+                ctx.fill();
+            }
+
             function drawBackground(timestamp) {
                 ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-                
-                // گرادیان
-                const grad = ctx.createLinearGradient(0, 0, 0, bgCanvas.height);
-                grad.addColorStop(0, currentTheme.gradient[0]);
-                grad.addColorStop(0.5, currentTheme.gradient[1]);
-                grad.addColorStop(1, currentTheme.gradient[2]);
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
 
                 // ابرها
                 clouds.forEach(cloud => {
-                    ctx.save();
-                    ctx.globalAlpha = cloud.opacity;
-                    let color;
-                    if (cloud.isPink) {
-                        color = 'rgba(255, 200, 210, 0.7)';
-                    } else {
-                        color = 'rgba(255, 255, 255, 0.6)';
-                    }
-                    ctx.fillStyle = color;
-                    ctx.beginPath();
-                    ctx.ellipse(cloud.x, cloud.y, cloud.width/2, cloud.height/2, 0, 0, Math.PI*2);
-                    ctx.fill();
-                    ctx.beginPath();
-                    ctx.ellipse(cloud.x - cloud.width*0.25, cloud.y - cloud.height*0.15, cloud.width*0.3, cloud.height*0.4, 0, 0, Math.PI*2);
-                    ctx.fill();
-                    ctx.beginPath();
-                    ctx.ellipse(cloud.x + cloud.width*0.25, cloud.y - cloud.height*0.1, cloud.width*0.3, cloud.height*0.4, 0, 0, Math.PI*2);
-                    ctx.fill();
-                    ctx.restore();
-
+                    drawCloud(cloud.x, cloud.y, cloud.width, cloud.height);
                     cloud.y += cloud.speedY;
-                    if (cloud.y < -100) {
-                        cloud.y = bgCanvas.height + 100;
+                    if (cloud.y < -50) {
+                        cloud.y = bgCanvas.height + 50;
                         cloud.x = Math.random() * bgCanvas.width;
                     }
                 });
@@ -635,15 +664,10 @@
                 stars.forEach(star => {
                     let currentOpacity = star.opacity + Math.sin(timestamp * star.twinkleSpeed + star.twinkleOffset) * 0.1;
                     currentOpacity = Math.max(0.3, Math.min(0.9, currentOpacity));
-                    
                     drawStar(star.x, star.y, 5, star.size, star.size/2.5, currentOpacity);
-
                     star.y += star.speedY;
                     star.x += star.speedX;
-                    if (star.y < -10) {
-                        star.y = bgCanvas.height + 10;
-                        star.x = Math.random() * bgCanvas.width;
-                    }
+                    if (star.y < -10) { star.y = bgCanvas.height + 10; star.x = Math.random() * bgCanvas.width; }
                     if (star.x < -10) star.x = bgCanvas.width + 10;
                     if (star.x > bgCanvas.width + 10) star.x = -10;
                 });
@@ -657,7 +681,7 @@
                 document.body.style.backgroundColor = currentTheme.bg;
             }
 
-            // تغییر تم
+            // تغییر تم با کلیک
             themeSwitch.addEventListener('click', () => {
                 let next = (currentThemeIndex + 1) % themes.length;
                 applyTheme(next);
@@ -677,6 +701,13 @@
 
             // راه‌اندازی
             function init() {
+                // تنظیم اولین عکس
+                if (backgroundImages.length > 0) {
+                    bgImageLayer.style.backgroundImage = `url('${backgroundImages[0]}')`;
+                }
+                preloadImages(backgroundImages);
+                setInterval(changeBackgroundImage, IMAGE_CHANGE_INTERVAL);
+
                 resizeCanvas();
                 createParticlesAndClouds();
                 requestAnimationFrame(drawBackground);
