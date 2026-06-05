@@ -56,56 +56,58 @@
             transform: translate3d(0,0,0);
         }
 
-        /* دکمهٔ منو (بسیار کوچک، خط طلایی) */
-        .menu-mini-btn {
+        /* دکمهٔ همبرگری (بالا سمت چپ) */
+        .hamburger-btn {
             position: fixed;
-            top: 16px; right: 16px;
+            top: 16px; left: 16px;
             z-index: 150;
-            width: 28px; height: 28px;
-            background: transparent;
-            border: none;
+            width: 32px; height: 32px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 8px;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             gap: 5px;
-            padding: 4px;
-            transition: transform 0.3s;
+            padding: 6px;
+            transition: background 0.3s;
         }
-        .menu-mini-btn span {
+        .hamburger-btn:hover { background: rgba(212,175,55,0.2); }
+        .hamburger-btn span {
             display: block;
-            width: 100%;
-            height: 2px;
+            width: 20px; height: 2px;
             background: #d4af37;
             border-radius: 2px;
             transition: all 0.3s;
         }
-        .menu-mini-btn.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-        .menu-mini-btn.open span:nth-child(2) { opacity: 0; }
-        .menu-mini-btn.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        .hamburger-btn.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger-btn.open span:nth-child(2) { opacity: 0; }
+        .hamburger-btn.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
         /* کشوی منو */
         .menu-drawer {
             position: fixed;
-            top: 0; right: -100%;
+            top: 0; left: -100%;
             width: 300px; height: 100vh;
-            background: rgba(18, 15, 32, 0.9);
+            background: rgba(12, 10, 25, 0.92);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
-            border-left: 1px solid rgba(212, 175, 55, 0.3);
+            border-right: 1px solid rgba(212, 175, 55, 0.3);
             z-index: 145;
-            padding: 60px 16px 20px;
-            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: -5px 0 30px rgba(0,0,0,0.6);
+            padding: 70px 18px 20px;
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 5px 0 30px rgba(0,0,0,0.6);
             overflow-y: auto;
-            direction: rtl;
         }
-        .menu-drawer.open { right: 0; }
+        .menu-drawer.open { left: 0; }
 
         .menu-overlay {
             position: fixed; top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.6);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
             z-index: 140;
@@ -117,31 +119,32 @@
         .menu-drawer h3 {
             font-family: 'Playfair Display', serif;
             color: #d4af37;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             text-align: center;
-            margin-bottom: 16px;
-            letter-spacing: 2px;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
         }
-        .menu-drawer .category { margin-bottom: 8px; }
-        .menu-drawer .cat-title {
+        .menu-category { margin-bottom: 12px; }
+        .menu-cat-title {
             font-weight: 600;
             color: #d4af37;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             font-size: 0.9rem;
+            padding: 0 4px;
         }
-        .menu-drawer .item {
-            padding: 6px 10px;
-            margin: 2px 0;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            color: #ddd;
+        .menu-item {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            padding: 10px 14px;
+            margin: 3px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: #ddd;
             transition: background 0.2s;
         }
-        .menu-drawer .item:hover {
+        .menu-item:hover {
             background: rgba(212,175,55,0.2);
             color: #fff;
         }
@@ -162,17 +165,12 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             transition: transform 0.3s, box-shadow 0.3s;
             user-select: none;
-            transform: translate3d(0,0,0);
         }
-        .theme-switch:hover { transform: scale(1.12); box-shadow: 0 6px 26px rgba(255,255,255,0.35); }
-        .theme-switch.rotating { animation: rotateDab 0.6s ease; }
-        @keyframes rotateDab { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
-
+        .theme-switch:hover { transform: scale(1.12); }
         .theme-tooltip {
             position: fixed; bottom: 68px; right: 10px;
             background: rgba(0,0,0,0.7);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             color: #fff; padding: 4px 12px;
             border-radius: 14px; font-size: 0.7rem;
             z-index: 110; opacity: 0;
@@ -191,7 +189,6 @@
             cursor: pointer;
             filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
             display: flex; align-items: center; justify-content: center;
-            transform: translate3d(0,0,0);
         }
         .record-disc {
             width: 100%; height: 100%;
@@ -211,13 +208,12 @@
             font-size: 0.7rem; color: #0a0a0a; font-weight: bold;
         }
 
-        /* کانتینر اصلی */
+        /* صفحه اصلی */
         .main-container {
             position: relative; z-index: 1;
             max-width: 1300px; margin: 0 auto;
             padding: 20px 20px 30px;
         }
-
         .header { text-align: center; padding: 20px 20px 8px; }
         .logo-text {
             font-family: 'Playfair Display', 'Cinzel', serif;
@@ -243,7 +239,6 @@
             background: linear-gradient(90deg, transparent, #d4af37, transparent);
             margin: 6px auto 0;
         }
-
         .quote-section { margin: 14px auto 12px; padding: 0 8px; }
         .quote-container {
             width: 100%; background: var(--quote-bg);
@@ -300,7 +295,7 @@
 
         .footer { text-align: center; padding: 10px; font-size: 0.6rem; color: #8e8a80; letter-spacing: 2px; opacity: 0.5; }
 
-        /* مدال‌های عمومی */
+        /* مدال‌های ابزار */
         .modal-overlay {
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: rgba(0,0,0,0.7);
@@ -319,14 +314,13 @@
             border: 1px solid rgba(212,175,55,0.35);
             border-radius: 20px;
             padding: 28px 24px;
-            width: 90%; max-width: 620px; max-height: 85vh;
+            width: 90%; max-width: 600px; max-height: 85vh;
             overflow-y: auto;
             box-shadow: 0 20px 50px rgba(0,0,0,0.6);
             transform: translateY(20px);
             transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
             position: relative;
             color: #e8e4f0;
-            direction: rtl;
         }
         .modal-overlay.active .modal-content { transform: translateY(0); }
         .modal-close {
@@ -341,29 +335,21 @@
             transition: 0.3s;
         }
         .modal-close:hover { background: rgba(255,100,100,0.3); }
-
         .tool-btn {
             background: rgba(212,175,55,0.2);
             border: 1px solid rgba(212,175,55,0.4);
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 10px;
-            cursor: pointer;
+            color: #fff; padding: 8px 16px;
+            border-radius: 10px; cursor: pointer;
             font-family: 'Vazirmatn', sans-serif;
-            margin: 4px;
-            transition: 0.3s;
+            margin: 4px; transition: 0.3s;
         }
         .tool-btn:hover { background: rgba(212,175,55,0.4); }
         .tool-input {
             background: rgba(255,255,255,0.08);
             border: 1px solid rgba(212,175,55,0.3);
-            color: #fff;
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-family: 'Vazirmatn', sans-serif;
-            width: 100%;
-            margin: 6px 0;
-            outline: none;
+            color: #fff; padding: 8px 12px;
+            border-radius: 10px; font-family: 'Vazirmatn', sans-serif;
+            width: 100%; margin: 6px 0; outline: none;
         }
 
         @media (max-width: 1200px) { .clocks-grid { grid-template-columns: repeat(4,1fr); } }
@@ -392,10 +378,8 @@
     <div class="bg-image-layer layer-a" id="bgLayerA"></div>
     <div class="bg-image-layer layer-b" id="bgLayerB"></div>
 
-    <!-- دکمهٔ کوچک منو -->
-    <button class="menu-mini-btn" id="menuMiniBtn"><span></span><span></span><span></span></button>
-
-    <!-- کشوی منو -->
+    <!-- دکمه همبرگری -->
+    <button class="hamburger-btn" id="hamburgerBtn"><span></span><span></span><span></span></button>
     <div class="menu-overlay" id="menuOverlay"></div>
     <div class="menu-drawer" id="menuDrawer"><h3>my time ✦</h3><div id="menuContent"></div></div>
 
@@ -431,7 +415,7 @@
 
     <!-- مدال عمومی -->
     <div class="modal-overlay" id="modalOverlay">
-        <div class="modal-content" id="modalContent">
+        <div class="modal-content">
             <button class="modal-close" id="modalClose">✕</button>
             <div id="modalBody"></div>
         </div>
@@ -442,7 +426,7 @@
 
     <script>
         (function() {
-            // ========== تنظیمات ==========
+            // ========== تنظیمات اصلی ==========
             const QUOTE_INTERVAL = 10000;
             const CLOCK_INTERVAL = 1000;
             const IMAGE_INTERVAL = 30000;
@@ -501,7 +485,7 @@
             const bgMusic = document.getElementById('bgMusic');
             const gramophoneBtn = document.getElementById('gramophoneToggle'), recordDisc = document.getElementById('recordDisc');
             const themeSwitch = document.getElementById('themeSwitch'), themeTooltip = document.getElementById('themeTooltip');
-            const menuBtn = document.getElementById('menuMiniBtn'), menuDrawer = document.getElementById('menuDrawer');
+            const hamburgerBtn = document.getElementById('hamburgerBtn'), menuDrawer = document.getElementById('menuDrawer');
             const menuOverlay = document.getElementById('menuOverlay');
             const modalOverlay = document.getElementById('modalOverlay'), modalBody = document.getElementById('modalBody');
             const modalClose = document.getElementById('modalClose');
@@ -516,11 +500,10 @@
                 return n;
             }
             function setInitialImage() { const i = getRandomImageIndex(); nextImageIndex = i; bgLayerA.style.backgroundImage = `url('${backgroundImages[i]}')`; activeLayer = 'A'; }
-            async function changeBackgroundImage() {
+            function changeBackgroundImage() {
                 const i = getRandomImageIndex(); nextImageIndex = i;
-                const url = backgroundImages[i];
                 const target = activeLayer === 'A' ? bgLayerB : bgLayerA;
-                target.style.backgroundImage = `url('${url}')`;
+                target.style.backgroundImage = `url('${backgroundImages[i]}')`;
                 if (activeLayer === 'A') { bgLayerB.style.zIndex = -4; bgLayerA.style.zIndex = -5; activeLayer = 'B'; }
                 else { bgLayerA.style.zIndex = -4; bgLayerB.style.zIndex = -5; activeLayer = 'A'; }
             }
@@ -625,7 +608,6 @@
                 quoteContainer.style.background = currentTheme.quoteBg;
                 themeTooltip.textContent = currentTheme.name; themeTooltip.classList.add('show');
                 setTimeout(() => themeTooltip.classList.remove('show'), 1500);
-                themeSwitch.classList.add('rotating'); setTimeout(() => themeSwitch.classList.remove('rotating'), 600);
             };
             themeSwitch.addEventListener('click', () => applyTheme((currentThemeIndex+1)%themes.length));
 
@@ -635,170 +617,104 @@
                 else { bgMusic.play().catch(()=>{}); recordDisc.classList.add('playing'); isPlaying = true; }
             }
             gramophoneBtn.addEventListener('click', toggleMusic);
-            function tryAutoplay() {
-                bgMusic.play().then(() => { isPlaying = true; recordDisc.classList.add('playing'); }).catch(() => { isPlaying = false; recordDisc.classList.remove('playing'); });
-            }
+            function tryAutoplay() { bgMusic.play().then(() => { isPlaying = true; recordDisc.classList.add('playing'); }).catch(() => { isPlaying = false; recordDisc.classList.remove('playing'); }); }
 
-            // ========== مدال ==========
-            window.openModal = function(title, contentHTML) {
-                modalBody.innerHTML = `<h2 style="color:#d4af37; margin-bottom:16px; font-family:'Playfair Display';">${title}</h2>${contentHTML}`;
+            // ========== مدال‌ها ==========
+            function openModal(title, htmlContent) {
+                modalBody.innerHTML = `<h2 style="color:#d4af37; margin-bottom:16px; font-family:'Playfair Display';">${title}</h2>${htmlContent}`;
                 modalOverlay.classList.add('active');
-            };
+            }
             modalClose.addEventListener('click', () => modalOverlay.classList.remove('active'));
             modalOverlay.addEventListener('click', e => { if(e.target === modalOverlay) modalOverlay.classList.remove('active'); });
 
-            // ========== منو با ابزارهای واقعی ==========
+            // ========== ابزارهای منو ==========
             let chronoInterval, chronoRunning = false, chronoTime = 0;
-            let alarmTimeout, timerInterval, timerRunning = false, timerTime = 0;
+            let timerInterval, timerRunning = false, timerTime = 0;
 
-            function buildChronograph() {
-                return `
-                <div style="text-align:center; font-size:3rem; font-family:'Cinzel'; margin:20px 0;" id="chronoDisplay">00:00.00</div>
-                <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-                    <button class="tool-btn" id="chronoStart">▶ شروع</button>
-                    <button class="tool-btn" id="chronoStop">⏸ توقف</button>
-                    <button class="tool-btn" id="chronoReset">↺ ریست</button>
-                </div>`;
-            }
+            function buildChronograph() { return `<div style="text-align:center; font-size:3rem; font-family:'Cinzel'; margin:20px 0;" id="chronoDisplay">00:00.00</div><div style="display:flex; gap:10px; justify-content:center;"><button class="tool-btn" id="chronoStart">▶</button><button class="tool-btn" id="chronoStop">⏸</button><button class="tool-btn" id="chronoReset">↺</button></div>`; }
             function initChronograph() {
-                const display = document.getElementById('chronoDisplay');
-                if(!display) return;
+                const disp = document.getElementById('chronoDisplay'); if(!disp) return;
                 document.getElementById('chronoStart').onclick = () => {
-                    if(!chronoRunning) {
-                        chronoRunning = true;
-                        const startTime = Date.now() - chronoTime;
-                        chronoInterval = setInterval(() => {
-                            chronoTime = Date.now() - startTime;
-                            const ms = Math.floor(chronoTime / 10) % 100;
-                            const s = Math.floor(chronoTime / 1000) % 60;
-                            const m = Math.floor(chronoTime / 60000);
-                            display.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(2,'0')}`;
-                        }, 10);
-                    }
+                    if(!chronoRunning) { chronoRunning = true; const start = Date.now() - chronoTime;
+                        chronoInterval = setInterval(() => { chronoTime = Date.now() - start; const ms = Math.floor(chronoTime/10)%100, s = Math.floor(chronoTime/1000)%60, m = Math.floor(chronoTime/60000); disp.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(ms).padStart(2,'0')}`; }, 10); }
                 };
                 document.getElementById('chronoStop').onclick = () => { clearInterval(chronoInterval); chronoRunning = false; };
-                document.getElementById('chronoReset').onclick = () => { clearInterval(chronoInterval); chronoRunning = false; chronoTime = 0; display.textContent = '00:00.00'; };
+                document.getElementById('chronoReset').onclick = () => { clearInterval(chronoInterval); chronoRunning = false; chronoTime = 0; disp.textContent = '00:00.00'; };
             }
 
-            function buildAlarm() {
-                return `
-                <div style="display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap;">
-                    <input type="number" id="alarmHour" class="tool-input" placeholder="ساعت" min="0" max="23" style="width:80px; text-align:center;">
-                    <span>:</span>
-                    <input type="number" id="alarmMinute" class="tool-input" placeholder="دقیقه" min="0" max="59" style="width:80px; text-align:center;">
-                    <button class="tool-btn" id="setAlarmBtn">🔔 تنظیم</button>
-                </div>
-                <div id="alarmStatus" style="text-align:center; margin-top:15px; color:#d4af37;"></div>`;
+            function buildTimer() { return `<div style="text-align:center; font-size:2.5rem; font-family:'Cinzel'; margin:20px 0;" id="timerDisplay">00:00</div><input type="number" id="timerMinutes" class="tool-input" placeholder="دقیقه"><div style="display:flex; gap:10px; justify-content:center; margin-top:10px;"><button class="tool-btn" id="timerStart">▶</button><button class="tool-btn" id="timerPause">⏸</button><button class="tool-btn" id="timerReset">↺</button></div>`; }
+            function initTimer() {
+                const disp = document.getElementById('timerDisplay');
+                document.getElementById('timerStart').onclick = () => {
+                    if(!timerRunning) { const min = parseInt(document.getElementById('timerMinutes').value) || 0; if(timerTime === 0) timerTime = min * 60;
+                        timerRunning = true; timerInterval = setInterval(() => { if(timerTime <= 0) { clearInterval(timerInterval); timerRunning = false; disp.textContent = '00:00'; return; } timerTime--; const m = Math.floor(timerTime/60), s = timerTime%60; disp.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; }, 1000); }
+                };
+                document.getElementById('timerPause').onclick = () => { clearInterval(timerInterval); timerRunning = false; };
+                document.getElementById('timerReset').onclick = () => { clearInterval(timerInterval); timerRunning = false; timerTime = 0; disp.textContent = '00:00'; };
             }
+
+            function buildAlarm() { return `<div style="display:flex; gap:10px; align-items:center; justify-content:center;"><input type="number" id="alarmHour" class="tool-input" placeholder="ساعت" min="0" max="23" style="width:80px;"><span>:</span><input type="number" id="alarmMinute" class="tool-input" placeholder="دقیقه" min="0" max="59" style="width:80px;"><button class="tool-btn" id="setAlarmBtn">🔔</button></div><div id="alarmStatus" style="text-align:center; margin-top:15px; color:#d4af37;"></div>`; }
+            let alarmTimeout;
             function initAlarm() {
                 document.getElementById('setAlarmBtn').onclick = () => {
-                    const h = parseInt(document.getElementById('alarmHour').value) || 0;
-                    const m = parseInt(document.getElementById('alarmMinute').value) || 0;
-                    const now = new Date();
-                    const alarmTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
-                    if(alarmTime <= now) alarmTime.setDate(alarmTime.getDate() + 1);
-                    const diff = alarmTime - now;
-                    document.getElementById('alarmStatus').textContent = `⏰ آلارم برای ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')} تنظیم شد`;
+                    const h = parseInt(document.getElementById('alarmHour').value) || 0, m = parseInt(document.getElementById('alarmMinute').value) || 0;
+                    const now = new Date(); const alarm = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
+                    if(alarm <= now) alarm.setDate(alarm.getDate()+1);
+                    const diff = alarm - now;
+                    document.getElementById('alarmStatus').textContent = `⏰ برای ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')} تنظیم شد`;
                     if(alarmTimeout) clearTimeout(alarmTimeout);
-                    alarmTimeout = setTimeout(() => {
-                        document.getElementById('alarmStatus').textContent = '🔔🔔🔔 آلارم!';
-                        if(Notification.permission === 'granted') new Notification('my time', { body: 'آلارم!' });
-                    }, diff);
+                    alarmTimeout = setTimeout(() => { document.getElementById('alarmStatus').textContent = '🔔🔔🔔'; if(Notification.permission === 'granted') new Notification('my time', { body: 'آلارم!' }); }, diff);
                 };
                 if(Notification.permission !== 'granted' && Notification.permission !== 'denied') Notification.requestPermission();
             }
 
-            function buildTimer() {
-                return `
-                <div style="text-align:center; font-size:2.5rem; font-family:'Cinzel'; margin:20px 0;" id="timerDisplay">00:00</div>
-                <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-                    <input type="number" id="timerMinutes" class="tool-input" placeholder="دقیقه" min="0" style="width:80px; text-align:center;">
-                    <button class="tool-btn" id="timerStart">▶ شروع</button>
-                    <button class="tool-btn" id="timerPause">⏸ توقف</button>
-                    <button class="tool-btn" id="timerReset">↺ ریست</button>
-                </div>`;
-            }
-            function initTimer() {
-                const display = document.getElementById('timerDisplay');
-                document.getElementById('timerStart').onclick = () => {
-                    if(!timerRunning) {
-                        const min = parseInt(document.getElementById('timerMinutes').value) || 0;
-                        if(timerTime === 0) timerTime = min * 60;
-                        timerRunning = true;
-                        timerInterval = setInterval(() => {
-                            if(timerTime <= 0) { clearInterval(timerInterval); timerRunning = false; display.textContent = '00:00'; return; }
-                            timerTime--;
-                            const m = Math.floor(timerTime / 60), s = timerTime % 60;
-                            display.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-                        }, 1000);
-                    }
-                };
-                document.getElementById('timerPause').onclick = () => { clearInterval(timerInterval); timerRunning = false; };
-                document.getElementById('timerReset').onclick = () => { clearInterval(timerInterval); timerRunning = false; timerTime = 0; display.textContent = '00:00'; };
-            }
-
             function buildWorldClock() {
-                const allCities = ['New York','London','Paris','Berlin','Tokyo','Beijing','Sydney','Moscow','Brasília','New Delhi','Toronto','Seoul','Dubai','Johannesburg','Los Angeles','Chicago','Houston','Phoenix','Philadelphia','San Antonio','San Diego','Dallas','San Jose','Austin','Jacksonville','Fort Worth','Columbus','Charlotte','Indianapolis','San Francisco','Seattle','Denver','Washington','Boston','El Paso','Nashville','Detroit','Oklahoma City','Portland','Las Vegas','Memphis','Louisville','Baltimore','Milwaukee','Albuquerque','Tucson','Fresno','Sacramento','Kansas City','Long Beach','Mesa','Atlanta','Colorado Springs','Virginia Beach','Raleigh','Omaha','Miami','Oakland','Minneapolis','Tulsa','Wichita','New Orleans','Arlington','Cleveland','Bakersfield','Tampa','Aurora','Honolulu','Anaheim','Santa Ana','Corpus Christi','Riverside','Lexington','Henderson','Stockton','Saint Paul','Cincinnati','St. Louis','Pittsburgh','Greensboro','Anchorage','Plano','Lincoln','Orlando','Irvine','Newark','Toledo','Durham','Chula Vista','Fort Wayne','Jersey City','St. Petersburg','Laredo','Madison','Chandler','Buffalo','Lubbock','Scottsdale','Reno','Glendale','Gilbert','Winston–Salem','North Las Vegas','Norfolk','Chesapeake','Garland','Irving','Hialeah','Fremont','Boise','Richmond','Baton Rouge','Spokane','Des Moines','Tacoma','San Bernardino','Modesto','Fontana','Santa Clarita','Birmingham','Oxnard','Fayetteville','Moreno Valley','Rochester','Huntington Beach','Salt Lake City','Grand Rapids','Amarillo','Yonkers','Montgomery','Akron','Little Rock','Huntsville','Augusta','Port St. Lucie','Grand Prairie','Tallahassee','Overland Park','Tempe','McKinney','Mobile','Cape Coral','Shreveport','Frisco','Knoxville','Worcester','Brownsville','Vancouver','Fort Lauderdale','Sioux Falls','Ontario','Chattanooga','Providence','Newport News','Rancho Cucamonga','Santa Rosa','Oceanside','Salem','Elk Grove','Garden Grove','Pembroke Pines','Peoria','Eugene','Corona','Cary','Springfield','Fort Collins','Jackson','Alexandria','Hayward','Lancaster','Lakewood','Clarksville','Palmdale','Salinas','Springfield','Hollywood','Pasadena','Sunnyvale','Macon','Kansas City','Pomona','Escondido','Killeen','Naperville','Joliet','Bellevue','Rockford','Savannah','Paterson','Torrance','Bridgeport','McAllen','Mesquite','Syracuse','Midland','Pasadena','Murfreesboro','Miramar','Dayton','Fullerton','Olathe','Orange','Thornton','Roseville','Denton','Waco','Surprise','Carrollton','West Valley City','Charleston','Warren','Hampton','Gainesville','Visalia','Coral Springs','Columbia','Cedar Rapids','Sterling Heights','New Haven','Stamford','Concord','Kent','Santa Clara','Elizabeth','Round Rock','Thousand Oaks','Lafayette','Athens','Topeka','Simi Valley','Fargo','Norman','Columbia','Abilene','Wilmington','Hartford','Victorville','Pearland','Vallejo','Ann Arbor','Berkeley','Allentown','Richardson','Odessa','Arvada','Cambridge','Sugar Land','Beaumont','Lansing','Evansville','Rochester','Independence','Fairfield','Provo','Clearwater','College Station','West Jordan','Carlsbad','El Monte','Murrieta','Temecula','Springfield','Palm Bay','Costa Mesa','Westminster','North Charleston','Miami Gardens','Manchester','High Point','Downey','Clovis','Pompano Beach','Pueblo','Elgin','Lowell','Antioch','West Covina','Ventura','Richmond','Gresham','Waterbury','Billings','Inglewood','Everett','Boulder','Daly City','Santa Maria','Norwalk','Burbank','Green Bay','Centennial','Arden-Arcade','Sandy Springs','Hillsboro','Jurupa Valley','Wichita Falls','San Mateo','Brockton','Davenport','Rialto','Edison','Spokane Valley','Albany','San Angelo','Vacaville','Compton','Carson','San Leandro','Kenosha','South Gate','Hesperia','Portsmouth','Roswell','Dearborn','Lynn','Federal Way','Lee\'s Summit','Livonia','Sparks','Santa Barbara','Bend','Las Cruces','Chico','Tracy','Redding','Yuma','Orem','Largo','Melbourne','Suffolk','Boca Raton','Longmont','Canton','Fishers','Missoula','Blue Springs','San Marcos','Tustin','Bellingham','Medford','Joplin','Lake Charles','Merced','St. George','Pflugerville','Kennewick','Champaign','Hoover','Cicero','Hemet','New Braunfels','Hattiesburg','Alhambra','Buena Park','Lakewood','Turlock','Mission Viejo','Manteca','Loveland','Bryan','Terre Haute','Port Arthur','Cranston','Lawton','Nampa','Auburn','Pawtucket','Fayetteville','Gulfport','Waukegan','Columbus','Bloomington','Jacksonville','Yakima','New Rochelle','St. Cloud','Edinburg','Carmel','Palm Coast','Danbury','Dothan','Warwick','Redwood City','Mount Pleasant','Lynchburg','Union City','Passaic','Pocatello','Casa Grande','Troy','Pharr','Caldwell','Vineland','Mount Vernon','Kenner','Lake Havasu City','Milpitas','Casper','Pleasanton','Rapid City','Flint','Livermore','Indio','Sherman','Santa Cruz','Montebello','La Crosse','Albany','Council Bluffs','New Bedford','Pittsburg','Temple','Cedar Park','Avondale','Bismarck','Noblesville','Owensboro','Fall River','Morgantown','San Clemente','Laguna Niguel','West Palm Beach','Gastonia','Haverhill','Eau Claire','Oshkosh','Perris','Valdosta','Idaho Falls','Muncie','Apex','Kokomo','Boynton Beach','Brooklyn Park','Bonita Springs','Hickory','Kissimmee','Lawrence','Aliso Viejo','Tuscaloosa','Florence','Evanston','Deerfield Beach','Homestead','New Britain','Schenectady','Rogers','Waldorf','San Rafael','Wausau','Appleton','Summerville','Lake Forest','Lodi','Davis','Upland','Fort Smith','Coon Rapids','Taylorsville','Eagan','Mission','Brentwood','The Woodlands','Madera','Charlottesville','Blacksburg','Jeffersonville','Layton','Georgetown','Burlington','Allen','Plymouth','Johnson City','New Brunswick','El Centro','Bozeman','Dublin','Southfield','Texarkana','El Cajon','Waterloo','North Richland Hills','Riverview','Lehi','Bowie','Bossier City','Hendersonville','Waterville','Ames','Redlands','Lakewood','Victoria','Cleveland Heights','Wilson','West Des Moines','Dubuque','Rock Hill','Mount Juliet','Portage','Owasso','Bartlett','Euless','Woodbury','Missouri City','Cedar Hill','Bedford','Hilton Head Island','Parker','Eden Prairie','Wylie','Mansfield','Lakeville','Sanford','Bristol','Lancaster','Enfield','Hammond','Porterville','Palm Springs','Hanford','Deltona','Columbus','Smyrna','Flagstaff','Grand Junction','Bowling Green','Sarasota','Buckeye','Palm Beach Gardens','Rancho Cordova','Cheyenne','Goodyear','Waukesha','Huntington','Rowlett','Sandy','Galveston','Yuba City','Coon Rapids','Blue Springs','Mentor','Bentonville','Muncie','Jackson','San Luis Obispo','Longview','Laguna Hills','Petaluma','Chesterfield','Middletown','Mishawaka','Salem','Kettering','Moore','Cleveland','Lake Elsinore','Madison','Auburn','Johns Creek','Spring Hill','Alpharetta','Franklin','Farmington Hills','Warner Robins','Pasco','North Little Rock','Sammamish','Palm Desert','Bothell','Flower Mound','Redmond','Lake Havasu City','North Port','Pocatello','Haltom City','Orland Park','Doral','Bethlehem','Cedar Rapids','Westland','Covington','Ocala','Florissant','Schenectady','Vineland','Burien','Casper','Keller','Meridian','Rio Rancho','Janesville','Hamilton','Gaithersburg','Huntsville','Union City','Pico Rivera','Burnsville','Arlington Heights','Kannapolis','Great Falls','Methuen','Taunton','Midwest City','Rock Island','Dunwoody','Sierra Vista','Elmhurst','Brookfield','Rochester Hills','Maricopa','Salina','Urbandale','DeKalb','Bartlesville','Oak Lawn','Kingsport','Titusville','Germantown','Bellevue','Burlington','Bangor','Irondequoit','Leominster','Harlingen','Littleton','St. Charles','North Miami','State College','Grapevine','Peabody','Ankeny','Mount Prospect','Beverly','Brea','West Haven','Everett','Twin Falls','Linden','West Allis','Fond du Lac','Plainfield','Manhattan','Euclid','Bel Air South','Enid','Carol Stream','Council Bluffs','Palm Harbor','Blaine','Hurst','Binghamton','Lake Havasu City','Blue Springs','Cleveland','Muskegon','Prescott','Cutler Bay','Weslaco','Hicksville','Smyrna','Milford','East Providence','Cuyahoga Falls','Maple Grove','Dothan','Land O\' Lakes','Middletown','Eau Claire','San Ramon','The Villages','Caldwell','Woonsocket','Hattiesburg','Lafayette','Elkhart','Kankakee','Hot Springs','Lehi','Eagle','Rosemead','North Lauderdale','New Berlin','Hackensack','Apache Junction','Fairbanks','Midland','Sumter','Sayreville','Indian Trail','New City','Moore','Brea','Richland','Tamarac','Bryan','Sicklerville','Lancaster','Fitchburg','Jefferson City','Largo','Ormond Beach','West Bend','San Jacinto','Port Charlotte','Cathedral City','La Habra','Palm Beach','Eastvale','Ocoee','Riverview','Maricopa','Fort Pierce','Oakland Park','Hempstead','Benton Harbor','Huntersville','Kalamazoo','Orem','St. George','Wentzville','Altamonte Springs','Spartanburg','Menifee','Apollo Beach','San Juan Capistrano','Cape Girardeau','La Quinta','Bozeman','Williamsport','Wauwatosa','Texarkana','Lakewood Ranch','Weatherford','Bullhead City','Dania Beach','Cedar Park','Franklin','Manassas','Burien','Naples','Brooklyn Park','Burnsville','Gilroy','Sherman','Lake Stevens','Bountiful','Findlay','Rockville','Monterey Park','Hollister','Palm Springs','Bellflower','Menomonee Falls','Paramount','Valrico','Hilliard','DeSoto','Kinston','Sunrise','Statesboro','Bayonne','Tupelo','El Dorado Hills','Newark','Upper Darby','Burleson','Plantation','Turlock','Wheaton','Carson City','Salisbury','Westfield','Lombard','Mankato','Lafayette','Goose Creek','Bartlett','San Bruno','Lewiston','Lakewood','Biloxi','Dover','Grand Island','Medina','Oak Park','Wilson','Rancho Santa Margarita','Conroe','Santa Fe','Coppell','Marion','Newport Beach','Charleston','Springfield','Bristol','Palm Bay','Waukesha','Lincoln Park','Belleville','San Gabriel','Fairfield','Granite City','Midland','Ellicott City','Eagle Pass','Moline','Bristol','Watsonville','Hilton Head Island','Washington','Herriman','Mundelein','Port Orange','Rome','North Miami Beach','Euless','New Braunfels','Roswell','St. Cloud','Bellevue','Alafaya','Oakville','South Jordan','Mehlville','Bloomington','Marana','Westminster','Oakland','Encinitas','Brentwood','Lexington','Plymouth','Miramar','Glendora','Orland Park','Bethlehem','Greenville','Idaho Falls','Highlands Ranch','Lynnwood','Lakewood','Plainfield','El Dorado Hills','Littleton','Redondo Beach','Spanish Fork','Pocatello','Cleveland','Hammond','Sanford','Fishers','Santee','Menifee','Mount Laurel','Hempstead','Burlington','O\'Fallon','Aloha','Temple City','Puyallup','Broomfield','West Sacramento','Napa','Rockville','Addison','San Miguel','Florence-Graham','Lakewood','Spring','National City','Linden','Brea','Covina','Bloomington','Reston','Clovis','Lake Elsinore','Alton','Buckeye','North Las Vegas','Canoga Park','Oak Lawn','Westmont','Revere','Leesburg','Edgewood','Minnetonka','Alamogordo','Albany','Brownsville','Beaverton','Riverside','Buffalo Grove','Harker Heights','Florin','Antelope','Enfield','Pharr','Apopka','Liberty','West Hartford','North Bergen','Crystal Lake','Bridgewater','Commerce City','Sun Prairie','Cedar Hill','Lacey','Paradise','Cedar Falls','Walla Walla','Newport','Strongsville','Anderson','Albany','Lake Oswego','Carrollwood','Sahuarita','Huntley','Woodland','Windsor','Hutto','Lehi','Kyle','Owings Mills','Spring Valley','Moorhead','Holland','Leander','La Mesa','Parker','Los Banos','Crown Point','Windsor','Urbana','Hoffman Estates','West Lafayette','Friendswood','Alton','Socorro','Merrillville','Seguin','Portage','Atlantic City','Lakeland','Winter Haven','Mission Bend','Carol City','San Marcos','Hendersonville','Rosemont','Golden Gate','Lemon Grove','Charleston','Pleasant Grove','Pittsfield','Melbourne','Beloit','Mankato','Southaven','Saginaw','Potomac','Bay City','Blacksburg','Lincoln','Oak Creek','Land O\' Lakes','East Los Angeles','St. Augustine','Olympia','Lenexa','Randallstown','Northglenn','Highland','Muscatine','Montgomery Village','Huntsville','East Orange','Salem','University Place','Augusta','Downers Grove','Cottage Grove','St. Peters','Killeen','Freeport','Cheektowaga','Sierra Vista','Conway','Smyrna','Lauderhill','Carson','Terre Haute','Hazelwood','San Juan','Colton','Riviera Beach','Keller','Bell Gardens','Sunrise Manor','West Covina','Layton','East Meadow','Seaside','Greenacres','Germantown','Nashua','Norwich','Salina','Temple','High Point','Palm City','Oak Park','Marion','Palm Coast','Kissimmee','Lodi','Urbandale','Baytown','Commerce','Buffalo','Fallbrook','Rancho Cordova','West Babylon','Stillwater','Miami Lakes','Apple Valley','Weslaco','Cherry Hill','Hoboken','Chicopee','Gresham','Sheboygan','Meriden','Haltom City','Boca Raton','Plainfield','Auburn','Biloxi','Beaumont','Millcreek','Tracy','San Leandro','Menomonee Falls','Marietta','Centereach','Grand Forks','Marion','Blue Springs','Riverton','South Hill','Cooper City','Cedar Rapids','Kettering','Eagan','Florissant','Hattiesburg','Schenectady','Decatur','Rapid City','Dothan','Madison','Lakewood','New Rochelle','Pasco','Cleveland Heights','Dundalk','Taunton','Hanover','Niagara Falls','Peoria','Whitney','Keller','Park Ridge','Everett','Atascocita','Brooklyn Center','Sherwood','Framingham','Hicksville','Moorpark','Moline','San Clemente','Glendale','Lancaster','Jacksonville','Weston','Valley Stream','Kenosha','Sayreville','Bowie','Campbell','Trujillo Alto','Ocoee','Atlantic Beach','Magna','Coram','Bel Air North','Tuckahoe','Novi','Lafayette','York','Butler','Mehlville','Rochester','Fort Lee','Eagle Mountain','Klamath Falls','Friendswood','Kearny','Fort Walton Beach','Statesboro','Bullhead City','Cleveland','University','San Marcos','Lockport','Watertown','Owasso','Colonie','Pensacola','Wentzville','Newport','Southaven','Pleasanton','Menomonee Falls','San Luis','Burlingame','Burien','San Juan Capistrano','Lynn','Leominster','Alexandria','Cibolo','Ogden','Weslaco','Mankato','Romeoville','Socorro','El Dorado','St. Augustine','Socastee','Sunny Isles Beach','Saratoga','West Covina','Orland Park','White Plains','Blacksburg','Urbana','North Port','Walla Walla','Cedar Falls','Marana','Holladay','Moorhead','Pekin','Highland Park','Elmont','Pacifica','Ken Caryl','Huntersville','Los Gatos','Indian Trail','West Fargo','Dania Beach','Wheeling','Suffolk','Atwater','El Dorado Hills','Lake Havasu City','Sammamish','Catonsville','Oak Creek','Northbrook','Riviera Beach','Key West','Cedar Hill','Southglenn','St. Louis Park','Belvidere','Bella Vista','Elk Grove Village','Medford','Wheaton','Longwood','Greenwood','Pikesville','Perth Amboy','Ames','Morristown','Clarksburg','Allen','Burton','Del Rio','Phenix City','Woodside','Richmond','Hercules','Shreveport','Salisbury','Pahrump','Olive Branch','Rosemead','Sevierville','Merrifield','North Bethesda','Secaucus','Perry Hall','Faribault','Hazleton','Woburn','DeLand','Bountiful','West Hollywood','Dearborn Heights','Lemoore','Woodlawn','Chalmette','El Reno','Millville','Scranton','Edinburg','Des Plaines','Hopkinsville','Tolleson','Elk River','Arcadia','Morton Grove','Carpentersville','Magna','Parkland','Chillum','Austintown','Lodi','Midvale','Cave Spring','Aliso Viejo','Alabaster','Chambersburg','Springville','Malden','Lockport','Bethany','South Laurel','Upper Arlington','St. Charles','Belmont','Elk Grove','St. Clair Shores','Sandusky','Port Charlotte','Lompoc','Idaho Falls','Kearns','De Pere','Edgewater','Addison','Ontario','Alvin','South Portland','Round Lake Beach','Winter Springs','Royal Oak','New Smyrna Beach','Woodridge','Saginaw','Arroyo Grande','La Presa','Oviedo','Staunton','Troy','New Iberia','Lodi','Calexico','Caldwell','Coral Terrace','Saratoga Springs','Moscow','Post Falls','Cleburne','Midlothian','Carbondale','Hermiston','Durango','Morganton','Winchester','North Ridgeville','Hilo','White Bear Lake','Bryn Mawr-Skyway','North Bethesda','Sun City','Kankakee','Algonquin','Woonsocket','Linden','Beacon','Dunedin','Zionsville','Austin','Rochester','Winder','St. Cloud','Kerrville','Mason','Jackson','Athens','Biddeford','Brunswick','Lake Ridge','Oshkosh','Opelika','Onalaska','DeKalb','Plainview','Miamisburg','Bay Shore','Palatine','Clarksville','Sherwood','North Fort Myers','Easton','Mokena','Eagle','Bel Air','Winter Garden','Eastlake','McMinnville','Westlake','La Vergne','Crystal','Fairmont','Leawood','Palm River-Clair Mel','Chillicothe','Galesburg','Warren','Edmonds','Urbandale','Bridgeton','Brawley','Cornelius','Columbia','Paso Robles','Saratoga','Bozeman','Lansdale','Jeffersontown','Lawrence','Rahway','Palm Beach Gardens','North Olmsted','Wilsonville','Hot Springs','Fajardo','Vestavia Hills','Zanesville','Bangor','Wausau','Rancho Palos Verdes','Grandville','Colonial Heights','East Palo Alto','Mason','Farmington','Goshen','Alamogordo','Lake Jackson','Mill Creek','Balch Springs','Muscle Shoals','Redmond','Willowbrook','South Pasadena','East Chicago','Mequon','Eden Prairie','Greenfield','Waterloo','Matthews','Grove City','Massillon','South San Francisco','Reynoldsburg','Neenah','Kingman','Yorkville','Owosso','Lake Magdalene','West Islip','Nogales','Bellaire','Benicia','Rockledge','Mineola','North Tonawanda','Warwick','Bonita Springs','Columbus','Bellmore','Hackensack','Bothell West','Pleasant Hill','Brookfield','Chaska','Hialeah Gardens','University City','Dublin','Lake St. Louis','Muskogee','Cahokia Heights','Lake Oswego','Rolling Meadows','Hastings','Foster City','El Dorado','Marion','Camden','Ansonia','Murray','North Richland Hills','Kirkland','Bethpage','Maywood','Brookings','Marlboro','Sylvania','South Lake Tahoe','Northfield','Maplewood','Fuquay-Varina','Cookeville','Whitehall','Elizabeth City','Westlake','Willingboro','Palm City','New London','Derry','Loma Linda','Cumberland','Socorro','North Royalton','Southaven','Safety Harbor','University Park','Riverdale','Covington','Williamsburg','Cottonwood Heights','Grandview','Morrisville','Mount Vernon','Spring Hill','Wisconsin Rapids','Lakeside','St. Michael','Centralia','Mount Lebanon','Eureka','Mercer Island','Willmar','Red Wing','Newberg','Mandan','Edgewood','Dumont','West Odessa','Ferndale','Sun City West','Avon','Soledad','Monroe','Drexel Heights','Wesley Chapel','Ramsey','Greenbelt','Clemson','Pleasant Valley','Stallings','Pahrump','Lodi','Marysville','Ashland','Prattville','Defiance','Lakeland North','Auburn Hills','Hollister','Kingsville','Kuna','Mundelein','Prior Lake','East Moline','Oak Forest','Redmond','Gallatin','San Lorenzo','Garner','Northbrook','Severna Park','Linden','Mountain House','Chanhassen','Sunny Isles Beach','Mililani','La Porte','Shaker Heights','Suitland','Winchester','Rock Springs','Salmon Creek','Hastings','Mayagüez','Allendale','Mint Hill','Gahanna','Parker','Natick','Titusville','Erie','Auburn','Pullman','Ottawa','Hueytown','Millcreek','Lake Elsinore','Somerset','Ridgewood','East Point','Palm Desert','Danville','Mandan','Dickinson','Safety Harbor','Crown Point','North Tustin','Spanish Lake','Owatonna','Monterey','Suisun City','Lockport','Lindsay','St. Matthews','Sapulpa','North Salt Lake','Wilkes-Barre','Schererville','Middletown','Oswego','Sulphur','Mesquite','Langley Park','Central Islip','Montgomery','Rutland','Inglewood-Finn Hill','Lebanon','Goodlettsville','Wauconda','Cedar City','Paris','Milledgeville','Sedalia','North Platte','Middleton','Sidney','Auburn','Scarsdale','Alabaster','Harrison','Moscow','Seymour','Chester','Helena','Alma','Dodge City','Hayden','Canyon Lake','Garden City','Adelphi','Elko','Saratoga Springs','Helena','Auburn','Derby','Prescott Valley','Moraga','Cockeysville','Huntington Station','Portsmouth','Muskegon Heights','Palmer','Socastee','Green','Avon Lake','Los Altos','Spanish Fork','Crestview','Bay Point','Paris','Lebanon','Hawaiian Gardens','Fruit Cove','Stoneham','North Ridgeville','Cambridge','Bay City','Palisades Park','Muscatine','Bainbridge Island','St. Marys','Sunnyside','Forest Grove','Merritt Island','Erlanger','Asheboro','St. Charles','Farmington','New Brighton','Wesley Chapel','Onalaska','Huntington','Altadena','Bluefield','Elko','Rolla','North Canton','Salida','Spokane Valley','Milford Mill','Prichard','Mint Hill','Westerville','McMinnville','Southlake','Cliffside Park','Maryville','Paragould','Winder','Chillum','Oak Park','South Euclid','Searcy','West New York','West Linn','Parkland','Mustang','Oro Valley','Hopkins','Thomasville','Ottawa','Beaver Dam','Seminole','Zachary','Franklin Square','Glen Burnie','Piqua','Mequon','Ypsilanti','Sherwood','Loves Park','Concord','Banning','Wheat Ridge','Summerlin South','Newnan','Shoreline','South Salt Lake','Alamosa','Meadow Woods','Yucaipa','Danville','Fort Hunt','Eloy','Spanish Springs','Klamath Falls','Castro Valley','Tukwila','Papillion','Russellville','Salina','Elizabeth','Glasgow','Butte-Silver Bow','Martha Lake','Laguna Woods','Madera Acres','Middletown','Pueblo West','Farmington','Lewiston','Troy','St. Andrews','Boulder City','Malibu','Altus','Leavenworth','Tifton','Camas','Bessemer','Lake Wales','Hudson','Bixby','Coachella','Ardmore','Tumwater','New Albany','Pembroke','St. Simons','Lufkin','Duncan','Oakleaf Plantation','Ada','Centralia','Holt','Gladstone','Ruskin','Marshall','Shawnee','Marion','Long Branch','Cudahy','Spring Hill','West Springfield','North Liberty','Ashland','Monroe','West Memphis','Canyon Lake','Blythe','Garden City','Beverly Hills','San Dimas','Claremore','Collinsville','Iselin','Rutherford','Gainesville','Fair Lawn','Daphne','Natchitoches','Bristol','Sugar Hill','McDonough','Forest Lake','Belton','Burlington','Boone','Cullman','Nacogdoches','Worthington','Columbus','Crest Hill','Huntington','Mays Chapel','Kerrville','Orange','Miami Springs','Birmingham','North Highlands','Moses Lake','Nixa','Beaumont','Mountain Brook','Parkville','Cockeysville','Azusa','Glenville','South Valley','St. Helens','Kernersville','Goleta','Lansing','Graham','Lake Ronkonkoma','San Benito','Hackettstown','Elmwood Park','Branford','Trussville','Rosenberg','Whitewater','Rosemount','Calabasas','St. Peters','Silverdale','Douglasville','Uniondale','Rockville Centre','Andover','Mount Holly','Pooler','Rye','El Cerrito','New Castle','West Whittier-Los Nietos','Brea','Cullman','Milledgeville','Mokena','Garfield','Papillion','Fort Washington','Pickerington','Gretna','Monsey','Perry Hall','Ashwaubenon','East Peoria','Wauconda','Lakeside','Benbrook','Selma','Ridgefield','Johnston','Franklin','Norwood','Garfield Heights','Cullman','Galt','McAlester','Wyoming','Lakewood','Sweetwater','Fort Atkinson','Cockeysville','Merrick','Pleasant Grove','Tifton','Ramona','Little Elm','Neenah','Spokane Valley','Alpena','Sapulpa','St. Andrews','Willoughby','Bellefontaine','Norwalk','Dunmore','Bloomsburg','Neosho','Lake Forest','Laguna Hills','Dixon','Woodburn','St. Louis Park','Sedro-Woolley','Halfmoon','Lynbrook','Newberry','Raytown','West Chicago','Jennings','New Castle','Verona','Cliffside Park','Dover','Bayou Cane','St. Ann','Taylors','Rock Springs','Paradise Valley','Grand Terrace','Ellensburg','Lake Zurich','Tiffin','New Hope','Lake in the Hills','Hurstbourne','Santa Fe Springs','Mountlake Terrace','Weatherford','Cottage Lake','Canby','Fitchburg','Ontario','Westbury','Eureka','Sartell','Deer Park','Le Ray','Glen Rock','Westfield','McMinnville','Scottsbluff','Belleview','Floral Park','San Fernando','Cahokia','Hutto','Plymouth','Bellview','Walker','Callaway','Blue Island','Sachse','El Paso de Robles','Tullahoma','Socorro','Glenview','Muskogee','Nogales','Stuart','Homewood','Fort Dix','Maryland Heights','Washington','Evesham','Nanuet','McKeesport','Oak Ridge','Chubbuck','Steubenville','Hazel Dell','Lincolnia','Mount Pleasant','Nicholasville','New Berlin','Myrtle Beach','Shoreview','Riverbank','New Providence','Avon','Garner','Tifton','Depew','Lake Geneva','Sun City Center','Marple','Forest Hills','North Myrtle Beach','Monroe','Plattsburgh','Old Bridge','Lakeway','Northampton','Pleasant Prairie','Streetsboro','McHenry','Pasadena','Northport','Brownwood','Berea','Los Lunas','Payson','Bothell','Ridgecrest','South Elgin','Port Hueneme','Machesney Park','Chillicothe','Holbrook','Norco','Commerce City','Centennial','McKeesport','Easthampton','Dyersburg','Libertyville','Hilliard','Benbrook','Tullahoma','North Laurel','New Baltimore','Farmers Branch','Athens','South Portland','Portland','Pearl River','Waynesboro','Wyandotte','Shelby','Grayslake','Brooklyn','Newburyport','Clemmons','Lisle','St. John','Belleview','Bothell West','Lithia Springs','South Plainfield','Hermitage','Rowland Heights','Galesburg','Danville','Dover','Jacksonville Beach','Lemon Hill','Maple Valley','Grandview','Tega Cay','Greeneville','Kihei','Secaucus','Moorhead','Plainview','Colleyville','Winder','Satellite Beach','Hampden','Abilene','Kilgore','Rolling Meadows','Harker Heights','St. Matthews','Knik-Fairview','Enumclaw','North Cowichan','Frederickson','Silver Spring','Alliance','East Northport','Kingston','Cleburne','Bristol','Fish Hawk','Lebanon','Chesterfield','North Platte','Lake Mary','Havre de Grace','Ferndale','Radcliff','Springfield','Mason City','Plum','Chippewa Falls','Dodge City','Eagle River','Eagle Pass','Port Huron','Mequon','Oak Park','Lincolnwood','Montgomery','Mattoon','Lemon Grove','Athens','Alvin','Enumclaw','Spring Hill','Sunland Park','Lino Lakes','Edgewater','Clarksburg','Cedar Mill','Granite Bay','Cedar Rapids','Sulphur Springs','St. John\'s','Ridgefield Park','Havre','Lake Forest Park','Vernon','Boulder','Rochester','Kernersville','New Hartford','Lombard','Cottonwood Heights','Hernando','Miami','Bellefontaine Neighbors','Onalaska','Ashland','Hurstbourne Acres','Hamilton','Jefferson','Cherry Hill Mall','Clay','Bethel Park','Fitchburg','Wauwatosa','Lino Lakes','North Tonawanda','Baldwin','Spanish Fort','Beavercreek','Cedar Falls','Lake Country','Escanaba','Bowie','Parma Heights','Port Chester','Kings Park','Logan','Winchester','Shorewood','Laurinburg','Green','Bedford','Clinton','Savage','Auburn','Lincolnton','Brown Deer','Lower Burrell','Princeton','Fenton','Pomfret','Jefferson Hills','Warrensburg','Alpena','Oregon','Cudahy','Ashland','Lemoore Station','Lockhart','Norfolk','St. Ann','Pinehurst','Painesville','Fairview Heights','Lyndhurst','St. Marys','North Chicago','Hazel Green','Bluffton','Menominee','South Portland','Gardner','McPherson','Burlington','Athens','St. Michael','Dunn','North Olmsted','Sycamore','Sunnyvale','Murphy','Pella','Hobbs','Brainerd','Laguna Beach','Manchester','Meriden','Carolina Beach','Newington','Oconomowoc','Brenham','Bon Air','Saint-Laurent','Valley','Lebanon','Crowley','West Odessa','Copperas Cove','Corcoran','New Lenox','Melrose','Lambertville','Trenton','Williston','Jefferson City','North Platte','Kerrville','Mountain Home','Manhattan Beach','Beaver','Fairview Park','Parkland','Scarsdale','Sweetwater','Wyoming','Winter Garden','Hudson','Pewaukee','Painesville','Seven Oaks','Cornelius','Montgomery','Wixom','River Falls','North Fort Myers','Palm Coast','North Royalton','Bay Point','Van Buren','Monroe','Cedar Mill','Waxahachie','Rocky River','Norwalk','Albemarle','Seal Beach','Johnson City','Dunedin','Conway','Orinda','Lenoir','Gatesville','Short Pump','Artesia','Centralia','Sedalia','Nederland','North Bend','Mount Juliet','Shelbyville','Burleson','Howell','Wilmette','Canyon Lake','Prineville','Westbrook','Maitland','Longview','Vero Beach South','Medford','Walnut','Lithonia','Middleton','Fernley','Cadillac','Socorro','Suamico','Highland','Midlothian','Ken Caryl','Willow Grove','Wake Forest','Corbin','Groveland','Lake Zurich','Greenfield','Buda','Branson','South Burlington','Troutdale','Canon City','Mason','North Plainfield','Lynn Haven','Whitefish Bay','Sebastian','Wheeling','Jefferson Valley-Yorktown','Hobe Sound','Mountain Home','Moscow','Harrison','Halfmoon','Hybla Valley','Terrytown','Clive','Marshfield','Mount Vernon','New River','Villa Rica','Summit','Trenton','Solon','Durant','Clarksburg','Bentonville','Butler','Fountain Valley','La Plata','Cleveland','Bryn Mawr','Griffin','Brea','Fort Lee','University Heights','Elkhorn','Brawley','Fostoria','Stillwater','Heber','Arlington','Lakewood','Cudahy','Pittsburg','Marietta','Cottage Grove','Silver Firs','Scituate','Pearl City','Huron','Farmington','Centralia','Westport','Seymour','St. John','Lakeland South','Havre de Grace','Duluth','Commerce','Onalaska','McMinnville','Maitland','Albemarle','Fernandina Beach','Lake Forest','Hope Mills','Powell','Highland','Lynden','Fayetteville','Moorestown','Palm Valley','Santee','Cedar City','Center Point','Watertown','Millbrae','Monroe','Bella Vista','Laurel','Washington','Sun City West','San Carlos','Goose Creek','South Lake Tahoe','Denison','Iselin','Cedar Park','Hayward','Galt','Wilkinsburg','Long Beach','Mehlville','Le Mars','Glassboro','Grenada','Lebanon','Middle River','University Park','Shrewsbury','Fort Lee','Fort Hunt','Budd Lake','Cohoes','Harrisburg','Homewood','Sulphur','Troy','Des Moines','Fort Payne','Ypsilanti','Sidney','Clemmons','Lake Oswego','Central','Biddeford','Parker','Camas','Plainview','Roosevelt','Oxford','Arcadia','Weirton','Evergreen Park','College Park','Forest Park','Lexington','Seaford','King of Prussia','Mequon','Barnstable Town','Payson','Mount Pleasant','Gloversville','Biddeford','Blytheville','Ridgewood','Boulder City','Melville','Chelsea','Mercerville','New Castle','Hastings-on-Hudson','Wauconda','Miamisburg','Kings Park West','Magna','Galloway','Jefferson Hills','Ferguson','South Bradenton','Twentynine Palms','Hewitt','Georgetown','Franklin','Mill Creek','Mequon','Winter Park','Lakewood','St. Matthews','Lake Forest','River Forest','Walker','Willowick','Drexel Hill','Chanhassen','Gillette','Alexandria','Socorro','Harker Heights','Fairfax','Truckee','Lemon Hill','Hazel Park','Holly Hill','Homewood','Ames','Monroe','Ocean Springs','Auburn','Mequon','Wilton Manors','American Fork','Mason City','Crestview','Lemon Grove','Baraboo','North Tonawanda','Cornelius','Washington','Wallingford','Des Moines','Burke','Jeannette','Brawley','Hazel Green','Mineola','Ferndale','Dallas','Raytown','Northport','Spanish Springs','Eloy','Bridgetown','Puyallup','Scottsboro','Socastee','La Vergne','Short Pump','River Forest','Tonawanda','Middleton','St. Marys','Farragut','Newburgh','Rexburg','Rocky Hill','Clarksburg','Dover','West Hollywood','Tinton Falls','College','Glenn Dale','Moraga','Morton','Hartford','Wilmington','Baker','Garden Grove','Eureka','Northbrook','Lafayette','Lehi','West Bend','Mountlake Terrace','Sulphur','Goshen','St. Michael','Pelham','Atchison','Sweetwater','Havre','Lake Zurich','Lumberton','Mokena','West Odessa','New Hope','Mandan','Dobbs Ferry','Halfmoon','Bethpage','Socorro','Kailua','Hazelwood','Owatonna','Holtsville','Mountain Home','St. Matthews','Bethany','Beaver Dam','Graham','Spanish Lake','Socorro','North Canton','Fultondale','Fernley','Sherwood','Lake Grove','St. Louis Park','Bellaire','Wisconsin Rapids','North Liberty','Forest City','Lavon','Socorro','Lakeville','Mandan','Socorro','Kingsland','Northview','Socorro','East Lansing','Socorro','Socorro','Socorro'];
-                const unique = [...new Set(allCities)];
-                return `
-                <input type="text" class="tool-input" id="citySearch" placeholder="🔍 جستجوی شهر...">
-                <div id="cityResults" style="max-height:300px; overflow-y:auto; margin-top:10px;"></div>`;
+                const sampleCities = ['New York','London','Paris','Berlin','Tokyo','Beijing','Sydney','Moscow','Brasília','New Delhi','Toronto','Seoul','Dubai','Johannesburg','Los Angeles','Chicago','Houston','Phoenix','Philadelphia','San Antonio','San Diego','Dallas','San Jose','Austin','Jacksonville','Fort Worth','Columbus','Charlotte','Indianapolis','San Francisco','Seattle','Denver','Washington','Boston','El Paso','Nashville','Detroit','Oklahoma City','Portland','Las Vegas','Memphis','Louisville','Baltimore','Milwaukee','Albuquerque','Tucson','Fresno','Sacramento','Kansas City','Long Beach','Mesa','Atlanta','Colorado Springs','Virginia Beach','Raleigh','Omaha','Miami','Oakland','Minneapolis','Tulsa','Wichita','New Orleans','Arlington','Cleveland','Bakersfield','Tampa','Aurora','Honolulu','Anaheim','Santa Ana','Corpus Christi','Riverside','Lexington','Henderson','Stockton','Saint Paul','Cincinnati','St. Louis','Pittsburgh','Greensboro','Anchorage','Plano','Lincoln','Orlando','Irvine','Newark','Toledo','Durham','Chula Vista','Fort Wayne','Jersey City','St. Petersburg','Laredo','Madison','Chandler','Buffalo','Lubbock','Scottsdale','Reno'];
+                return `<input type="text" id="citySearch" class="tool-input" placeholder="🔍 جستجوی شهر..."><div id="cityResults" style="max-height:300px; overflow-y:auto; margin-top:10px;"></div>`;
             }
             function initWorldClock() {
-                const input = document.getElementById('citySearch');
-                const results = document.getElementById('cityResults');
-                const allCities = [...new Set([...countries.map(c=>c.city), 'Los Angeles','Chicago','Houston','Phoenix','Philadelphia','San Antonio','San Diego','Dallas','San Jose','Austin','Jacksonville','Fort Worth','Columbus','Charlotte','Indianapolis','San Francisco','Seattle','Denver','Washington','Boston','El Paso','Nashville','Detroit','Oklahoma City','Portland','Las Vegas','Memphis','Louisville','Baltimore','Milwaukee','Albuquerque','Tucson','Fresno','Sacramento','Kansas City','Long Beach','Mesa','Atlanta','Colorado Springs','Virginia Beach','Raleigh','Omaha','Miami','Oakland','Minneapolis','Tulsa','Wichita','New Orleans','Arlington','Cleveland','Bakersfield','Tampa','Aurora','Honolulu','Anaheim','Santa Ana','Corpus Christi','Riverside','Lexington','Henderson','Stockton','Saint Paul','Cincinnati','St. Louis','Pittsburgh','Greensboro','Anchorage','Plano','Lincoln','Orlando','Irvine','Newark','Toledo','Durham','Chula Vista','Fort Wayne','Jersey City','St. Petersburg','Laredo','Madison','Chandler','Buffalo','Lubbock','Scottsdale','Reno','Glendale','Gilbert','Winston–Salem','North Las Vegas','Norfolk','Chesapeake','Garland','Irving','Hialeah','Fremont','Boise','Richmond','Baton Rouge','Spokane','Des Moines','Tacoma','San Bernardino','Modesto','Fontana','Santa Clarita','Birmingham','Oxnard','Fayetteville','Moreno Valley','Rochester','Huntington Beach','Salt Lake City','Grand Rapids','Amarillo','Yonkers','Montgomery','Akron','Little Rock','Huntsville','Augusta','Port St. Lucie','Grand Prairie','Tallahassee','Overland Park','Tempe','McKinney','Mobile','Cape Coral','Shreveport','Frisco','Knoxville','Worcester','Brownsville','Vancouver','Fort Lauderdale','Sioux Falls','Ontario','Chattanooga','Providence','Newport News','Rancho Cucamonga','Santa Rosa','Oceanside','Salem','Elk Grove','Garden Grove','Pembroke Pines','Peoria','Eugene','Corona','Cary','Springfield','Fort Collins','Jackson','Alexandria','Hayward','Lancaster','Lakewood','Clarksville','Palmdale','Salinas','Springfield','Hollywood','Pasadena','Sunnyvale','Macon','Kansas City','Pomona','Escondido','Killeen','Naperville','Joliet','Bellevue','Rockford','Savannah','Paterson','Torrance','Bridgeport','McAllen','Mesquite','Syracuse','Midland','Pasadena','Murfreesboro','Miramar','Dayton','Fullerton','Olathe','Orange','Thornton','Roseville','Denton','Waco','Surprise','Carrollton','West Valley City','Charleston','Warren','Hampton','Gainesville','Visalia','Coral Springs','Columbia','Cedar Rapids','Sterling Heights','New Haven','Stamford','Concord','Kent','Santa Clara','Elizabeth','Round Rock','Thousand Oaks','Lafayette','Athens','Topeka','Simi Valley','Fargo','Norman','Columbia','Abilene','Wilmington','Hartford','Victorville','Pearland','Vallejo','Ann Arbor','Berkeley','Allentown','Richardson','Odessa','Arvada','Cambridge','Sugar Land','Beaumont','Lansing','Evansville','Rochester','Independence','Fairfield','Provo','Clearwater','College Station','West Jordan','Carlsbad','El Monte','Murrieta','Temecula','Springfield','Palm Bay','Costa Mesa','Westminster','North Charleston','Miami Gardens','Manchester','High Point','Downey','Clovis','Pompano Beach','Pueblo','Elgin','Lowell','Antioch','West Covina','Ventura','Richmond','Gresham','Waterbury','Billings','Inglewood','Everett','Boulder','Daly City','Santa Maria','Norwalk','Burbank','Green Bay','Centennial','Arden-Arcade','Sandy Springs','Hillsboro','Jurupa Valley','Wichita Falls','San Mateo','Brockton','Davenport','Rialto','Edison','Spokane Valley','Albany','San Angelo','Vacaville','Compton','Carson','San Leandro','Kenosha','South Gate','Hesperia','Portsmouth','Roswell','Dearborn','Lynn','Federal Way','Lee\'s Summit','Livonia','Sparks','Santa Barbara','Bend','Las Cruces','Chico','Tracy','Redding','Yuma','Orem','Largo','Melbourne','Suffolk','Boca Raton','Longmont','Canton','Fishers','Missoula','Blue Springs','San Marcos','Tustin','Bellingham','Medford','Joplin','Lake Charles','Merced','St. George','Pflugerville','Kennewick','Champaign','Hoover','Cicero','Hemet','New Braunfels','Hattiesburg','Alhambra','Buena Park','Lakewood','Turlock','Mission Viejo','Manteca','Loveland','Bryan','Terre Haute','Port Arthur','Cranston','Lawton','Nampa','Auburn','Pawtucket','Fayetteville','Gulfport','Waukegan','Columbus','Bloomington','Jacksonville','Yakima','New Rochelle','St. Cloud','Edinburg','Carmel','Palm Coast','Danbury','Dothan','Warwick','Redwood City','Mount Pleasant','Lynchburg','Union City','Passaic','Pocatello','Casa Grande','Troy','Pharr','Caldwell','Vineland','Mount Vernon','Kenner','Lake Havasu City','Milpitas','Casper','Pleasanton','Rapid City','Flint','Livermore','Indio','Sherman','Santa Cruz','Montebello','La Crosse','Albany','Council Bluffs','New Bedford','Pittsburg','Temple','Cedar Park','Avondale','Bismarck','Noblesville','Owensboro','Fall River','Morgantown','San Clemente','Laguna Niguel','West Palm Beach','Gastonia','Haverhill','Eau Claire','Oshkosh','Perris','Valdosta','Idaho Falls','Muncie','Apex','Kokomo','Boynton Beach','Brooklyn Park','Bonita Springs','Hickory','Kissimmee','Lawrence','Aliso Viejo','Tuscaloosa','Florence','Evanston','Deerfield Beach','Homestead','New Britain','Schenectady','Rogers','Waldorf','San Rafael','Wausau','Appleton','Summerville','Lake Forest','Lodi','Davis','Upland','Fort Smith','Coon Rapids','Taylorsville','Eagan','Mission','Brentwood','The Woodlands','Madera','Charlottesville','Blacksburg','Jeffersonville','Layton','Georgetown','Burlington','Allen','Plymouth','Johnson City','New Brunswick','El Centro','Bozeman','Dublin','Southfield','Texarkana','El Cajon','Waterloo','North Richland Hills','Riverview','Lehi','Bowie','Bossier City','Hendersonville','Waterville','Ames','Redlands','Lakewood','Victoria','Cleveland Heights','Wilson','West Des Moines','Dubuque','Rock Hill','Mount Juliet','Portage','Owasso','Bartlett','Euless','Woodbury','Missouri City','Cedar Hill','Bedford','Hilton Head Island','Parker','Eden Prairie','Wylie','Mansfield','Lakeville','Sanford','Bristol','Lancaster','Enfield','Hammond','Porterville','Palm Springs','Hanford','Deltona','Columbus','Smyrna','Flagstaff','Grand Junction','Bowling Green','Sarasota','Buckeye','Palm Beach Gardens','Rancho Cordova','Cheyenne','Goodyear','Waukesha','Huntington','Rowlett','Sandy','Galveston','Yuba City','Coon Rapids','Blue Springs','Mentor','Bentonville','Muncie','Jackson','San Luis Obispo','Longview','Laguna Hills','Petaluma','Chesterfield','Middletown','Mishawaka','Salem','Kettering','Moore','Cleveland','Lake Elsinore','Madison','Auburn','Johns Creek','Spring Hill','Alpharetta','Franklin','Farmington Hills','Warner Robins','Pasco','North Little Rock','Sammamish','Palm Desert','Bothell','Flower Mound','Redmond','Lake Havasu City','North Port','Pocatello','Haltom City','Orland Park','Doral','Bethlehem','Cedar Rapids','Westland','Covington','Ocala','Florissant','Schenectady','Vineland','Burien','Casper','Keller','Meridian','Rio Rancho','Janesville','Hamilton','Gaithersburg','Huntsville','Union City','Pico Rivera','Burnsville','Arlington Heights','Kannapolis','Great Falls','Methuen','Taunton','Midwest City','Rock Island','Dunwoody','Sierra Vista','Elmhurst','Brookfield','Rochester Hills','Maricopa','Salina','Urbandale','DeKalb','Bartlesville','Oak Lawn','Kingsport','Titusville','Germantown','Bellevue','Burlington','Bangor','Irondequoit','Leominster','Harlingen','Littleton','St. Charles','North Miami','State College','Grapevine','Peabody','Ankeny','Mount Prospect','Beverly','Brea','West Haven','Everett','Twin Falls','Linden','West Allis','Fond du Lac','Plainfield','Manhattan','Euclid','Bel Air South','Enid','Carol Stream','Council Bluffs','Palm Harbor','Blaine','Hurst','Binghamton','Lake Havasu City','Blue Springs','Cleveland','Muskegon','Prescott','Cutler Bay','Weslaco','Hicksville','Smyrna','Milford','East Providence','Cuyahoga Falls','Maple Grove','Dothan','Land O\' Lakes','Middletown','Eau Claire','San Ramon','The Villages','Caldwell','Woonsocket','Hattiesburg','Lafayette','Elkhart','Kankakee','Hot Springs','Lehi','Eagle','Rosemead','North Lauderdale','New Berlin','Hackensack','Apache Junction','Fairbanks','Midland','Sumter','Sayreville','Indian Trail','New City','Moore','Brea','Richland','Tamarac','Bryan','Sicklerville','Lancaster','Fitchburg','Jefferson City','Largo','Ormond Beach','West Bend','San Jacinto','Port Charlotte','Cathedral City','La Habra','Palm Beach','Eastvale','Ocoee','Riverview','Maricopa','Fort Pierce','Oakland Park','Hempstead','Benton Harbor','Huntersville','Kalamazoo','Orem','St. George','Wentzville','Altamonte Springs','Spartanburg','Menifee','Apollo Beach','San Juan Capistrano','Cape Girardeau','La Quinta','Bozeman','Williamsport','Wauwatosa','Texarkana','Lakewood Ranch','Weatherford','Bullhead City','Dania Beach','Cedar Park','Franklin','Manassas','Burien','Naples','Brooklyn Park','Burnsville','Gilroy','Sherman','Lake Stevens','Bountiful','Findlay','Rockville','Monterey Park','Hollister','Palm Springs','Bellflower','Menomonee Falls','Paramount','Valrico','Hilliard','DeSoto','Kinston','Sunrise','Statesboro','Bayonne','Tupelo','El Dorado Hills','Newark','Upper Darby','Burleson','Plantation','Turlock','Wheaton','Carson City','Salisbury','Westfield','Lombard','Mankato','Lafayette','Goose Creek','Bartlett','San Bruno','Lewiston','Lakewood','Biloxi','Dover','Grand Island','Medina','Oak Park','Wilson','Rancho Santa Margarita','Conroe','Santa Fe','Coppell','Marion','Newport Beach','Charleston','Springfield','Bristol','Palm Bay','Waukesha','Lincoln Park','Belleville','San Gabriel','Fairfield','Granite City','Midland','Ellicott City','Eagle Pass','Moline','Bristol','Watsonville','Hilton Head Island','Washington','Herriman','Mundelein','Port Orange','Rome','North Miami Beach','Euless','New Braunfels','Roswell','St. Cloud','Bellevue','Alafaya','Oakville','South Jordan','Mehlville','Bloomington','Marana','Westminster','Oakland','Encinitas','Brentwood','Lexington','Plymouth','Miramar','Glendora','Orland Park','Bethlehem','Greenville','Idaho Falls','Highlands Ranch','Lynnwood','Lakewood','Plainfield','El Dorado Hills','Littleton','Redondo Beach','Spanish Fork','Pocatello','Cleveland','Hammond','Sanford','Fishers','Santee','Menifee','Mount Laurel','Hempstead','Burlington','O\'Fallon','Aloha','Temple City','Puyallup','Broomfield','West Sacramento','Napa','Rockville','Addison','San Miguel','Florence-Graham','Lakewood','Spring','National City','Linden','Brea','Covina','Bloomington','Reston','Clovis','Lake Elsinore','Alton','Buckeye','North Las Vegas','Canoga Park','Oak Lawn','Westmont','Revere','Leesburg','Edgewood','Minnetonka','Alamogordo','Albany','Brownsville','Beaverton','Riverside','Buffalo Grove','Harker Heights','Florin','Antelope','Enfield','Pharr','Apopka','Liberty','West Hartford','North Bergen','Crystal Lake','Bridgewater','Commerce City','Sun Prairie','Cedar Hill','Lacey','Paradise','Cedar Falls','Walla Walla','Newport','Strongsville','Anderson','Albany','Lake Oswego','Carrollwood','Sahuarita','Huntley','Woodland','Windsor','Hutto','Lehi','Kyle','Owings Mills','Spring Valley','Moorhead','Holland','Leander','La Mesa','Parker','Los Banos','Crown Point','Windsor','Urbana','Hoffman Estates','West Lafayette','Friendswood','Alton','Socorro','Merrillville','Seguin','Portage','Atlantic City','Lakeland','Winter Haven','Mission Bend','Carol City','San Marcos','Hendersonville','Rosemont','Golden Gate','Lemon Grove','Charleston','Pleasant Grove','Pittsfield','Melbourne','Beloit','Mankato','Southaven','Saginaw','Potomac','Bay City','Blacksburg','Lincoln','Oak Creek','Land O\' Lakes','East Los Angeles','St. Augustine','Olympia','Lenexa','Randallstown','Northglenn','Highland','Muscatine','Montgomery Village','Huntsville','East Orange','Salem','University Place','Augusta','Downers Grove','Cottage Grove','St. Peters','Killeen','Freeport','Cheektowaga','Sierra Vista','Conway','Smyrna','Lauderhill','Carson','Terre Haute','Hazelwood','San Juan','Colton','Riviera Beach','Keller','Bell Gardens','Sunrise Manor','West Covina','Layton','East Meadow','Seaside','Greenacres','Germantown','Nashua','Norwich','Salina','Temple','High Point','Palm City','Oak Park','Marion','Palm Coast','Kissimmee','Lodi','Urbandale','Baytown','Commerce','Buffalo','Fallbrook','Rancho Cordova','West Babylon','Stillwater','Miami Lakes','Apple Valley','Weslaco','Cherry Hill','Hoboken','Chicopee','Gresham','Sheboygan','Meriden','Haltom City','Boca Raton','Plainfield','Auburn','Biloxi','Beaumont','Millcreek','Tracy','San Leandro','Menomonee Falls','Marietta','Centereach','Grand Forks','Marion','Blue Springs','Riverton','South Hill','Cooper City','Cedar Rapids','Kettering','Eagan','Florissant','Hattiesburg','Schenectady','Decatur','Rapid City','Dothan','Madison','Lakewood','New Rochelle','Pasco','Cleveland Heights','Dundalk','Taunton','Hanover','Niagara Falls','Peoria','Whitney','Keller','Park Ridge','Everett','Atascocita','Brooklyn Center','Sherwood','Framingham','Hicksville','Moorpark','Moline','San Clemente','Glendale','Lancaster','Jacksonville','Weston','Valley Stream','Kenosha','Sayreville','Bowie','Campbell','Trujillo Alto','Ocoee','Atlantic Beach','Magna','Coram','Bel Air North','Tuckahoe','Novi','Lafayette','York','Butler','Mehlville','Rochester','Fort Lee','Eagle Mountain','Klamath Falls','Friendswood','Kearny','Fort Walton Beach','Statesboro','Bullhead City','Cleveland','University','San Marcos','Lockport','Watertown','Owasso','Colonie','Pensacola','Wentzville','Newport','Southaven','Pleasanton','Menomonee Falls','San Luis','Burlingame','Burien','San Juan Capistrano','Lynn','Leominster','Alexandria','Cibolo','Ogden','Weslaco','Mankato','Romeoville','Socorro','El Dorado','St. Augustine','Socastee','Sunny Isles Beach','Saratoga','West Covina','Orland Park','White Plains','Blacksburg','Urbana','North Port','Walla Walla','Cedar Falls','Marana','Holladay','Moorhead','Pekin','Highland Park','Elmont','Pacifica','Ken Caryl','Huntersville','Los Gatos','Indian Trail','West Fargo','Dania Beach','Wheeling','Suffolk','Atwater','El Dorado Hills','Lake Havasu City','Sammamish','Catonsville','Oak Creek','Northbrook','Riviera Beach','Key West','Cedar Hill','Southglenn','St. Louis Park','Belvidere','Bella Vista','Elk Grove Village','Medford','Wheaton','Longwood','Greenwood','Pikesville','Perth Amboy','Ames','Morristown','Clarksburg','Allen','Burton','Del Rio','Phenix City','Woodside','Richmond','Hercules','Shreveport','Salisbury','Pahrump','Olive Branch','Rosemead','Sevierville','Merrifield','North Bethesda','Secaucus','Perry Hall','Faribault','Hazleton','Woburn','DeLand','Bountiful','West Hollywood','Dearborn Heights','Lemoore','Woodlawn','Chalmette','El Reno','Millville','Scranton','Edinburg','Des Plaines','Hopkinsville','Tolleson','Elk River','Arcadia','Morton Grove','Carpentersville','Magna','Parkland','Chillum','Austintown','Lodi','Midvale','Cave Spring','Aliso Viejo','Alabaster','Chambersburg','Springville','Malden','Lockport','Bethany','South Laurel','Upper Arlington','St. Charles','Belmont','Elk Grove','St. Clair Shores','Sandusky','Port Charlotte','Lompoc','Idaho Falls','Kearns','De Pere','Edgewater','Addison','Ontario','Alvin','South Portland','Round Lake Beach','Winter Springs','Royal Oak','New Smyrna Beach','Woodridge','Saginaw','Arroyo Grande','La Presa','Oviedo','Staunton','Troy','New Iberia','Lodi','Calexico','Caldwell','Coral Terrace','Saratoga Springs','Moscow','Post Falls','Cleburne','Midlothian','Carbondale','Hermiston','Durango','Morganton','Winchester','North Ridgeville','Hilo','White Bear Lake','Bryn Mawr-Skyway','North Bethesda','Sun City','Kankakee','Algonquin','Woonsocket','Linden','Beacon','Dunedin','Zionsville','Austin','Rochester','Winder','St. Cloud','Kerrville','Mason','Jackson','Athens','Biddeford','Brunswick','Lake Ridge','Oshkosh','Opelika','Onalaska','DeKalb','Plainview','Miamisburg','Bay Shore','Palatine','Clarksville','Sherwood','North Fort Myers','Easton','Mokena','Eagle','Bel Air','Winter Garden','Eastlake','McMinnville','Westlake','La Vergne','Crystal','Fairmont','Leawood','Palm River-Clair Mel','Chillicothe','Galesburg','Warren','Edmonds','Urbandale','Bridgeton','Brawley','Cornelius','Columbia','Paso Robles','Saratoga','Bozeman','Lansdale','Jeffersontown','Lawrence','Rahway','Palm Beach Gardens','North Olmsted','Wilsonville','Hot Springs','Fajardo','Vestavia Hills','Zanesville','Bangor','Wausau','Rancho Palos Verdes','Grandville','Colonial Heights','East Palo Alto','Mason','Farmington','Goshen','Alamogordo','Lake Jackson','Mill Creek','Balch Springs','Muscle Shoals','Redmond','Willowbrook','South Pasadena','East Chicago','Mequon','Eden Prairie','Greenfield','Waterloo','Matthews','Grove City','Massillon','South San Francisco','Reynoldsburg','Neenah','Kingman','Yorkville','Owosso','Lake Magdalene','West Islip','Nogales','Bellaire','Benicia','Rockledge','Mineola','North Tonawanda','Warwick','Bonita Springs','Columbus','Bellmore','Hackensack','Bothell West','Pleasant Hill','Brookfield','Chaska','Hialeah Gardens','University City','Dublin','Lake St. Louis','Muskogee','Cahokia Heights','Lake Oswego','Rolling Meadows','Hastings','Foster City','El Dorado','Marion','Camden','Ansonia','Murray','North Richland Hills','Kirkland','Bethpage','Maywood','Brookings','Marlboro','Sylvania','South Lake Tahoe','Northfield','Maplewood','Fuquay-Varina','Cookeville','Whitehall','Elizabeth City','Westlake','Willingboro','Palm City','New London','Derry','Loma Linda','Cumberland','Socorro','North Royalton','Southaven','Safety Harbor','University Park','Riverdale','Covington','Williamsburg','Cottonwood Heights','Grandview','Morrisville','Mount Vernon','Spring Hill','Wisconsin Rapids','Lakeside','St. Michael','Centralia','Mount Lebanon','Eureka','Mercer Island','Willmar','Red Wing','Newberg','Mandan','Edgewood','Dumont','West Odessa','Ferndale','Sun City West','Avon','Soledad','Monroe','Drexel Heights','Wesley Chapel','Ramsey','Greenbelt','Clemson','Pleasant Valley','Stallings','Pahrump','Lodi','Marysville','Ashland','Prattville','Defiance','Lakeland North','Auburn Hills','Hollister','Kingsville','Kuna','Mundelein','Prior Lake','East Moline','Oak Forest','Redmond','Gallatin','San Lorenzo','Garner','Northbrook','Severna Park','Linden','Mountain House','Chanhassen','Sunny Isles Beach','Mililani','La Porte','Shaker Heights','Suitland','Winchester','Rock Springs','Salmon Creek','Hastings','Mayagüez','Allendale','Mint Hill','Gahanna','Parker','Natick','Titusville','Erie','Auburn','Pullman','Ottawa','Hueytown','Millcreek','Lake Elsinore','Somerset','Ridgewood','East Point','Palm Desert','Danville','Mandan','Dickinson','Safety Harbor','Crown Point','North Tustin','Spanish Lake','Owatonna','Monterey','Suisun City','Lockport','Lindsay','St. Matthews','Sapulpa','North Salt Lake','Wilkes-Barre','Schererville','Middletown','Oswego','Sulphur','Mesquite','Langley Park','Central Islip','Montgomery','Rutland','Inglewood-Finn Hill','Lebanon','Goodlettsville','Wauconda','Cedar City','Paris','Milledgeville','Sedalia','North Platte','Middleton','Sidney','Auburn','Scarsdale','Alabaster','Harrison','Moscow','Seymour','Chester','Helena','Alma','Dodge City','Hayden','Canyon Lake','Garden City','Adelphi','Elko','Saratoga Springs','Helena','Auburn','Derby','Prescott Valley','Moraga','Cockeysville','Huntington Station','Portsmouth','Muskegon Heights','Palmer','Socastee','Green','Avon Lake','Los Altos','Spanish Fork','Crestview','Bay Point','Paris','Lebanon','Hawaiian Gardens','Fruit Cove','Stoneham','North Ridgeville','Cambridge','Bay City','Palisades Park','Muscatine','Bainbridge Island','St. Marys','Sunnyside','Forest Grove','Merritt Island','Erlanger','Asheboro','St. Charles','Farmington','New Brighton','Wesley Chapel','Onalaska','Huntington','Altadena','Bluefield','Elko','Rolla','North Canton','Salida','Spokane Valley','Milford Mill','Prichard','Mint Hill','Westerville','McMinnville','Southlake','Cliffside Park','Maryville','Paragould','Winder','Chillum','Oak Park','South Euclid','Searcy','West New York','West Linn','Parkland','Mustang','Oro Valley','Hopkins','Thomasville','Ottawa','Beaver Dam','Seminole','Zachary','Franklin Square','Glen Burnie','Piqua','Mequon','Ypsilanti','Sherwood','Loves Park','Concord','Banning','Wheat Ridge','Summerlin South','Newnan','Shoreline','South Salt Lake','Alamosa','Meadow Woods','Yucaipa','Danville','Fort Hunt','Eloy','Spanish Springs','Klamath Falls','Castro Valley','Tukwila','Papillion','Russellville','Salina','Elizabeth','Glasgow','Butte-Silver Bow','Martha Lake','Laguna Woods','Madera Acres','Middletown','Pueblo West','Farmington','Lewiston','Troy','St. Andrews','Boulder City','Malibu','Altus','Leavenworth','Tifton','Camas','Bessemer','Lake Wales','Hudson','Bixby','Coachella','Ardmore','Tumwater','New Albany','Pembroke','St. Simons','Lufkin','Duncan','Oakleaf Plantation','Ada','Centralia','Holt','Gladstone','Ruskin','Marshall','Shawnee','Marion','Long Branch','Cudahy','Spring Hill','West Springfield','North Liberty','Ashland','Monroe','West Memphis','Canyon Lake','Blythe','Garden City','Beverly Hills','San Dimas','Claremore','Collinsville','Iselin','Rutherford','Gainesville','Fair Lawn','Daphne','Natchitoches','Bristol','Sugar Hill','McDonough','Forest Lake','Belton','Burlington','Boone','Cullman','Nacogdoches','Worthington','Columbus','Crest Hill','Huntington','Mays Chapel','Kerrville','Orange','Miami Springs','Birmingham','North Highlands','Moses Lake','Nixa','Beaumont','Mountain Brook','Parkville','Cockeysville','Azusa','Glenville','South Valley','St. Helens','Kernersville','Goleta','Lansing','Graham','Lake Ronkonkoma','San Benito','Hackettstown','Elmwood Park','Branford','Trussville','Rosenberg','Whitewater','Rosemount','Calabasas','St. Peters','Silverdale','Douglasville','Uniondale','Rockville Centre','Andover','Mount Holly','Pooler','Rye','El Cerrito','New Castle','West Whittier-Los Nietos','Brea','Cullman','Milledgeville','Mokena','Garfield','Papillion','Fort Washington','Pickerington','Gretna','Monsey','Perry Hall','Ashwaubenon','East Peoria','Wauconda','Lakeside','Benbrook','Selma','Ridgefield','Johnston','Franklin','Norwood','Garfield Heights','Cullman','Galt','McAlester','Wyoming','Lakewood','Sweetwater','Fort Atkinson','Cockeysville','Merrick','Pleasant Grove','Tifton','Ramona','Little Elm','Neenah','Spokane Valley','Alpena','Sapulpa','St. Andrews','Willoughby','Bellefontaine','Norwalk','Dunmore','Bloomsburg','Neosho','Lake Forest','Laguna Hills','Dixon','Woodburn','St. Louis Park','Sedro-Woolley','Halfmoon','Lynbrook','Newberry','Raytown','West Chicago','Jennings','New Castle','Verona','Cliffside Park','Dover','Bayou Cane','St. Ann','Taylors','Rock Springs','Paradise Valley','Grand Terrace','Ellensburg','Lake Zurich','Tiffin','New Hope','Lake in the Hills','Hurstbourne','Santa Fe Springs','Mountlake Terrace','Weatherford','Cottage Lake','Canby','Fitchburg','Ontario','Westbury','Eureka','Sartell','Deer Park','Le Ray','Glen Rock','Westfield','McMinnville','Scottsbluff','Belleview','Floral Park','San Fernando','Cahokia','Hutto','Plymouth','Bellview','Walker','Callaway','Blue Island','Sachse','El Paso de Robles','Tullahoma','Socorro','Glenview','Muskogee','Nogales','Stuart','Homewood','Fort Dix','Maryland Heights','Washington','Evesham','Nanuet','McKeesport','Oak Ridge','Chubbuck','Steubenville','Hazel Dell','Lincolnia','Mount Pleasant','Nicholasville','New Berlin','Myrtle Beach','Shoreview','Riverbank','New Providence','Avon','Garner','Tifton','Depew','Lake Geneva','Sun City Center','Marple','Forest Hills','North Myrtle Beach','Monroe','Plattsburgh','Old Bridge','Lakeway','Northampton','Pleasant Prairie','Streetsboro','McHenry','Pasadena','Northport','Brownwood','Berea','Los Lunas','Payson','Bothell','Ridgecrest','South Elgin','Port Hueneme','Machesney Park','Chillicothe','Holbrook','Norco','Commerce City','Centennial','McKeesport','Easthampton','Dyersburg','Libertyville','Hilliard','Benbrook','Tullahoma','North Laurel','New Baltimore','Farmers Branch','Athens','South Portland','Portland','Pearl River','Waynesboro','Wyandotte','Shelby','Grayslake','Brooklyn','Newburyport','Clemmons','Lisle','St. John','Belleview','Bothell West','Lithia Springs','South Plainfield','Hermitage','Rowland Heights','Galesburg','Danville','Dover','Jacksonville Beach','Lemon Hill','Maple Valley','Grandview','Tega Cay','Greeneville','Kihei','Secaucus','Moorhead','Plainview','Colleyville','Winder','Satellite Beach','Hampden','Abilene','Kilgore','Rolling Meadows','Harker Heights','St. Matthews','Knik-Fairview','Enumclaw','North Cowichan','Frederickson','Silver Spring','Alliance','East Northport','Kingston','Cleburne','Bristol','Fish Hawk','Lebanon','Chesterfield','North Platte','Lake Mary','Havre de Grace','Ferndale','Radcliff','Springfield','Mason City','Plum','Chippewa Falls','Dodge City','Eagle River','Eagle Pass','Port Huron','Mequon','Oak Park','Lincolnwood','Montgomery','Mattoon','Lemon Grove','Athens','Alvin','Enumclaw','Spring Hill','Sunland Park','Lino Lakes','Edgewater','Clarksburg','Cedar Mill','Granite Bay','Cedar Rapids','Sulphur Springs','St. John\'s','Ridgefield Park','Havre','Lake Forest Park','Vernon','Boulder','Rochester','Kernersville','New Hartford','Lombard','Cottonwood Heights','Hernando','Miami','Bellefontaine Neighbors','Onalaska','Ashland','Hurstbourne Acres','Hamilton','Jefferson','Cherry Hill Mall','Clay','Bethel Park','Fitchburg','Wauwatosa','Lino Lakes','North Tonawanda','Baldwin','Spanish Fort','Beavercreek','Cedar Falls','Lake Country','Escanaba','Bowie','Parma Heights','Port Chester','Kings Park','Logan','Winchester','Shorewood','Laurinburg','Green','Bedford','Clinton','Savage','Auburn','Lincolnton','Brown Deer','Lower Burrell','Princeton','Fenton','Pomfret','Jefferson Hills','Warrensburg','Alpena','Oregon','Cudahy','Ashland','Lemoore Station','Lockhart','Norfolk','St. Ann','Pinehurst','Painesville','Fairview Heights','Lyndhurst','St. Marys','North Chicago','Hazel Green','Bluffton','Menominee','South Portland','Gardner','McPherson','Burlington','Athens','St. Michael','Dunn','North Olmsted','Sycamore','Sunnyvale','Murphy','Pella','Hobbs','Brainerd','Laguna Beach','Manchester','Meriden','Carolina Beach','Newington','Oconomowoc','Brenham','Bon Air','Saint-Laurent','Valley','Lebanon','Crowley','West Odessa','Copperas Cove','Corcoran','New Lenox','Melrose','Lambertville','Trenton','Williston','Jefferson City','North Platte','Kerrville','Mountain Home','Manhattan Beach','Beaver','Fairview Park','Parkland','Scarsdale','Sweetwater','Wyoming','Winter Garden','Hudson','Pewaukee','Painesville','Seven Oaks','Cornelius','Montgomery','Wixom','River Falls','North Fort Myers','Palm Coast','North Royalton','Bay Point','Van Buren','Monroe','Cedar Mill','Waxahachie','Rocky River','Norwalk','Albemarle','Seal Beach','Johnson City','Dunedin','Conway','Orinda','Lenoir','Gatesville','Short Pump','Artesia','Centralia','Sedalia','Nederland','North Bend','Mount Juliet','Shelbyville','Burleson','Howell','Wilmette','Canyon Lake','Prineville','Westbrook','Maitland','Longview','Vero Beach South','Medford','Walnut','Lithonia','Middleton','Fernley','Cadillac','Socorro','Suamico','Highland','Midlothian','Ken Caryl','Willow Grove','Wake Forest','Corbin','Groveland','Lake Zurich','Greenfield','Buda','Branson','South Burlington','Troutdale','Canon City','Mason','North Plainfield','Lynn Haven','Whitefish Bay','Sebastian','Wheeling','Jefferson Valley-Yorktown','Hobe Sound','Mountain Home','Moscow','Harrison','Halfmoon','Hybla Valley','Terrytown','Clive','Marshfield','Mount Vernon','New River','Villa Rica','Summit','Trenton','Solon','Durant','Clarksburg','Bentonville','Butler','Fountain Valley','La Plata','Cleveland','Bryn Mawr','Griffin','Brea','Fort Lee','University Heights','Elkhorn','Brawley','Fostoria','Stillwater','Heber','Arlington','Lakewood','Cudahy','Pittsburg','Marietta','Cottage Grove','Silver Firs','Scituate','Pearl City','Huron','Farmington','Centralia','Westport','Seymour','St. John','Lakeland South','Havre de Grace','Duluth','Commerce','Onalaska','McMinnville','Maitland','Albemarle','Fernandina Beach','Lake Forest','Hope Mills','Powell','Highland','Lynden','Fayetteville','Moorestown','Palm Valley','Santee','Cedar City','Center Point','Watertown','Millbrae','Monroe','Bella Vista','Laurel','Washington','Sun City West','San Carlos','Goose Creek','South Lake Tahoe','Denison','Iselin','Cedar Park','Hayward','Galt','Wilkinsburg','Long Beach','Mehlville','Le Mars','Glassboro','Grenada','Lebanon','Middle River','University Park','Shrewsbury','Fort Lee','Fort Hunt','Budd Lake','Cohoes','Harrisburg','Homewood','Sulphur','Troy','Des Moines','Fort Payne','Ypsilanti','Sidney','Clemmons','Lake Oswego','Central','Biddeford','Parker','Camas','Plainview','Roosevelt','Oxford','Arcadia','Weirton','Evergreen Park','College Park','Forest Park','Lexington','Seaford','King of Prussia','Mequon','Barnstable Town','Payson','Mount Pleasant','Gloversville','Biddeford','Blytheville','Ridgewood','Boulder City','Melville','Chelsea','Mercerville','New Castle','Hastings-on-Hudson','Wauconda','Miamisburg','Kings Park West','Magna','Galloway','Jefferson Hills','Ferguson','South Bradenton','Twentynine Palms','Hewitt','Georgetown','Franklin','Mill Creek','Mequon','Winter Park','Lakewood','St. Matthews','Lake Forest','River Forest','Walker','Willowick','Drexel Hill','Chanhassen','Gillette','Alexandria','Socorro','Harker Heights','Fairfax','Truckee','Lemon Hill','Hazel Park','Holly Hill','Homewood','Ames','Monroe','Ocean Springs','Auburn','Mequon','Wilton Manors','American Fork','Mason City','Crestview','Lemon Grove','Baraboo','North Tonawanda','Cornelius','Washington','Wallingford','Des Moines','Burke','Jeannette','Brawley','Hazel Green','Mineola','Ferndale','Dallas','Raytown','Northport','Spanish Springs','Eloy','Bridgetown','Puyallup','Scottsboro','Socastee','La Vergne','Short Pump','River Forest','Tonawanda','Middleton','St. Marys','Farragut','Newburgh','Rexburg','Rocky Hill','Clarksburg','Dover','West Hollywood','Tinton Falls','College','Glenn Dale','Moraga','Morton','Hartford','Wilmington','Baker','Garden Grove','Eureka','Northbrook','Lafayette','Lehi','West Bend','Mountlake Terrace','Sulphur','Goshen','St. Michael','Pelham','Atchison','Sweetwater','Havre','Lake Zurich','Lumberton','Mokena','West Odessa','New Hope','Mandan','Dobbs Ferry','Halfmoon','Bethpage','Socorro','Kailua','Hazelwood','Owatonna','Holtsville','Mountain Home','St. Matthews','Bethany','Beaver Dam','Graham','Spanish Lake','Socorro','North Canton','Fultondale','Fernley','Sherwood','Lake Grove','St. Louis Park','Bellaire','Wisconsin Rapids','North Liberty','Forest City','Lavon','Socorro','Lakeville','Mandan','Socorro','Kingsland','Northview','Socorro','East Lansing','Socorro','Socorro','Socorro'])]];
-                const showResults = (q = '') => {
+                const input = document.getElementById('citySearch'), results = document.getElementById('cityResults');
+                const allCities = ['New York','London','Paris','Berlin','Tokyo','Beijing','Sydney','Moscow','Brasília','New Delhi','Toronto','Seoul','Dubai','Johannesburg','Los Angeles','Chicago','Houston','Phoenix','Philadelphia','San Antonio','San Diego','Dallas','San Jose','Austin','Jacksonville','Fort Worth','Columbus','Charlotte','Indianapolis','San Francisco','Seattle','Denver','Washington','Boston','El Paso','Nashville','Detroit','Oklahoma City','Portland','Las Vegas','Memphis','Louisville','Baltimore','Milwaukee','Albuquerque','Tucson','Fresno','Sacramento','Kansas City','Long Beach','Mesa','Atlanta','Colorado Springs','Virginia Beach','Raleigh','Omaha','Miami','Oakland','Minneapolis','Tulsa','Wichita','New Orleans','Arlington','Cleveland','Bakersfield','Tampa','Aurora','Honolulu','Anaheim','Santa Ana','Corpus Christi','Riverside','Lexington','Henderson','Stockton','Saint Paul','Cincinnati','St. Louis','Pittsburgh','Greensboro','Anchorage','Plano','Lincoln','Orlando','Irvine','Newark','Toledo','Durham','Chula Vista','Fort Wayne','Jersey City','St. Petersburg','Laredo','Madison','Chandler','Buffalo','Lubbock','Scottsdale','Reno'];
+                const show = (q='') => {
                     const filtered = allCities.filter(c => c.toLowerCase().includes(q.toLowerCase()));
-                    results.innerHTML = filtered.slice(0,30).map(c => `<div style="padding:6px; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.1);" class="city-item">${c}</div>`).join('');
-                    document.querySelectorAll('.city-item').forEach(el => el.onclick = () => {
-                        const tz = Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone').find(t => t.includes(el.textContent.replace(' ','_'))) : null;
-                        const time = tz ? new Date().toLocaleString('en-US',{timeZone:tz, hour:'2-digit', minute:'2-digit'}) : '--:--';
+                    results.innerHTML = filtered.slice(0,30).map(c => `<div class="city-row" style="padding:6px; cursor:pointer; border-bottom:1px solid rgba(255,255,255,0.1);">${c}</div>`).join('');
+                    document.querySelectorAll('.city-row').forEach(el => el.onclick = () => {
+                        const tzGuess = el.textContent.replace(' ','_');
+                        const time = new Date().toLocaleString('en-US',{timeZone: tzGuess, hour:'2-digit', minute:'2-digit'}).replace('AM','').replace('PM','');
                         el.textContent = `${el.textContent.split(' - ')[0]} - ${time}`;
                     });
                 };
-                showResults();
-                input.addEventListener('input', () => showResults(input.value));
+                show(); input.addEventListener('input', () => show(input.value));
             }
 
             function buildCalendar() {
-                const now = new Date();
-                const shamsi = gregorianToJalali(now);
-                return `<div style="text-align:center; font-size:1.8rem; color:#d4af37; font-family:'Cinzel';">${now.toLocaleDateString('fa-IR',{weekday:'long', year:'numeric', month:'long', day:'numeric'})}</div><div style="text-align:center; margin-top:10px; color:#ccc;">📅 ${shamsi}</div>`;
+                const now = new Date(); const shamsi = gregorianToJalali(now);
+                return `<div style="text-align:center; font-size:1.8rem; color:#d4af37; font-family:'Cinzel';">${now.toLocaleDateString('fa-IR',{weekday:'long', year:'numeric', month:'long', day:'numeric'})}</div><div style="text-align:center; margin-top:10px;">📅 ${shamsi}</div>`;
             }
 
-            function buildMoonPhase() {
-                return '<canvas id="moonCanvas" width="200" height="200" style="display:block; margin:0 auto;"></canvas><p style="text-align:center; color:#d4af37; margin-top:10px;" id="moonPhaseText">🌙 فاز ماه</p>';
-            }
+            function buildMoonPhase() { return '<canvas id="moonCanvas" width="200" height="200" style="display:block; margin:0 auto;"></canvas><p style="text-align:center; color:#d4af37; margin-top:10px;">🌙 فاز ماه</p>'; }
             function initMoonPhase() {
-                const mc = document.getElementById('moonCanvas');
-                if(!mc) return;
-                const mctx = mc.getContext('2d');
-                mctx.fillStyle = '#0a0a18'; mctx.fillRect(0,0,200,200);
+                const mc = document.getElementById('moonCanvas'); if(!mc) return;
+                const mctx = mc.getContext('2d'); mctx.fillStyle = '#0a0a18'; mctx.fillRect(0,0,200,200);
                 mctx.beginPath(); mctx.arc(100,100,80,0,Math.PI*2); mctx.fillStyle = '#e8e4f0'; mctx.fill();
                 const phase = (new Date().getDate() % 30) / 30;
                 mctx.beginPath(); mctx.arc(100 + phase*60 - 30,100,75,0,Math.PI*2); mctx.fillStyle = '#0a0a18'; mctx.fill();
-                document.getElementById('moonPhaseText').textContent = `🌙 فاز ماه: ${Math.round(phase*100)}%`;
             }
 
+            // ========== منوی اصلی ==========
             const menuItems = [
                 { cat: '⏱️ ابزارهای اصلی', items: [
-                    { icon:'⏱️', text:'کرنوگراف', action: ()=>{ openModal('⏱️ کرنوگراف', buildChronograph()); setTimeout(initChronograph, 100); } },
-                    { icon:'⏰', text:'آلارم', action: ()=>{ openModal('⏰ آلارم', buildAlarm()); setTimeout(initAlarm, 100); } },
-                    { icon:'⏳', text:'تایمر شمارش معکوس', action: ()=>{ openModal('⏳ تایمر', buildTimer()); setTimeout(initTimer, 100); } },
-                    { icon:'🌍', text:'ساعت جهانی', action: ()=>{ openModal('🌍 ساعت جهانی', buildWorldClock()); setTimeout(initWorldClock, 100); } },
+                    { icon:'⏱️', text:'کرنوگراف', action: ()=>{ openModal('⏱️ کرنوگراف', buildChronograph()); setTimeout(initChronograph,100); } },
+                    { icon:'⏰', text:'آلارم', action: ()=>{ openModal('⏰ آلارم', buildAlarm()); setTimeout(initAlarm,100); } },
+                    { icon:'⏳', text:'تایمر شمارش معکوس', action: ()=>{ openModal('⏳ تایمر', buildTimer()); setTimeout(initTimer,100); } },
+                    { icon:'🌍', text:'ساعت جهانی', action: ()=>{ openModal('🌍 ساعت جهانی', buildWorldClock()); setTimeout(initWorldClock,100); } },
                     { icon:'📅', text:'تقویم', action: ()=> openModal('📅 تقویم', buildCalendar()) },
-                    { icon:'🌙', text:'فاز ماه', action: ()=>{ openModal('🌙 فاز ماه', buildMoonPhase()); setTimeout(initMoonPhase, 100); } },
-                    { icon:'🎨', text:'گالری تم', action: ()=> openModal('🎨 گالری تم', themes.map((t,i)=>`<p style="cursor:pointer; padding:8px; border-radius:8px; margin:4px 0; background:rgba(255,255,255,0.05);" onclick="document.getElementById('modalOverlay').classList.remove('active');applyTheme(${i})">${t.name}</p>`).join('')) },
+                    { icon:'🌙', text:'فاز ماه', action: ()=>{ openModal('🌙 فاز ماه', buildMoonPhase()); setTimeout(initMoonPhase,100); } },
+                    { icon:'🎨', text:'گالری تم', action: ()=> openModal('🎨 گالری تم', themes.map((t,i)=>`<p style="cursor:pointer; padding:8px; margin:4px 0; border-radius:8px; background:rgba(255,255,255,0.05);" onclick="document.getElementById('modalOverlay').classList.remove('active');applyTheme(${i})">${t.name}</p>`).join('')) },
                 ]},
-                { cat: '🌐 مناطق زمانی', items: countries.map(c=>({ icon:'🕐', text:`${c.city}`, action: ()=> openModal(c.city, `<p>${getLocalTime(c.timezone).timeStr} - ${getLocalTime(c.timezone).dateStr}</p>`) })) },
-                { cat: '⏲️ ابزارهای زمان', items: [
-                    { icon:'🔄', text:'تبدیل واحد زمان', action: ()=> openModal('تبدیل', '<input class="tool-input" id="timeConvert" placeholder="دقیقه"><p id="timeResult"></p>') },
-                    { icon:'📊', text:'نمودار اختلاف ساعت', action: ()=> openModal('نمودار', '<p>به‌زودی...</p>') },
-                    { icon:'⏲️', text:'پومودورو', action: ()=> openModal('پومودورو', buildTimer()) },
-                ]},
+                { cat: '🌐 زمان شهرها', items: countries.map(c=>({ icon:'🕐', text:c.city, action: ()=> openModal(c.city, `<p>${getLocalTime(c.timezone).timeStr} - ${getLocalTime(c.timezone).dateStr}</p>`) })) },
                 { cat: '⚙️ تنظیمات', items: [
-                    { icon:'🔤', text:'تغییر فونت', action: ()=> openModal('فونت', '<p>انتخاب فونت</p>') },
+                    { icon:'🔤', text:'فونت', action: ()=> openModal('فونت', '<p>تنظیمات فونت</p>') },
                     { icon:'🎚️', text:'شفافیت کارت‌ها', action: ()=> openModal('شفافیت', '<input type="range" min="0.1" max="1" step="0.1" class="tool-input">') },
                 ]},
             ];
@@ -806,14 +722,12 @@
             function buildMenu() {
                 let html = '';
                 menuItems.forEach(cat => {
-                    html += `<div class="category"><div class="cat-title">${cat.cat}</div>`;
-                    cat.items.forEach(item => {
-                        html += `<div class="item" data-action="${item.text}"><span>${item.icon}</span> ${item.text}</div>`;
-                    });
+                    html += `<div class="menu-category"><div class="menu-cat-title">${cat.cat}</div>`;
+                    cat.items.forEach(item => { html += `<div class="menu-item" data-action="${item.text}"><span>${item.icon}</span> ${item.text}</div>`; });
                     html += '</div>';
                 });
                 document.getElementById('menuContent').innerHTML = html;
-                document.querySelectorAll('.item').forEach(el => {
+                document.querySelectorAll('.menu-item').forEach(el => {
                     el.addEventListener('click', () => {
                         const action = el.dataset.action;
                         const found = menuItems.flatMap(c=>c.items).find(i=>i.text===action);
@@ -823,9 +737,9 @@
                 });
             }
 
-            function openMenu() { menuDrawer.classList.add('open'); menuOverlay.classList.add('active'); menuBtn.classList.add('open'); }
-            function closeMenu() { menuDrawer.classList.remove('open'); menuOverlay.classList.remove('active'); menuBtn.classList.remove('open'); }
-            menuBtn.addEventListener('click', () => menuDrawer.classList.contains('open') ? closeMenu() : openMenu());
+            function openMenu() { menuDrawer.classList.add('open'); menuOverlay.classList.add('active'); hamburgerBtn.classList.add('open'); }
+            function closeMenu() { menuDrawer.classList.remove('open'); menuOverlay.classList.remove('active'); hamburgerBtn.classList.remove('open'); }
+            hamburgerBtn.addEventListener('click', () => menuDrawer.classList.contains('open') ? closeMenu() : openMenu());
             menuOverlay.addEventListener('click', closeMenu);
 
             // ========== راه‌اندازی ==========
