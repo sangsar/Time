@@ -16,7 +16,6 @@
             --card-day-bg: linear-gradient(145deg, rgba(245,242,235,0.7), rgba(255,252,245,0.75));
             --card-night-bg: linear-gradient(145deg, rgba(16,14,35,0.65), rgba(28,22,50,0.75));
             --quote-bg: rgba(20, 15, 35, 0.4);
-            --overlay-color: rgba(0,0,0,0.35);
             --star-color: rgba(230,220,255,0.9);
         }
 
@@ -32,7 +31,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* لایهٔ عکس‌های پس‌زمینه */
+        /* لایه‌های عکس پس‌زمینه (دو لایه برای تعویض بدون مکث) */
         .bg-image-layer {
             position: fixed;
             top: 0; left: 0;
@@ -41,11 +40,12 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            /* بدون ترنزیشن برای جلوگیری از پرش */
             transition: none;
             transform: translate3d(0,0,0);
             will-change: background-image;
         }
+        .bg-image-layer.layer-a { z-index: -4; opacity: 1; }
+        .bg-image-layer.layer-b { z-index: -5; opacity: 1; } /* لایه مخفی که عکس بعدی در آن بارگذاری می‌شود */
 
         /* بوم ستاره‌ها */
         #background-canvas {
@@ -67,6 +67,18 @@
             transform: translate3d(0,0,0);
         }
 
+        /* نوار نشانگر تم */
+        .theme-indicator-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 3px;
+            background: #d4af37;
+            z-index: 120;
+            transition: width 0.3s ease, background 0.5s;
+            box-shadow: 0 0 12px currentColor;
+            pointer-events: none;
+        }
+
         /* دکمه تغییر تم (پایین راست) */
         .theme-switch {
             position: fixed;
@@ -85,13 +97,42 @@
             font-size: 1.2rem;
             color: #fff;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
             user-select: none;
             transform: translate3d(0,0,0);
         }
         .theme-switch:hover {
             transform: scale(1.12);
             box-shadow: 0 6px 26px rgba(255,255,255,0.35);
+        }
+        .theme-switch.rotating {
+            animation: rotateDab 0.6s ease;
+        }
+        @keyframes rotateDab {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* نام تم شناور */
+        .theme-tooltip {
+            position: fixed;
+            bottom: 68px; right: 10px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 14px;
+            font-size: 0.7rem;
+            z-index: 110;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+        }
+        .theme-tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* گرامافون (پایین چپ) */
@@ -311,11 +352,14 @@
         <source src="https://dl.musicviral.ir/Music/04-04/Emilio%20Piano%20x%20Lucie%20-%20Maison.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- لایهٔ عکس‌های پس‌زمینه -->
-    <div class="bg-image-layer" id="bgImageLayer"></div>
+    <!-- لایه‌های عکس (دو لایه) -->
+    <div class="bg-image-layer layer-a" id="bgLayerA"></div>
+    <div class="bg-image-layer layer-b" id="bgLayerB"></div>
 
-    <!-- دکمه تغییر تم (ماه) -->
+    <!-- دکمه تغییر تم -->
     <button class="theme-switch" id="themeSwitch" title="تغییر تم">🌙</button>
+    <div class="theme-tooltip" id="themeTooltip"></div>
+    <div class="theme-indicator-bar" id="themeBar"></div>
 
     <!-- گرامافون -->
     <button class="gramophone-toggle" id="gramophoneToggle" title="پخش/قطع موسیقی">
@@ -400,7 +444,7 @@
                 { city: 'Johannesburg', timezone: 'Africa/Johannesburg', featured: false, useShamsi: false }
             ];
 
-            // تم‌های رنگی (overlay و تغییر رنگ المان‌ها)
+            // تم‌ها با رنگ‌های عمیق‌تر
             const themes = [
                 {
                     name: 'کهکشانی',
@@ -408,7 +452,8 @@
                     quoteBg: 'rgba(20, 15, 35, 0.4)',
                     cardDayBg: 'linear-gradient(145deg, rgba(245,242,235,0.7), rgba(255,252,245,0.75))',
                     cardNightBg: 'linear-gradient(145deg, rgba(16,14,35,0.65), rgba(28,22,50,0.75))',
-                    starColor: 'rgba(230,220,255,0.9)'
+                    starColor: 'rgba(230,220,255,0.9)',
+                    barColor: '#d4af37'
                 },
                 {
                     name: 'صورتی رؤیایی',
@@ -416,7 +461,8 @@
                     quoteBg: 'rgba(35, 15, 30, 0.4)',
                     cardDayBg: 'linear-gradient(145deg, rgba(252,240,245,0.7), rgba(255,245,250,0.75))',
                     cardNightBg: 'linear-gradient(145deg, rgba(40,15,30,0.65), rgba(50,20,35,0.75))',
-                    starColor: 'rgba(255,200,220,0.9)'
+                    starColor: 'rgba(255,200,220,0.9)',
+                    barColor: '#ff90a0'
                 },
                 {
                     name: 'آبی دریایی',
@@ -424,7 +470,8 @@
                     quoteBg: 'rgba(15, 20, 35, 0.4)',
                     cardDayBg: 'linear-gradient(145deg, rgba(235,242,252,0.7), rgba(245,248,255,0.75))',
                     cardNightBg: 'linear-gradient(145deg, rgba(15,20,35,0.65), rgba(22,28,50,0.75))',
-                    starColor: 'rgba(180,220,255,0.9)'
+                    starColor: 'rgba(180,220,255,0.9)',
+                    barColor: '#4a90d9'
                 },
                 {
                     name: 'سفید مهتابی',
@@ -432,14 +479,16 @@
                     quoteBg: 'rgba(30, 30, 40, 0.4)',
                     cardDayBg: 'linear-gradient(145deg, rgba(245,245,250,0.7), rgba(255,255,255,0.75))',
                     cardNightBg: 'linear-gradient(145deg, rgba(25,25,35,0.65), rgba(35,35,50,0.75))',
-                    starColor: 'rgba(255,255,255,0.9)'
+                    starColor: 'rgba(255,255,255,0.9)',
+                    barColor: '#e0e0e0'
                 }
             ];
             let currentThemeIndex = 0;
             let currentTheme = themes[0];
 
             // DOM
-            const bgImageLayer = document.getElementById('bgImageLayer');
+            const bgLayerA = document.getElementById('bgLayerA');
+            const bgLayerB = document.getElementById('bgLayerB');
             const bgOverlay = document.getElementById('bgOverlay');
             const bgCanvas = document.getElementById('background-canvas');
             const ctx = bgCanvas.getContext('2d');
@@ -451,26 +500,68 @@
             const gramophoneBtn = document.getElementById('gramophoneToggle');
             const recordDisc = document.getElementById('recordDisc');
             const themeSwitch = document.getElementById('themeSwitch');
+            const themeTooltip = document.getElementById('themeTooltip');
+            const themeBar = document.getElementById('themeBar');
 
             let quoteIndex = 0;
             let clockCards = [];
             let isPlaying = true;
             let quotesArray = [];
-            let currentImageIndex = 0;
             let stars = [];
+            let activeLayer = 'A'; // کدام لایه در حال نمایش است
+            let nextImageIndex = -1; // ایندکس تصویر بعدی
 
-            // ---------- مدیریت عکس‌ها ----------
-            function changeBackgroundImage() {
-                if (backgroundImages.length === 0) return;
-                currentImageIndex = (currentImageIndex + 1) % backgroundImages.length;
-                bgImageLayer.style.backgroundImage = `url('${backgroundImages[currentImageIndex]}')`;
+            // ---------- مدیریت عکس‌های رندوم بدون مکث ----------
+            function getRandomImageIndex() {
+                if (backgroundImages.length === 1) return 0;
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * backgroundImages.length);
+                } while (newIndex === nextImageIndex && backgroundImages.length > 1);
+                return newIndex;
             }
 
-            function preloadImages(urls) {
-                urls.forEach(url => {
+            function preloadImage(url) {
+                return new Promise((resolve) => {
                     const img = new Image();
+                    img.onload = () => resolve();
+                    img.onerror = () => resolve();
                     img.src = url;
                 });
+            }
+
+            async function changeBackgroundImage() {
+                const newIndex = getRandomImageIndex();
+                nextImageIndex = newIndex;
+                const newImageUrl = backgroundImages[newIndex];
+
+                // لایه‌ای که در حال حاضر مخفی است را آماده می‌کنیم
+                const targetLayer = activeLayer === 'A' ? bgLayerB : bgLayerA;
+
+                // پیش‌بارگذاری و تنظیم عکس در لایه مخفی
+                await preloadImage(newImageUrl);
+                targetLayer.style.backgroundImage = `url('${newImageUrl}')`;
+
+                // جابجایی لایه‌ها: لایه مخفی را نمایان و لایه قبلی را مخفی می‌کنیم
+                if (activeLayer === 'A') {
+                    bgLayerB.style.zIndex = -4;
+                    bgLayerA.style.zIndex = -5;
+                    activeLayer = 'B';
+                } else {
+                    bgLayerA.style.zIndex = -4;
+                    bgLayerB.style.zIndex = -5;
+                    activeLayer = 'A';
+                }
+            }
+
+            // راه‌اندازی اولیه: اولین عکس رندوم
+            function setInitialImage() {
+                const initialIndex = getRandomImageIndex();
+                nextImageIndex = initialIndex;
+                bgLayerA.style.backgroundImage = `url('${backgroundImages[initialIndex]}')`;
+                bgLayerA.style.zIndex = -4;
+                bgLayerB.style.zIndex = -5;
+                activeLayer = 'A';
             }
 
             // ---------- تاریخ شمسی ----------
@@ -609,7 +700,7 @@
                     stars.push({
                         x: Math.random() * bgCanvas.width,
                         y: Math.random() * bgCanvas.height,
-                        size: Math.random() * 3 + 3, // 3 تا 6 پیکسل (کمی بزرگتر)
+                        size: Math.random() * 3 + 3,
                         speedY: -(Math.random() * 0.3 + 0.1),
                         speedX: (Math.random() - 0.5) * 0.2,
                         opacity: Math.random() * 0.5 + 0.4,
@@ -655,14 +746,29 @@
             function applyTheme(index) {
                 currentThemeIndex = index;
                 currentTheme = themes[index];
-                // اعمال تغییرات رنگی
+                
+                // تغییر رنگ‌ها
                 bgOverlay.style.background = `radial-gradient(ellipse at center, ${currentTheme.overlayColor} 0%, rgba(0,0,0,0.4) 100%)`;
                 quoteContainer.style.background = currentTheme.quoteBg;
                 document.documentElement.style.setProperty('--card-day-bg', currentTheme.cardDayBg);
                 document.documentElement.style.setProperty('--card-night-bg', currentTheme.cardNightBg);
+                
+                // نوار نشانگر
+                themeBar.style.width = '100%';
+                themeBar.style.background = currentTheme.barColor;
+                themeBar.style.boxShadow = `0 0 12px ${currentTheme.barColor}`;
+                setTimeout(() => { themeBar.style.width = '0'; }, 1000);
+                
+                // نام تم
+                themeTooltip.textContent = currentTheme.name;
+                themeTooltip.classList.add('show');
+                setTimeout(() => { themeTooltip.classList.remove('show'); }, 1500);
+                
+                // انیمیشن دکمه
+                themeSwitch.classList.add('rotating');
+                setTimeout(() => { themeSwitch.classList.remove('rotating'); }, 600);
             }
 
-            // تغییر تم
             themeSwitch.addEventListener('click', () => {
                 let next = (currentThemeIndex + 1) % themes.length;
                 applyTheme(next);
@@ -682,11 +788,7 @@
 
             // راه‌اندازی
             function init() {
-                // تنظیم اولین عکس
-                if (backgroundImages.length > 0) {
-                    bgImageLayer.style.backgroundImage = `url('${backgroundImages[0]}')`;
-                }
-                preloadImages(backgroundImages);
+                setInitialImage();
                 setInterval(changeBackgroundImage, IMAGE_CHANGE_INTERVAL);
 
                 resizeCanvas();
@@ -699,7 +801,6 @@
                 prepareQuotes();
                 updateQuote();
 
-                // اعمال تم اولیه
                 applyTheme(0);
 
                 setInterval(updateClocks, CLOCK_INTERVAL);
