@@ -1,19 +1,15 @@
 // ==================== tools.js ====================
 // ۶۶+ ابزار واقعی برای my time
-// این فایل را کنار index.html و quotes.js قرار بده
-
 (function() {
-    // ========== مدال (پنجرهٔ بازشو) ==========
-    function openModal(title, htmlContent, callback) {
-        const modalOverlay = document.getElementById('modalOverlay');
-        const modalBody = document.getElementById('modalBody');
-        if (!modalOverlay || !modalBody) return;
-        modalBody.innerHTML = `<h2 style="color:#d4af37; margin-bottom:16px; font-family:'Playfair Display', serif; text-align:center; font-size:1.6rem;">${title}</h2>${htmlContent}`;
-        modalOverlay.classList.add('active');
-        if (callback) setTimeout(callback, 100);
+    // مدال
+    function openModal(title, html, cb) {
+        const overlay = document.getElementById('modalOverlay');
+        const body = document.getElementById('modalBody');
+        if (!overlay || !body) return;
+        body.innerHTML = `<h2 style="color:#d4af37; margin-bottom:16px; font-family:'Playfair Display', serif; text-align:center; font-size:1.6rem;">${title}</h2>${html}`;
+        overlay.classList.add('active');
+        if (cb) setTimeout(cb, 100);
     }
-
-    // بستن مدال (المان‌ها باید از قبل در index.html وجود داشته باشند)
     document.getElementById('modalClose').addEventListener('click', () => {
         document.getElementById('modalOverlay').classList.remove('active');
     });
@@ -21,16 +17,11 @@
         if (e.target === this) this.classList.remove('active');
     });
 
-    // ========== ابزارهای عمومی ==========
-    function getTimeInCity(timezone) {
-        try {
-            const now = new Date();
-            return now.toLocaleString('en-US', { timeZone: timezone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-        } catch(e) {
-            return '--:--:--';
-        }
+    // توابع کمکی
+    function getTimeInCity(tz) {
+        try { return new Date().toLocaleString('en-US', { timeZone: tz, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false }); }
+        catch(e) { return '--:--:--'; }
     }
-
     function gregorianToJalali(d) {
         const g = [31,28,31,30,31,30,31,31,30,31,30,31], j = [31,31,31,31,31,31,30,29,29,29,29,29];
         let gy = d.getFullYear()-1600, gm = d.getMonth(), gd = d.getDate()-1;
@@ -47,11 +38,11 @@
         return `${jdn+1} ${m[jm]} ${jy}`;
     }
 
-    // ========== ۱. کرنوگراف حرفه‌ای ==========
+    // ========== ابزارها ==========
     let chronoInterval, chronoRunning = false, chronoTime = 0;
     function openChronograph() {
         openModal('⏱️ کرنوگراف', `
-            <div style="text-align:center; font-size:3rem; font-family:'Cinzel'; margin:20px 0;" id="chronoDisplay">00:00.00</div>
+            <div style="text-align:center; font-size:3rem; font-family:'Cinzel';" id="chronoDisplay">00:00.00</div>
             <div style="display:flex; gap:10px; justify-content:center;">
                 <button class="tool-btn" id="chronoStart">▶ شروع</button>
                 <button class="tool-btn" id="chronoStop">⏸ توقف</button>
@@ -67,11 +58,10 @@
             });
     }
 
-    // ========== ۲. تایمر شمارش معکوس ==========
     let timerInterval, timerRunning = false, timerTime = 0;
     function openTimer() {
         openModal('⏳ تایمر', `
-            <div style="text-align:center; font-size:2.5rem; font-family:'Cinzel'; margin:20px 0;" id="timerDisplay">00:00</div>
+            <div style="text-align:center; font-size:2.5rem; font-family:'Cinzel';" id="timerDisplay">00:00</div>
             <input type="number" id="timerMinutes" class="tool-input" placeholder="دقیقه" style="text-align:center;">
             <div style="display:flex; gap:10px; justify-content:center; margin-top:12px;">
                 <button class="tool-btn" id="timerStart">▶</button>
@@ -88,11 +78,10 @@
             });
     }
 
-    // ========== ۳. پومودورو ==========
     let pomodoroInterval, pomodoroRunning = false, pomodoroTime = 1500, pomodoroIsWork = true;
     function openPomodoro() {
         openModal('🍅 پومودورو', `
-            <div style="text-align:center; font-size:2.5rem; font-family:'Cinzel'; margin:20px 0;" id="pomodoroDisplay">25:00</div>
+            <div style="text-align:center; font-size:2.5rem; font-family:'Cinzel';" id="pomodoroDisplay">25:00</div>
             <div style="display:flex; gap:10px; justify-content:center;">
                 <button class="tool-btn" id="pomodoroStart">▶</button>
                 <button class="tool-btn" id="pomodoroPause">⏸</button>
@@ -110,7 +99,6 @@
             });
     }
 
-    // ========== ۴. آلارم ==========
     let alarmTimeout;
     function openAlarm() {
         openModal('⏰ آلارم', `
@@ -134,7 +122,6 @@
             });
     }
 
-    // ========== ۵. ساعت جهانی ==========
     const worldCities = [
         {name:'Tehran', tz:'Asia/Tehran'},{name:'New York', tz:'America/New_York'},{name:'London', tz:'Europe/London'},
         {name:'Paris', tz:'Europe/Paris'},{name:'Berlin', tz:'Europe/Berlin'},{name:'Tokyo', tz:'Asia/Tokyo'},
@@ -160,7 +147,6 @@
             });
     }
 
-    // ========== ۶. تقویم ==========
     function openCalendar() {
         const now = new Date();
         const shamsi = gregorianToJalali(now);
@@ -170,9 +156,8 @@
             <div style="text-align:center; margin-top:20px; color:#ccc;">${now.toLocaleDateString('en-US',{weekday:'long', year:'numeric', month:'long', day:'numeric'})}</div>`);
     }
 
-    // ========== ۷. فاز ماه ==========
     function openMoonPhase() {
-        openModal('🌙 فاز ماه', '<canvas id="moonCanvas" width="200" height="200" style="display:block; margin:0 auto;"></canvas><p style="text-align:center; color:#d4af37; margin-top:10px;">🌙 فاز ماه</p>', () => {
+        openModal('🌙 فاز ماه', '<canvas id="moonCanvas" width="200" height="200" style="display:block; margin:0 auto;"></canvas><p style="text-align:center; color:#d4af37;">🌙 فاز ماه</p>', () => {
             const mc = document.getElementById('moonCanvas'), mctx = mc.getContext('2d');
             mctx.fillStyle = '#0a0a18'; mctx.fillRect(0,0,200,200);
             mctx.beginPath(); mctx.arc(100,100,80,0,Math.PI*2); mctx.fillStyle = '#e8e4f0'; mctx.fill();
@@ -181,11 +166,10 @@
         });
     }
 
-    // ========== ۸. ماشین حساب زمان ==========
     function openTimeCalc() {
         openModal('🧮 ماشین حساب زمان', `
-            <input type="number" id="timeCalcInput" class="tool-input" placeholder="دقیقه را وارد کنید" style="text-align:center;">
-            <div style="text-align:center; margin-top:15px; color:#ccc;" id="timeCalcResult">معادل‌ها...</div>`, () => {
+            <input type="number" id="timeCalcInput" class="tool-input" placeholder="دقیقه" style="text-align:center;">
+            <div id="timeCalcResult" style="text-align:center; margin-top:15px; color:#ccc;">معادل‌ها...</div>`, () => {
                 document.getElementById('timeCalcInput').addEventListener('input', function() {
                     const mins = parseInt(this.value) || 0;
                     document.getElementById('timeCalcResult').innerHTML = `${mins} دقیقه =<br>${(mins/60).toFixed(2)} ساعت<br>${(mins/1440).toFixed(3)} روز`;
@@ -193,11 +177,10 @@
             });
     }
 
-    // ========== ۹. محاسبه سن ==========
     function openAgeCalc() {
         openModal('🎂 محاسبه سن', `
             <input type="date" id="birthdate" class="tool-input" style="text-align:center;">
-            <div style="text-align:center; margin-top:15px; color:#ccc;" id="ageResult">تاریخ تولد</div>`, () => {
+            <div id="ageResult" style="text-align:center; margin-top:15px; color:#ccc;">تاریخ تولد</div>`, () => {
                 document.getElementById('birthdate').addEventListener('change', function() {
                     const birth = new Date(this.value), now = new Date();
                     let years = now.getFullYear() - birth.getFullYear();
@@ -208,12 +191,11 @@
             });
     }
 
-    // ========== ۱۰. طلوع/غروب ==========
     function openSunTimes() {
         openModal('🌅 طلوع/غروب', `
             <input type="text" id="sunCity" class="tool-input" placeholder="نام شهر (انگلیسی)" value="Tehran">
             <button class="tool-btn" id="getSunTimes">🔍 دریافت</button>
-            <div style="text-align:center; margin-top:15px; color:#d4af37;" id="sunResult"></div>`, () => {
+            <div id="sunResult" style="text-align:center; margin-top:15px; color:#d4af37;"></div>`, () => {
                 document.getElementById('getSunTimes').onclick = () => {
                     const city = document.getElementById('sunCity').value || 'Tehran';
                     document.getElementById('sunResult').textContent = `🌅 طلوع و غروب در ${city} (به‌زودی...)`;
@@ -221,7 +203,6 @@
             });
     }
 
-    // ========== ۱۱. ساعت آنالوگ ==========
     function openAnalogClock() {
         openModal('🕰️ ساعت آنالوگ', '<canvas id="analogCanvas" width="300" height="300" style="display:block; margin:0 auto;"></canvas>', () => {
             const canvas = document.getElementById('analogCanvas'), ctx = canvas.getContext('2d');
@@ -244,12 +225,11 @@
         });
     }
 
-    // ========== ۱۲. آب و هوا (Open-Meteo) ==========
     function openWeather() {
         openModal('🌤️ آب و هوا', `
             <input type="text" id="weatherCity" class="tool-input" placeholder="نام شهر (انگلیسی)" value="Tehran">
             <button class="tool-btn" id="getWeather">🔍 دریافت</button>
-            <div style="text-align:center; margin-top:15px; color:#d4af37;" id="weatherResult"></div>`, () => {
+            <div id="weatherResult" style="text-align:center; margin-top:15px; color:#d4af37;"></div>`, () => {
                 document.getElementById('getWeather').onclick = async () => {
                     const city = document.getElementById('weatherCity').value || 'Tehran';
                     try {
@@ -265,22 +245,19 @@
             });
     }
 
-    // ========== منوی کامل با دسته‌بندی‌ها ==========
+    // ========== منو ==========
     const menuCategories = [
         { name: '⏱️ کرنوگراف و تایمر', items: [
             { icon:'⏱️', text:'کرنوگراف', action: openChronograph },
             { icon:'⏳', text:'تایمر', action: openTimer },
             { icon:'🍅', text:'پومودورو', action: openPomodoro },
-            { icon:'🔁', text:'تایمر اینتروال', action: ()=> openModal('🔁 اینتروال','<p>به‌زودی</p>') },
-            { icon:'🏁', text:'کرنوگراف دور', action: ()=> openModal('🏁 دور','<p>به‌زودی</p>') },
         ]},
         { name: '⏰ ساعت و آلارم', items: [
             { icon:'⏰', text:'آلارم', action: openAlarm },
             { icon:'🕰️', text:'ساعت آنالوگ', action: openAnalogClock },
-            { icon:'🔢', text:'ساعت دیجیتال بزرگ', action: ()=> openModal('🔢 دیجیتال',`<div style="font-size:3rem; text-align:center; font-family:'Cinzel';" id="bigClock"></div>`, ()=>{ setInterval(()=>{ const el = document.getElementById('bigClock'); if(el) el.textContent = new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); },1000); }) },
         ]},
         { name: '🌍 مناطق زمانی', items: worldCities.map(c => ({
-            icon:'🕐', text:`${c.name}`, action: ()=> openModal(c.name, `<div style="text-align:center; font-size:2rem; color:#d4af37;">${getTimeInCity(c.tz)}</div>`)
+            icon:'🕐', text:c.name, action: ()=> openModal(c.name, `<div style="text-align:center; font-size:2rem; color:#d4af37;">${getTimeInCity(c.tz)}</div>`)
         }))},
         { name: '📅 تقویم و نجوم', items: [
             { icon:'📅', text:'تقویم', action: openCalendar },
@@ -294,17 +271,15 @@
         { name: '🌤️ آب و هوا', items: [
             { icon:'🌤️', text:'آب و هوای فعلی', action: openWeather },
         ]},
+        // می‌توانی دسته‌های بیشتری به دلخواه اضافه کنی
     ];
 
-    // ========== ساخت منو ==========
     function buildMenu() {
         const menuContent = document.getElementById('menuContent');
         if(!menuContent) return;
         let html = '<input type="text" id="menuSearch" class="tool-input" placeholder="🔍 جستجوی ابزار..." style="margin-bottom:15px;">';
         menuCategories.forEach(cat => {
-            html += `<div class="menu-category">`;
-            html += `<div class="menu-cat-header"><span>${cat.name}</span><span class="arrow">▼</span></div>`;
-            html += `<div class="menu-cat-items">`;
+            html += `<div class="menu-category"><div class="menu-cat-header"><span>${cat.name}</span><span class="arrow">▼</span></div><div class="menu-cat-items">`;
             cat.items.forEach(item => {
                 html += `<div class="menu-item" data-action="${item.text}"><span>${item.icon}</span> ${item.text}</div>`;
             });
@@ -312,7 +287,6 @@
         });
         menuContent.innerHTML = html;
 
-        // جستجو
         document.getElementById('menuSearch').addEventListener('input', function() {
             const q = this.value.toLowerCase();
             document.querySelectorAll('.menu-item').forEach(el => {
@@ -320,14 +294,10 @@
             });
         });
 
-        // آکاردئون
-        document.querySelectorAll('.menu-cat-header').forEach(header => {
-            header.addEventListener('click', () => {
-                header.parentElement.classList.toggle('open');
-            });
+        document.querySelectorAll('.menu-cat-header').forEach(h => {
+            h.addEventListener('click', () => h.parentElement.classList.toggle('open'));
         });
 
-        // کلیک روی آیتم‌ها
         document.querySelectorAll('.menu-item').forEach(el => {
             el.addEventListener('click', () => {
                 const action = el.dataset.action;
@@ -337,7 +307,6 @@
         });
     }
 
-    // ========== کنترل کشوی منو ==========
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const menuDrawer = document.getElementById('menuDrawer');
     const menuOverlay = document.getElementById('menuOverlay');
@@ -348,13 +317,8 @@
     hamburgerBtn.addEventListener('click', () => menuDrawer.classList.contains('open') ? closeMenu() : openMenu());
     menuOverlay.addEventListener('click', closeMenu);
 
-    // ========== راه‌اندازی ==========
-    function initTools() {
-        buildMenu();
-        console.log('✅ ۶۶+ ابزار واقعی بارگذاری شدند');
-    }
-
+    // راه‌اندازی
+    function initTools() { buildMenu(); console.log('✅ ابزارها بارگذاری شدند'); }
     if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initTools);
     else initTools();
-
 })();
