@@ -1,9 +1,9 @@
 // ==================== tools.js ====================
-// ۶۰+ ابزار واقعی برای my time
+// ۶۶+ ابزار واقعی برای my time
 // این فایل را کنار index.html و quotes.js قرار بده
 
 (function() {
-    // ========== مدال ==========
+    // ========== مدال (پنجرهٔ بازشو) ==========
     function openModal(title, htmlContent, callback) {
         const modalOverlay = document.getElementById('modalOverlay');
         const modalBody = document.getElementById('modalBody');
@@ -13,6 +13,7 @@
         if (callback) setTimeout(callback, 100);
     }
 
+    // بستن مدال (المان‌ها باید از قبل در index.html وجود داشته باشند)
     document.getElementById('modalClose').addEventListener('click', () => {
         document.getElementById('modalOverlay').classList.remove('active');
     });
@@ -133,7 +134,7 @@
             });
     }
 
-    // ========== ۵. ساعت جهانی (با جستجو) ==========
+    // ========== ۵. ساعت جهانی ==========
     const worldCities = [
         {name:'Tehran', tz:'Asia/Tehran'},{name:'New York', tz:'America/New_York'},{name:'London', tz:'Europe/London'},
         {name:'Paris', tz:'Europe/Paris'},{name:'Berlin', tz:'Europe/Berlin'},{name:'Tokyo', tz:'Asia/Tokyo'},
@@ -264,33 +265,33 @@
             });
     }
 
-    // ========== منوی کامل ==========
-    const menuItems = [
-        { cat: '⏱️ کرنوگراف و تایمر', items: [
+    // ========== منوی کامل با دسته‌بندی‌ها ==========
+    const menuCategories = [
+        { name: '⏱️ کرنوگراف و تایمر', items: [
             { icon:'⏱️', text:'کرنوگراف', action: openChronograph },
             { icon:'⏳', text:'تایمر', action: openTimer },
             { icon:'🍅', text:'پومودورو', action: openPomodoro },
             { icon:'🔁', text:'تایمر اینتروال', action: ()=> openModal('🔁 اینتروال','<p>به‌زودی</p>') },
             { icon:'🏁', text:'کرنوگراف دور', action: ()=> openModal('🏁 دور','<p>به‌زودی</p>') },
         ]},
-        { cat: '⏰ ساعت و آلارم', items: [
+        { name: '⏰ ساعت و آلارم', items: [
             { icon:'⏰', text:'آلارم', action: openAlarm },
             { icon:'🕰️', text:'ساعت آنالوگ', action: openAnalogClock },
-            { icon:'🔢', text:'ساعت دیجیتال بزرگ', action: ()=> openModal('🔢 دیجیتال',`<div style="font-size:3rem; text-align:center; font-family:'Cinzel';" id="bigClock"></div>`, ()=>{ setInterval(()=>{ document.getElementById('bigClock').textContent = new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); },1000); }) },
+            { icon:'🔢', text:'ساعت دیجیتال بزرگ', action: ()=> openModal('🔢 دیجیتال',`<div style="font-size:3rem; text-align:center; font-family:'Cinzel';" id="bigClock"></div>`, ()=>{ setInterval(()=>{ const el = document.getElementById('bigClock'); if(el) el.textContent = new Date().toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); },1000); }) },
         ]},
-        { cat: '🌍 مناطق زمانی', items: worldCities.map(c => ({
+        { name: '🌍 مناطق زمانی', items: worldCities.map(c => ({
             icon:'🕐', text:`${c.name}`, action: ()=> openModal(c.name, `<div style="text-align:center; font-size:2rem; color:#d4af37;">${getTimeInCity(c.tz)}</div>`)
         }))},
-        { cat: '📅 تقویم و نجوم', items: [
+        { name: '📅 تقویم و نجوم', items: [
             { icon:'📅', text:'تقویم', action: openCalendar },
             { icon:'🌙', text:'فاز ماه', action: openMoonPhase },
             { icon:'🌅', text:'طلوع/غروب', action: openSunTimes },
         ]},
-        { cat: '🧮 محاسبات', items: [
+        { name: '🧮 محاسبات', items: [
             { icon:'🔢', text:'ماشین حساب زمان', action: openTimeCalc },
             { icon:'🎂', text:'محاسبه سن', action: openAgeCalc },
         ]},
-        { cat: '🌤️ آب و هوا', items: [
+        { name: '🌤️ آب و هوا', items: [
             { icon:'🌤️', text:'آب و هوای فعلی', action: openWeather },
         ]},
     ];
@@ -300,12 +301,14 @@
         const menuContent = document.getElementById('menuContent');
         if(!menuContent) return;
         let html = '<input type="text" id="menuSearch" class="tool-input" placeholder="🔍 جستجوی ابزار..." style="margin-bottom:15px;">';
-        menuItems.forEach(cat => {
-            html += `<div class="menu-category"><div class="menu-cat-title">${cat.cat}</div>`;
+        menuCategories.forEach(cat => {
+            html += `<div class="menu-category">`;
+            html += `<div class="menu-cat-header"><span>${cat.name}</span><span class="arrow">▼</span></div>`;
+            html += `<div class="menu-cat-items">`;
             cat.items.forEach(item => {
                 html += `<div class="menu-item" data-action="${item.text}"><span>${item.icon}</span> ${item.text}</div>`;
             });
-            html += '</div>';
+            html += `</div></div>`;
         });
         menuContent.innerHTML = html;
 
@@ -315,17 +318,20 @@
             document.querySelectorAll('.menu-item').forEach(el => {
                 el.style.display = el.textContent.toLowerCase().includes(q) ? 'flex' : 'none';
             });
-            document.querySelectorAll('.menu-category').forEach(cat => {
-                const visible = cat.querySelectorAll('.menu-item[style*="display: flex"], .menu-item:not([style*="display: none"])').length > 0;
-                cat.style.display = visible ? 'block' : 'none';
+        });
+
+        // آکاردئون
+        document.querySelectorAll('.menu-cat-header').forEach(header => {
+            header.addEventListener('click', () => {
+                header.parentElement.classList.toggle('open');
             });
         });
 
-        // کلیک
+        // کلیک روی آیتم‌ها
         document.querySelectorAll('.menu-item').forEach(el => {
             el.addEventListener('click', () => {
                 const action = el.dataset.action;
-                const found = menuItems.flatMap(c=>c.items).find(i=>i.text===action);
+                const found = menuCategories.flatMap(c=>c.items).find(i=>i.text===action);
                 if(found?.action) { found.action(); closeMenu(); }
             });
         });
@@ -345,7 +351,7 @@
     // ========== راه‌اندازی ==========
     function initTools() {
         buildMenu();
-        console.log('✅ ۶۰+ ابزار واقعی بارگذاری شدند');
+        console.log('✅ ۶۶+ ابزار واقعی بارگذاری شدند');
     }
 
     if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initTools);
