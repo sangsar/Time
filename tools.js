@@ -1,4 +1,4 @@
-// ==================== tools.js (نسخهٔ نهایی - بخش اول) ====================
+// ==================== tools.js (بخش اول - کامل) ====================
 (function() {
 
     // ========== SPA Container ==========
@@ -68,6 +68,7 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .weather-widget { background: rgba(10,20,40,0.5); border-radius: 20px; padding: 24px; text-align: center; }
         @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
     `;
     document.head.appendChild(advancedStyles);
@@ -392,7 +393,6 @@
                 </div>
                 <canvas id="weatherChart" width="700" height="350" style="width:100%; max-width:700px; margin:25px auto;"></canvas>
             </div>
-            <style>.weather-widget { background: rgba(10,20,40,0.5); border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 20px; }</style>
         `, async () => {
             document.getElementById('getWeather').onclick = async () => {
                 const city = document.getElementById('weatherCity').value || 'Tehran';
@@ -655,7 +655,7 @@
         });
     }
 
-    // ادامه در بخش دوم (هوش مصنوعی و ابزارهای جدید)...    // ====================== هوش مصنوعی‌های ساده و کاربردی ======================
+    // ادامه در بخش دوم...    // ====================== هوش مصنوعی‌های ساده و کاربردی ======================
 
     // ========== ۲۵. متن به گفتار (Web Speech API - فارسی) ==========
     function openTTS() {
@@ -853,7 +853,7 @@
         });
     }
 
-    // ====================== ابزارهای تعمیرشده ======================
+    // ====================== ابزارهای جدید و پرطرفدار ======================
 
     // ========== ۳۱. کوتاه‌کننده لینک (TinyURL) ==========
     function openLinkShortener() {
@@ -882,7 +882,7 @@
         });
     }
 
-    // ========== ۳۲. مبدل ارز (همان API قبلی - سالم بود) ==========
+    // ========== ۳۲. مبدل ارز ==========
     function openCurrencyConverter() {
         openAppPage('💱 مبدل ارز', `
             <div class="glass-panel">
@@ -904,6 +904,160 @@
                     const data = await res.json();
                     document.getElementById('currencyResult').textContent = `${amount} ${from} = ${(amount * data.rates[to]).toFixed(2)} ${to}`;
                 } catch (e) { document.getElementById('currencyResult').textContent = 'خطا در دریافت نرخ.'; }
+            };
+        });
+    }
+
+    // ========== ۳۳. QR Code Generator ==========
+    function openQRCode() {
+        openAppPage('🏷️ QR Code Generator', `
+            <div class="glass-panel" style="text-align:center;">
+                <input type="text" id="qrInput" class="tool-input" placeholder="متن یا لینک برای QR Code">
+                <button class="tool-btn" id="generateQRBtn">✨ تولید</button>
+                <div id="qrResult" style="margin-top:20px;"></div>
+            </div>
+        `, () => {
+            document.getElementById('generateQRBtn').onclick = () => {
+                const text = document.getElementById('qrInput').value;
+                const url = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`;
+                document.getElementById('qrResult').innerHTML = `<img src="${url}" style="border-radius:16px;">`;
+            };
+        });
+    }
+
+    // ========== ۳۴. Markdown Preview ==========
+    function openMarkdownPreview() {
+        openAppPage('📝 Markdown Preview', `
+            <div class="glass-panel">
+                <textarea id="mdInput" class="tool-input" placeholder="متن Markdown..." style="height:150px;"></textarea>
+                <div id="mdPreview" style="margin-top:20px; padding:15px; background:rgba(255,255,255,0.05); border-radius:12px; color:#ccc;"></div>
+            </div>
+        `, () => {
+            document.getElementById('mdInput').addEventListener('input', function() {
+                const text = this.value;
+                const html = text
+                    .replace(/### (.*)/g, '<h3 style="color:#d4af37;">$1</h3>')
+                    .replace(/## (.*)/g, '<h2 style="color:#d4af37;">$1</h2>')
+                    .replace(/# (.*)/g, '<h1 style="color:#d4af37;">$1</h1>')
+                    .replace(/\*\*(.*)\*\*/g, '<b>$1</b>')
+                    .replace(/\*(.*)\*/g, '<i>$1</i>');
+                document.getElementById('mdPreview').innerHTML = html;
+            });
+        });
+    }
+
+    // ========== ۳۵. Text Diff Checker ==========
+    function openTextDiff() {
+        openAppPage('🔍 Text Diff Checker', `
+            <div class="glass-panel">
+                <textarea id="diffText1" class="tool-input" placeholder="متن اول..."></textarea>
+                <textarea id="diffText2" class="tool-input" placeholder="متن دوم..."></textarea>
+                <button class="tool-btn" id="compareDiffBtn">مقایسه</button>
+                <div id="diffResult" style="margin-top:20px; padding:15px; background:rgba(255,255,255,0.05); border-radius:12px; color:#ccc; white-space:pre-wrap;"></div>
+            </div>
+        `, () => {
+            document.getElementById('compareDiffBtn').onclick = () => {
+                const text1 = document.getElementById('diffText1').value;
+                const text2 = document.getElementById('diffText2').value;
+                if (text1 === text2) {
+                    document.getElementById('diffResult').textContent = '✅ متون یکسان هستند.';
+                } else {
+                    document.getElementById('diffResult').textContent = '❌ متون متفاوت هستند.';
+                }
+            };
+        });
+    }
+
+    // ========== ۳۶. UUID Generator ==========
+    function openUUIDGenerator() {
+        openAppPage('🆔 UUID Generator', `
+            <div class="glass-panel" style="text-align:center;">
+                <button class="tool-btn" id="generateUUIDBtn">تولید UUID</button>
+                <div id="uuidResult" style="margin-top:20px; color:#d4af37; font-size:1.2rem; word-break:break-all;"></div>
+            </div>
+        `, () => {
+            document.getElementById('generateUUIDBtn').onclick = () => {
+                const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+                document.getElementById('uuidResult').textContent = uuid;
+            };
+        });
+    }
+
+    // ========== ۳۷. IP Lookup ==========
+    function openIPLookup() {
+        openAppPage('🌐 IP Lookup', `
+            <div class="glass-panel" style="text-align:center;">
+                <button class="tool-btn" id="checkIPBtn">بررسی IP من</button>
+                <div id="ipResult" style="margin-top:20px; color:#ccc;"></div>
+            </div>
+        `, () => {
+            document.getElementById('checkIPBtn').onclick = async () => {
+                try {
+                    const res = await fetch('https://api.ipify.org?format=json');
+                    const data = await res.json();
+                    document.getElementById('ipResult').textContent = `آدرس IP: ${data.ip}`;
+                } catch (e) {
+                    document.getElementById('ipResult').textContent = 'خطا در دریافت IP.';
+                }
+            };
+        });
+    }
+
+    // ========== ۳۸. تست سرعت اینترنت ==========
+    function openSpeedTest() {
+        openAppPage('🚀 تست سرعت', `
+            <div class="glass-panel" style="text-align:center;">
+                <button class="tool-btn" id="startSpeedTest">شروع تست</button>
+                <div id="speedResult" style="margin-top:20px; color:#d4af37; font-size:1.3rem;"></div>
+            </div>
+        `, () => {
+            document.getElementById('startSpeedTest').onclick = () => {
+                document.getElementById('speedResult').textContent = '⏳ در حال تست...';
+                const image = new Image(); const startTime = Date.now();
+                image.onload = () => {
+                    const duration = (Date.now() - startTime) / 1000;
+                    const speed = (500000 * 8 / duration / 1024 / 1024).toFixed(2);
+                    document.getElementById('speedResult').textContent = `سرعت تقریبی: ${speed} Mbps`;
+                };
+                image.src = 'https://www.google.com/images/phd/px.gif?t=' + Date.now();
+            };
+        });
+    }
+
+    // ========== ۳۹. تولید رمز عبور ==========
+    function openPasswordGenerator() {
+        openAppPage('🔐 رمز عبور', `
+            <div class="glass-panel" style="text-align:center;">
+                <button class="tool-btn" id="generatePasswordBtn">تولید رمز</button>
+                <div id="passwordResult" style="margin-top:20px; color:#d4af37; font-size:1.5rem; word-break:break-all;"></div>
+            </div>
+        `, () => {
+            document.getElementById('generatePasswordBtn').onclick = () => {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
+                let pass = ''; for (let i=0; i<16; i++) pass += chars[Math.floor(Math.random() * chars.length)];
+                document.getElementById('passwordResult').textContent = pass;
+            };
+        });
+    }
+
+    // ========== ۴۰. محاسبه BMI ==========
+    function openBMI() {
+        openAppPage('⚖️ محاسبه BMI', `
+            <div class="glass-panel">
+                <input type="number" id="weight" class="tool-input" placeholder="وزن (kg)">
+                <input type="number" id="height" class="tool-input" placeholder="قد (cm)">
+                <button class="tool-btn" id="calcBMIBtn">محاسبه</button>
+                <div id="bmiResult" style="text-align:center; margin-top:20px; color:#d4af37; font-size:1.5rem;"></div>
+            </div>
+        `, () => {
+            document.getElementById('calcBMIBtn').onclick = () => {
+                const w = parseFloat(document.getElementById('weight').value), h = parseFloat(document.getElementById('height').value) / 100;
+                const bmi = (w / (h * h)).toFixed(1);
+                let status = bmi < 18.5 ? 'کمبود وزن' : bmi < 25 ? 'نرمال' : bmi < 30 ? 'اضافه وزن' : 'چاق';
+                document.getElementById('bmiResult').textContent = `${bmi} (${status})`;
             };
         });
     }
@@ -991,18 +1145,44 @@
         }));
     }
 
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const menuDrawer = document.getElementById('menuDrawer');
-    const menuOverlay = document.getElementById('menuOverlay');
-    function openMenu() { menuDrawer.classList.add('open'); menuOverlay.classList.add('active'); hamburgerBtn.classList.add('open'); }
-    function closeMenu() { menuDrawer.classList.remove('open'); menuOverlay.classList.remove('active'); hamburgerBtn.classList.remove('open'); }
-    hamburgerBtn.addEventListener('click', () => menuDrawer.classList.contains('open') ? closeMenu() : openMenu());
-    menuOverlay.addEventListener('click', closeMenu);
+    // ========== تعمیر دکمهٔ همبرگری ==========
+    function fixHamburgerButton() {
+        const btn = document.getElementById('hamburgerBtn');
+        const drawer = document.getElementById('menuDrawer');
+        const overlay = document.getElementById('menuOverlay');
 
+        if (!btn || !drawer || !overlay) return;
+
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        const newOverlay = overlay.cloneNode(true);
+        overlay.parentNode.replaceChild(newOverlay, overlay);
+
+        function openMenu() {
+            drawer.classList.add('open');
+            document.getElementById('menuOverlay').classList.add('active');
+            document.getElementById('hamburgerBtn').classList.add('open');
+        }
+        function closeMenu() {
+            drawer.classList.remove('open');
+            document.getElementById('menuOverlay').classList.remove('active');
+            document.getElementById('hamburgerBtn').classList.remove('open');
+        }
+
+        document.getElementById('hamburgerBtn').addEventListener('click', function() {
+            if (drawer.classList.contains('open')) { closeMenu(); } else { openMenu(); }
+        });
+        document.getElementById('menuOverlay').addEventListener('click', closeMenu);
+    }
+
+    // ========== راه‌اندازی ==========
     function initTools() {
         buildMenu();
-        console.log('✅ اَبَر سایت با ۴۰+ ابزار واقعی و هوش مصنوعی فعال شد');
+        fixHamburgerButton();
+        console.log('✅ اَبَر سایت با ۴۰+ ابزار واقعی و دکمه منوی تعمیرشده فعال شد');
     }
+
     if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initTools);
     else initTools();
+
 })();
