@@ -17,6 +17,7 @@
             --card-night-bg: linear-gradient(145deg, rgba(16,14,35,0.65), rgba(28,22,50,0.75));
             --quote-bg: rgba(20, 15, 35, 0.4);
             --star-color: rgba(230,220,255,0.9);
+            --menu-width: 340px;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
@@ -31,7 +32,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* لایه‌های عکس پس‌زمینه (دو لایه برای تعویض بدون مکث) */
+        /* ========== لایه‌های پس‌زمینه (دقیقاً مثل قبل) ========== */
         .bg-image-layer {
             position: fixed;
             top: 0; left: 0;
@@ -44,10 +45,9 @@
             transform: translate3d(0,0,0);
             will-change: background-image;
         }
-        .bg-image-layer.layer-a { z-index: -4; opacity: 1; }
-        .bg-image-layer.layer-b { z-index: -5; opacity: 1; } /* لایه مخفی که عکس بعدی در آن بارگذاری می‌شود */
+        .bg-image-layer.layer-a { z-index: -4; }
+        .bg-image-layer.layer-b { z-index: -5; }
 
-        /* بوم ستاره‌ها */
         #background-canvas {
             position: fixed;
             top: 0; left: 0;
@@ -56,7 +56,6 @@
             pointer-events: none;
             transform: translate3d(0,0,0);
         }
-
         .bg-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -67,19 +66,144 @@
             transform: translate3d(0,0,0);
         }
 
-        /* نوار نشانگر تم */
-        .theme-indicator-bar {
+        /* ========== دکمه همبرگری (بالا چپ) ========== */
+        .hamburger-toggle {
             position: fixed;
-            top: 0; left: 0;
-            height: 3px;
-            background: #d4af37;
-            z-index: 120;
-            transition: width 0.3s ease, background 0.5s;
-            box-shadow: 0 0 12px currentColor;
-            pointer-events: none;
+            top: 20px; left: 20px;
+            z-index: 150;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
+            user-select: none;
+            transform: translate3d(0,0,0);
+        }
+        .hamburger-toggle:hover {
+            transform: scale(1.12);
+            box-shadow: 0 6px 26px rgba(255,255,255,0.35);
+        }
+        .hamburger-toggle.open {
+            transform: rotate(90deg);
         }
 
-        /* دکمه تغییر تم (پایین راست) */
+        /* overlay منو */
+        .menu-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 140;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .menu-overlay.active {
+            opacity: 1; pointer-events: auto;
+        }
+
+        /* پنل منو */
+        .menu-panel {
+            position: fixed;
+            top: 0; left: -100%;
+            width: var(--menu-width);
+            height: 100vh;
+            background: rgba(18, 15, 32, 0.85);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-right: 1px solid rgba(212, 175, 55, 0.3);
+            z-index: 145;
+            padding: 70px 18px 20px;
+            transition: left 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 10px 0 40px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow-y: auto;
+            direction: rtl;
+        }
+        .menu-panel.open {
+            left: 0;
+        }
+
+        /* جستجو در منو */
+        .menu-search {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(212,175,55,0.3);
+            color: #fff;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            outline: none;
+            backdrop-filter: blur(10px);
+        }
+        .menu-search::placeholder { color: #aaa; }
+
+        /* دسته‌بندی‌ها */
+        .menu-category {
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            margin-bottom: 6px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .menu-category-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #d4af37;
+            background: rgba(0,0,0,0.2);
+            transition: background 0.3s;
+        }
+        .menu-category-header:hover {
+            background: rgba(212,175,55,0.1);
+        }
+        .menu-category-items {
+            display: none;
+            flex-direction: column;
+            padding: 0 8px 8px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+        .menu-category.open .menu-category-items {
+            display: flex;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            margin: 2px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+            color: #ddd;
+        }
+        .menu-item:hover {
+            background: rgba(212,175,55,0.15);
+            color: #fff;
+        }
+        .menu-item .icon { font-size: 1.1rem; min-width: 22px; text-align: center; }
+
+        /* دکمه تم (پایین راست) */
         .theme-switch {
             position: fixed;
             bottom: 20px; right: 20px;
@@ -97,23 +221,14 @@
             font-size: 1.2rem;
             color: #fff;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
             user-select: none;
             transform: translate3d(0,0,0);
         }
-        .theme-switch:hover {
-            transform: scale(1.12);
-            box-shadow: 0 6px 26px rgba(255,255,255,0.35);
-        }
-        .theme-switch.rotating {
-            animation: rotateDab 0.6s ease;
-        }
-        @keyframes rotateDab {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        .theme-switch:hover { transform: scale(1.12); box-shadow: 0 6px 26px rgba(255,255,255,0.35); }
+        .theme-switch.rotating { animation: rotateDab 0.6s ease; }
+        @keyframes rotateDab { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
 
-        /* نام تم شناور */
         .theme-tooltip {
             position: fixed;
             bottom: 68px; right: 10px;
@@ -130,12 +245,9 @@
             transition: opacity 0.3s, transform 0.3s;
             pointer-events: none;
         }
-        .theme-tooltip.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .theme-tooltip.show { opacity:1; transform:translateY(0); }
 
-        /* گرامافون (پایین چپ) */
+        /* گرامافون */
         .gramophone-toggle {
             position: fixed;
             bottom: 20px; left: 20px;
@@ -145,9 +257,7 @@
             border: none;
             cursor: pointer;
             filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             transform: translate3d(0,0,0);
         }
         .record-disc {
@@ -156,9 +266,7 @@
             background: radial-gradient(circle at 30% 30%, #1a1a1a, #0a0a0a 70%);
             border: 2px solid #333;
             box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
         }
         .record-disc.playing { animation: spin 2s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -170,24 +278,63 @@
             font-size: 0.7rem; color: #0a0a0a; font-weight: bold;
         }
 
-        /* کانتینر اصلی */
-        .main-container {
+        /* ========== مدال‌های عمومی ========== */
+        .modal-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 200;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        .modal-overlay.active {
+            opacity: 1; pointer-events: auto;
+        }
+        .modal-content {
+            background: rgba(22, 18, 38, 0.85);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(212,175,55,0.35);
+            border-radius: 20px;
+            padding: 28px 24px;
+            width: 90%;
+            max-width: 620px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            transform: translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
             position: relative;
-            z-index: 1;
-            max-width: 1300px;
-            margin: 0 auto;
+            color: #e8e4f0;
+            direction: rtl;
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        .modal-close {
+            position: absolute; top: 12px; left: 12px;
+            width: 34px; height: 34px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+        }
+        .modal-close:hover { background: rgba(255,100,100,0.3); }
+
+        /* سایر استایل‌های صفحه اصلی (بدون تغییر) */
+        .main-container {
+            position: relative; z-index: 1;
+            max-width: 1300px; margin: 0 auto;
             padding: 20px 20px 30px;
         }
-
-        /* لوگو */
-        .header {
-            text-align: center;
-            padding: 20px 20px 8px;
-        }
+        .header { text-align: center; padding: 20px 20px 8px; }
         .logo-text {
             font-family: 'Playfair Display', 'Cinzel', serif;
-            font-size: 3.2rem; font-weight: 700;
-            letter-spacing: 2px;
+            font-size: 3.2rem; font-weight: 700; letter-spacing: 2px;
             background: linear-gradient(180deg, #f5e6c8, #d4af37 40%, #b8922e 70%, #d4af37);
             -webkit-background-clip: text; background-clip: text;
             -webkit-text-fill-color: transparent; color: transparent;
@@ -201,9 +348,8 @@
         }
         .logo-subtitle {
             font-family: 'Cormorant Garamond', 'Playfair Display', serif;
-            font-size: 1.2rem; letter-spacing: 4px;
-            color: #c4a86c; text-transform: uppercase;
-            margin-top: 0; font-style: italic; font-weight: 500;
+            font-size: 1.2rem; letter-spacing: 4px; color: #c4a86c;
+            text-transform: uppercase; margin-top: 0; font-style: italic; font-weight: 500;
         }
         .logo-divider {
             width: 110px; height: 1.5px;
@@ -211,120 +357,61 @@
             margin: 6px auto 0;
         }
 
-        /* نقل‌قول */
-        .quote-section {
-            margin: 14px auto 12px; padding: 0 8px;
-        }
+        .quote-section { margin: 14px auto 12px; padding: 0 8px; }
         .quote-container {
-            width: 100%;
-            background: var(--quote-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(200, 170, 100, 0.25);
-            border-radius: 12px;
-            padding: 14px 20px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-            position: relative; overflow: hidden;
-            transition: background 0.5s;
+            width: 100%; background: var(--quote-bg);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(200,170,100,0.25); border-radius: 12px;
+            padding: 14px 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            position: relative; overflow: hidden; transition: background 0.5s;
         }
         .quote-container::before {
             content: ''; position: absolute; top:0; left:0; right:0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent);
+            height: 1px; background: linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent);
         }
         .quote-text {
-            font-family: 'Vazirmatn', 'Cormorant Garamond', serif;
-            font-size: 1.15rem; font-style: italic;
-            color: #ede5d0; letter-spacing: 0.3px;
-            line-height: 1.8; text-align: center;
-            transition: opacity 0.4s ease;
+            font-size: 1.15rem; font-style: italic; color: #ede5d0;
+            letter-spacing: 0.3px; line-height: 1.8; text-align: center;
+            transition: opacity 0.4s;
         }
         .quote-author {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 0.8rem;
-            color: #d4af37;
-            text-align: right;
-            margin-top: 6px;
-            font-style: italic;
-            opacity: 0.9;
-            padding-right: 10px;
+            font-family: 'Cormorant Garamond', serif; font-size: 0.8rem;
+            color: #d4af37; text-align: right; margin-top: 6px;
+            font-style: italic; opacity: 0.9; padding-right: 10px;
         }
         .quote-fade { animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn {
-            from { opacity:0; transform: translateY(5px); }
-            to { opacity:1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from{opacity:0; transform:translateY(5px);} to{opacity:1; transform:translateY(0);} }
 
-        /* شبکه ساعت‌ها */
         .clocks-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin-top: 6px; padding: 0 4px;
+            display: grid; grid-template-columns: repeat(5, 1fr);
+            gap: 10px; margin-top: 6px; padding: 0 4px;
         }
-
         .clock-card {
-            position: relative;
-            border-radius: 14px;
-            padding: 12px 6px 8px;
-            text-align: center;
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            min-height: 90px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 3px;
+            border-radius: 14px; padding: 12px 6px 8px; text-align: center;
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            min-height: 90px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; gap: 3px;
             box-shadow: 0 6px 20px rgba(0,0,0,0.35);
             transition: transform 0.3s, box-shadow 0.3s, background 0.5s;
             border: 1px solid rgba(255,255,255,0.08);
         }
         .clock-card.day-mode {
-            background: var(--card-day-bg);
-            border: 1px solid rgba(200,170,110,0.5);
-            color: #2a241a;
+            background: var(--card-day-bg); border: 1px solid rgba(200,170,110,0.5); color: #2a241a;
         }
         .clock-card.night-mode {
-            background: var(--card-night-bg);
-            border: 1px solid rgba(140,160,220,0.4);
-            color: #e0dbef;
+            background: var(--card-night-bg); border: 1px solid rgba(140,160,220,0.4); color: #e0dbef;
         }
-        .clock-card:hover {
-            transform: translateY(-3px);
-            z-index: 5;
-        }
+        .clock-card:hover { transform: translateY(-3px); z-index: 5; }
         .clock-card.iran-featured {
             border: 1.5px solid rgba(212,175,55,0.7) !important;
             box-shadow: 0 0 18px rgba(212,175,55,0.3) !important;
         }
+        .city-name { font-family: 'Playfair Display', serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 2px; }
+        .time-display { font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 700; letter-spacing: 1px; background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 6px; }
+        .date-display { font-size: 0.6rem; opacity: 0.7; direction: ltr; margin-top: 2px; }
+        .date-display .shamsi-date { display: block; font-size: 0.55rem; opacity: 0.7; }
 
-        .city-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 0.85rem; font-weight: 600;
-            letter-spacing: 0.5px; margin-bottom: 2px;
-        }
-        .time-display {
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem; font-weight: 700;
-            letter-spacing: 1px;
-            background: rgba(255,255,255,0.05);
-            padding: 2px 8px; border-radius: 6px;
-        }
-        .date-display {
-            font-family: 'Vazirmatn', sans-serif;
-            font-size: 0.6rem; opacity: 0.7;
-            direction: ltr; margin-top: 2px;
-        }
-        .date-display .shamsi-date {
-            display: block; font-size: 0.55rem; opacity: 0.7;
-        }
-
-        .footer {
-            text-align: center; padding: 10px;
-            font-size: 0.6rem; color: #8e8a80;
-            letter-spacing: 2px; opacity: 0.5;
-        }
+        .footer { text-align: center; padding: 10px; font-size: 0.6rem; color: #8e8a80; letter-spacing: 2px; opacity: 0.5; }
 
         @media (max-width: 1200px) { .clocks-grid { grid-template-columns: repeat(4,1fr); } }
         @media (max-width: 900px) { .clocks-grid { grid-template-columns: repeat(3,1fr); } .logo-text { font-size:2.4rem; } }
@@ -356,16 +443,18 @@
     <div class="bg-image-layer layer-a" id="bgLayerA"></div>
     <div class="bg-image-layer layer-b" id="bgLayerB"></div>
 
-    <!-- دکمه تغییر تم -->
-    <button class="theme-switch" id="themeSwitch" title="تغییر تم">🌙</button>
+    <!-- دکمه منو -->
+    <button class="hamburger-toggle" id="hamburgerToggle">☰</button>
+    <div class="menu-overlay" id="menuOverlay"></div>
+    <div class="menu-panel" id="menuPanel"></div>
+
+    <!-- دکمه تم -->
+    <button class="theme-switch" id="themeSwitch">🌙</button>
     <div class="theme-tooltip" id="themeTooltip"></div>
-    <div class="theme-indicator-bar" id="themeBar"></div>
 
     <!-- گرامافون -->
-    <button class="gramophone-toggle" id="gramophoneToggle" title="پخش/قطع موسیقی">
-        <div class="record-disc" id="recordDisc">
-            <div class="record-label">♪</div>
-        </div>
+    <button class="gramophone-toggle" id="gramophoneToggle">
+        <div class="record-disc" id="recordDisc"><div class="record-label">♪</div></div>
     </button>
 
     <!-- بوم ستاره‌ها -->
@@ -374,27 +463,27 @@
 
     <!-- کانتینر اصلی -->
     <div class="main-container">
-
         <header class="header">
             <h1 class="logo-text">my time</h1>
             <p class="logo-subtitle">Memento Mori</p>
             <div class="logo-divider"></div>
         </header>
-
-        <!-- نقل‌قول -->
         <div class="quote-section">
             <div class="quote-container" id="quoteContainer">
                 <div class="quote-text" id="quoteText"></div>
                 <div class="quote-author" id="quoteAuthor"></div>
             </div>
         </div>
-
-        <!-- شبکه ساعت‌ها -->
         <div class="clocks-grid" id="clocksGrid"></div>
+        <footer class="footer">✦ my time ✦ Memento Mori ✦</footer>
+    </div>
 
-        <footer class="footer">
-            ✦ my time ✦ Memento Mori ✦
-        </footer>
+    <!-- مدال عمومی -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content" id="modalContent">
+            <button class="modal-close" id="modalClose">✕</button>
+            <div id="modalBody"></div>
+        </div>
     </div>
 
     <!-- فایل quotes.js -->
@@ -402,10 +491,10 @@
 
     <script>
         (function() {
-            // ---------- تنظیمات ----------
+            // ---------- تنظیمات اصلی ----------
             const QUOTE_INTERVAL = 10000;
-            const CLOCK_INTERVAL = 1_000;
-            const IMAGE_CHANGE_INTERVAL = 30000;
+            const CLOCK_INTERVAL = 1000;
+            const IMAGE_INTERVAL = 30000;
 
             const backgroundImages = [
                 'https://img2.taw-bio.ir/2023/159777/1jk1lmtb.jpeg',
@@ -427,71 +516,36 @@
             ];
 
             const countries = [
-                { city: 'Tehran',   timezone: 'Asia/Tehran',       featured: true,  useShamsi: true },
-                { city: 'New York', timezone: 'America/New_York',  featured: false, useShamsi: false },
-                { city: 'London',   timezone: 'Europe/London',     featured: false, useShamsi: false },
-                { city: 'Paris',    timezone: 'Europe/Paris',      featured: false, useShamsi: false },
-                { city: 'Berlin',   timezone: 'Europe/Berlin',     featured: false, useShamsi: false },
-                { city: 'Tokyo',    timezone: 'Asia/Tokyo',        featured: false, useShamsi: false },
-                { city: 'Beijing',  timezone: 'Asia/Shanghai',     featured: false, useShamsi: false },
-                { city: 'Sydney',   timezone: 'Australia/Sydney',  featured: false, useShamsi: false },
-                { city: 'Moscow',   timezone: 'Europe/Moscow',     featured: false, useShamsi: false },
-                { city: 'Brasília', timezone: 'America/Sao_Paulo', featured: false, useShamsi: false },
-                { city: 'New Delhi',timezone: 'Asia/Kolkata',      featured: false, useShamsi: false },
-                { city: 'Toronto',  timezone: 'America/Toronto',   featured: false, useShamsi: false },
-                { city: 'Seoul',    timezone: 'Asia/Seoul',        featured: false, useShamsi: false },
-                { city: 'Dubai',    timezone: 'Asia/Dubai',        featured: false, useShamsi: false },
-                { city: 'Johannesburg', timezone: 'Africa/Johannesburg', featured: false, useShamsi: false }
+                { city: 'Tehran', timezone: 'Asia/Tehran', featured: true, useShamsi: true },
+                { city: 'New York', timezone: 'America/New_York', useShamsi: false },
+                { city: 'London', timezone: 'Europe/London', useShamsi: false },
+                { city: 'Paris', timezone: 'Europe/Paris', useShamsi: false },
+                { city: 'Berlin', timezone: 'Europe/Berlin', useShamsi: false },
+                { city: 'Tokyo', timezone: 'Asia/Tokyo', useShamsi: false },
+                { city: 'Beijing', timezone: 'Asia/Shanghai', useShamsi: false },
+                { city: 'Sydney', timezone: 'Australia/Sydney', useShamsi: false },
+                { city: 'Moscow', timezone: 'Europe/Moscow', useShamsi: false },
+                { city: 'Brasília', timezone: 'America/Sao_Paulo', useShamsi: false },
+                { city: 'New Delhi', timezone: 'Asia/Kolkata', useShamsi: false },
+                { city: 'Toronto', timezone: 'America/Toronto', useShamsi: false },
+                { city: 'Seoul', timezone: 'Asia/Seoul', useShamsi: false },
+                { city: 'Dubai', timezone: 'Asia/Dubai', useShamsi: false },
+                { city: 'Johannesburg', timezone: 'Africa/Johannesburg', useShamsi: false }
             ];
 
-            // تم‌ها با رنگ‌های عمیق‌تر
             const themes = [
-                {
-                    name: 'کهکشانی',
-                    overlayColor: 'rgba(10,0,20,0.3)',
-                    quoteBg: 'rgba(20, 15, 35, 0.4)',
-                    cardDayBg: 'linear-gradient(145deg, rgba(245,242,235,0.7), rgba(255,252,245,0.75))',
-                    cardNightBg: 'linear-gradient(145deg, rgba(16,14,35,0.65), rgba(28,22,50,0.75))',
-                    starColor: 'rgba(230,220,255,0.9)',
-                    barColor: '#d4af37'
-                },
-                {
-                    name: 'صورتی رؤیایی',
-                    overlayColor: 'rgba(30,5,20,0.3)',
-                    quoteBg: 'rgba(35, 15, 30, 0.4)',
-                    cardDayBg: 'linear-gradient(145deg, rgba(252,240,245,0.7), rgba(255,245,250,0.75))',
-                    cardNightBg: 'linear-gradient(145deg, rgba(40,15,30,0.65), rgba(50,20,35,0.75))',
-                    starColor: 'rgba(255,200,220,0.9)',
-                    barColor: '#ff90a0'
-                },
-                {
-                    name: 'آبی دریایی',
-                    overlayColor: 'rgba(0,10,25,0.3)',
-                    quoteBg: 'rgba(15, 20, 35, 0.4)',
-                    cardDayBg: 'linear-gradient(145deg, rgba(235,242,252,0.7), rgba(245,248,255,0.75))',
-                    cardNightBg: 'linear-gradient(145deg, rgba(15,20,35,0.65), rgba(22,28,50,0.75))',
-                    starColor: 'rgba(180,220,255,0.9)',
-                    barColor: '#4a90d9'
-                },
-                {
-                    name: 'سفید مهتابی',
-                    overlayColor: 'rgba(20,20,30,0.3)',
-                    quoteBg: 'rgba(30, 30, 40, 0.4)',
-                    cardDayBg: 'linear-gradient(145deg, rgba(245,245,250,0.7), rgba(255,255,255,0.75))',
-                    cardNightBg: 'linear-gradient(145deg, rgba(25,25,35,0.65), rgba(35,35,50,0.75))',
-                    starColor: 'rgba(255,255,255,0.9)',
-                    barColor: '#e0e0e0'
-                }
+                { name: 'کهکشانی', overlayColor: 'rgba(10,0,20,0.3)', quoteBg: 'rgba(20,15,35,0.4)', cardDayBg: 'linear-gradient(145deg, rgba(245,242,235,0.7), rgba(255,252,245,0.75))', cardNightBg: 'linear-gradient(145deg, rgba(16,14,35,0.65), rgba(28,22,50,0.75))', starColor: 'rgba(230,220,255,0.9)', barColor: '#d4af37' },
+                { name: 'صورتی رؤیایی', overlayColor: 'rgba(30,5,20,0.3)', quoteBg: 'rgba(35,15,30,0.4)', cardDayBg: 'linear-gradient(145deg, rgba(252,240,245,0.7), rgba(255,245,250,0.75))', cardNightBg: 'linear-gradient(145deg, rgba(40,15,30,0.65), rgba(50,20,35,0.75))', starColor: 'rgba(255,200,220,0.9)', barColor: '#ff90a0' },
+                { name: 'آبی دریایی', overlayColor: 'rgba(0,10,25,0.3)', quoteBg: 'rgba(15,20,35,0.4)', cardDayBg: 'linear-gradient(145deg, rgba(235,242,252,0.7), rgba(245,248,255,0.75))', cardNightBg: 'linear-gradient(145deg, rgba(15,20,35,0.65), rgba(22,28,50,0.75))', starColor: 'rgba(180,220,255,0.9)', barColor: '#4a90d9' },
+                { name: 'سفید مهتابی', overlayColor: 'rgba(20,20,30,0.3)', quoteBg: 'rgba(30,30,40,0.4)', cardDayBg: 'linear-gradient(145deg, rgba(245,245,250,0.7), rgba(255,255,255,0.75))', cardNightBg: 'linear-gradient(145deg, rgba(25,25,35,0.65), rgba(35,35,50,0.75))', starColor: 'rgba(255,255,255,0.9)', barColor: '#e0e0e0' }
             ];
-            let currentThemeIndex = 0;
-            let currentTheme = themes[0];
 
-            // DOM
+            // DOM elements
             const bgLayerA = document.getElementById('bgLayerA');
             const bgLayerB = document.getElementById('bgLayerB');
             const bgOverlay = document.getElementById('bgOverlay');
-            const bgCanvas = document.getElementById('background-canvas');
-            const ctx = bgCanvas.getContext('2d');
+            const canvas = document.getElementById('background-canvas');
+            const ctx = canvas.getContext('2d');
             const clocksGrid = document.getElementById('clocksGrid');
             const quoteText = document.getElementById('quoteText');
             const quoteAuthor = document.getElementById('quoteAuthor');
@@ -501,318 +555,348 @@
             const recordDisc = document.getElementById('recordDisc');
             const themeSwitch = document.getElementById('themeSwitch');
             const themeTooltip = document.getElementById('themeTooltip');
-            const themeBar = document.getElementById('themeBar');
+            const hamburgerToggle = document.getElementById('hamburgerToggle');
+            const menuOverlay = document.getElementById('menuOverlay');
+            const menuPanel = document.getElementById('menuPanel');
+            const modalOverlay = document.getElementById('modalOverlay');
+            const modalContent = document.getElementById('modalContent');
+            const modalBody = document.getElementById('modalBody');
+            const modalClose = document.getElementById('modalClose');
 
-            let quoteIndex = 0;
-            let clockCards = [];
-            let isPlaying = true;
-            let quotesArray = [];
-            let stars = [];
-            let activeLayer = 'A'; // کدام لایه در حال نمایش است
-            let nextImageIndex = -1; // ایندکس تصویر بعدی
+            let quoteIndex = 0, clockCards = [], isPlaying = true, quotesArray = [];
+            let currentThemeIndex = 0, currentTheme = themes[0];
+            let activeLayer = 'A', nextImageIndex = -1, stars = [];
 
-            // ---------- مدیریت عکس‌های رندوم بدون مکث ----------
-            function getRandomImageIndex() {
-                if (backgroundImages.length === 1) return 0;
-                let newIndex;
-                do {
-                    newIndex = Math.floor(Math.random() * backgroundImages.length);
-                } while (newIndex === nextImageIndex && backgroundImages.length > 1);
-                return newIndex;
+            // ========== توابع کمکی ==========
+            function gregorianToJalali(d) {
+                const g = [31,28,31,30,31,30,31,31,30,31,30,31], j = [31,31,31,31,31,31,30,29,29,29,29,29];
+                let gy = d.getFullYear()-1600, gm = d.getMonth(), gd = d.getDate()-1;
+                let gdn = 365*gy + Math.floor((gy+3)/4) - Math.floor((gy+99)/100) + Math.floor((gy+399)/400);
+                for(let i=0;i<gm;i++) gdn += g[i];
+                if(gm>1 && ((gy%4===0 && gy%100!==0) || gy%400===0)) gdn++;
+                gdn += gd;
+                let jdn = gdn - 79, jnp = Math.floor(jdn/12053); jdn %= 12053;
+                let jy = 979 + 33*jnp + 4*Math.floor(jdn/1461); jdn %= 1461;
+                if(jdn >= 366) { jy += Math.floor((jdn-1)/365); jdn = (jdn-1)%365; }
+                let jm = 0;
+                for(let i=0;i<11;i++) { if(jdn >= j[i]) { jdn -= j[i]; jm++; } else break; }
+                const m = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+                return `${jdn+1} ${m[jm]} ${jy}`;
             }
 
-            function preloadImage(url) {
-                return new Promise((resolve) => {
-                    const img = new Image();
-                    img.onload = () => resolve();
-                    img.onerror = () => resolve();
-                    img.src = url;
-                });
-            }
-
-            async function changeBackgroundImage() {
-                const newIndex = getRandomImageIndex();
-                nextImageIndex = newIndex;
-                const newImageUrl = backgroundImages[newIndex];
-
-                // لایه‌ای که در حال حاضر مخفی است را آماده می‌کنیم
-                const targetLayer = activeLayer === 'A' ? bgLayerB : bgLayerA;
-
-                // پیش‌بارگذاری و تنظیم عکس در لایه مخفی
-                await preloadImage(newImageUrl);
-                targetLayer.style.backgroundImage = `url('${newImageUrl}')`;
-
-                // جابجایی لایه‌ها: لایه مخفی را نمایان و لایه قبلی را مخفی می‌کنیم
-                if (activeLayer === 'A') {
-                    bgLayerB.style.zIndex = -4;
-                    bgLayerA.style.zIndex = -5;
-                    activeLayer = 'B';
-                } else {
-                    bgLayerA.style.zIndex = -4;
-                    bgLayerB.style.zIndex = -5;
-                    activeLayer = 'A';
-                }
-            }
-
-            // راه‌اندازی اولیه: اولین عکس رندوم
-            function setInitialImage() {
-                const initialIndex = getRandomImageIndex();
-                nextImageIndex = initialIndex;
-                bgLayerA.style.backgroundImage = `url('${backgroundImages[initialIndex]}')`;
-                bgLayerA.style.zIndex = -4;
-                bgLayerB.style.zIndex = -5;
-                activeLayer = 'A';
-            }
-
-            // ---------- تاریخ شمسی ----------
-            function gregorianToJalali(date) {
-                const gYear = date.getFullYear(), gMonth = date.getMonth()+1, gDay = date.getDate();
-                const gDays = [31,28,31,30,31,30,31,31,30,31,30,31];
-                const jDays = [31,31,31,31,31,31,30,29,29,29,29,29];
-                let gy = gYear-1600, gm = gMonth-1, gd = gDay-1;
-                let gDayNo = 365*gy + Math.floor((gy+3)/4) - Math.floor((gy+99)/100) + Math.floor((gy+399)/400);
-                for(let i=0;i<gm;i++) gDayNo += gDays[i];
-                if(gm>1 && ((gy%4===0 && gy%100!==0) || gy%400===0)) gDayNo++;
-                gDayNo += gd;
-                let jDayNo = gDayNo - 79;
-                let jNp = Math.floor(jDayNo/12053);
-                jDayNo %= 12053;
-                let jy = 979 + 33*jNp + 4*Math.floor(jDayNo/1461);
-                jDayNo %= 1461;
-                if(jDayNo >= 366) { jy += Math.floor((jDayNo-1)/365); jDayNo = (jDayNo-1)%365; }
-                let jm=0;
-                for(let i=0;i<11;i++) {
-                    if(jDayNo >= jDays[i]) { jDayNo -= jDays[i]; jm++; }
-                    else break;
-                }
-                const months = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
-                return `${jDayNo+1} ${months[jm]} ${jy}`;
-            }
-
-            function getLocalTimeData(tz, shamsi) {
+            function getLocalTime(tz, shamsi) {
                 try {
                     const now = new Date();
-                    const timeOpts = { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false };
-                    const dateOpts = { timeZone: tz, weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-                    const timeStr = now.toLocaleString('en-US', timeOpts);
-                    const dateStr = now.toLocaleString('en-US', dateOpts);
-                    const [h, m] = timeStr.split(':');
-                    const hour = parseInt(h);
-                    let shamsiDate = '';
-                    if(shamsi) {
-                        try { const d = new Date(now.toLocaleString('en-US',{timeZone:tz})); shamsiDate = gregorianToJalali(d); } catch(e){}
-                    }
-                    return { hours:h, minutes:m, timeStr:`${h}:${m}`, dateStr, shamsiDate, isDay: hour>=6 && hour<18 };
+                    const t = now.toLocaleString('en-US', { timeZone: tz, hour:'2-digit', minute:'2-digit', hour12:false });
+                    const d = now.toLocaleString('en-US', { timeZone: tz, weekday:'short', year:'numeric', month:'short', day:'numeric' });
+                    const [h,m] = t.split(':'); const hour = parseInt(h);
+                    let s = '';
+                    if(shamsi) { try { s = gregorianToJalali(new Date(now.toLocaleString('en-US',{timeZone:tz}))); } catch(e){} }
+                    return { hours:h, minutes:m, timeStr:`${h}:${m}`, dateStr:d, shamsiDate:s, isDay: hour>=6 && hour<18 };
                 } catch(e) {
                     const now = new Date();
-                    const h = String(now.getHours()).padStart(2,'0');
-                    const m = String(now.getMinutes()).padStart(2,'0');
-                    return {
-                        hours:h, minutes:m, timeStr:`${h}:${m}`,
-                        dateStr: now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}),
-                        shamsiDate: shamsi ? gregorianToJalali(now) : '',
-                        isDay: now.getHours()>=6 && now.getHours()<18
-                    };
+                    return { hours: String(now.getHours()).padStart(2,'0'), minutes: String(now.getMinutes()).padStart(2,'0'), timeStr:`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`, dateStr: now.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}), shamsiDate: shamsi? gregorianToJalali(now) : '', isDay: now.getHours()>=6 && now.getHours()<18 };
                 }
             }
 
-            function createClockCards() {
+            function createClocks() {
                 clocksGrid.innerHTML = '';
                 clockCards = [];
                 countries.forEach(c => {
                     const card = document.createElement('div');
                     card.className = 'clock-card';
                     if(c.featured) card.classList.add('iran-featured');
-                    card.innerHTML = `
-                        <div class="city-name">${c.city}</div>
-                        <div class="time-display"><span class="time-main">--:--</span></div>
-                        <div class="date-display">
-                            <span class="gregorian-date">---</span>
-                            ${c.useShamsi ? '<span class="shamsi-date"></span>' : ''}
-                        </div>`;
+                    card.innerHTML = `<div class="city-name">${c.city}</div><div class="time-display"><span class="time-main">--:--</span></div><div class="date-display"><span class="gregorian-date">---</span>${c.useShamsi ? '<span class="shamsi-date"></span>' : ''}</div>`;
                     clocksGrid.appendChild(card);
-                    clockCards.push({
-                        el: card,
-                        tz: c.timezone,
-                        shamsi: c.useShamsi,
-                        timeMain: card.querySelector('.time-main'),
-                        gDate: card.querySelector('.gregorian-date'),
-                        sDate: card.querySelector('.shamsi-date')
-                    });
+                    clockCards.push({ el: card, tz: c.timezone, shamsi: c.useShamsi, timeMain: card.querySelector('.time-main'), gDate: card.querySelector('.gregorian-date'), sDate: card.querySelector('.shamsi-date') });
                 });
             }
 
             function updateClocks() {
-                clockCards.forEach(card => {
-                    const d = getLocalTimeData(card.tz, card.shamsi);
-                    card.timeMain.textContent = d.timeStr;
-                    card.el.classList.remove('day-mode','night-mode');
-                    card.el.classList.add(d.isDay ? 'day-mode' : 'night-mode');
-                    if(card.gDate) card.gDate.textContent = d.dateStr;
-                    if(card.sDate && card.shamsi) card.sDate.textContent = d.shamsiDate || '';
+                clockCards.forEach(c => {
+                    const d = getLocalTime(c.tz, c.shamsi);
+                    c.timeMain.textContent = d.timeStr;
+                    c.el.classList.remove('day-mode','night-mode');
+                    c.el.classList.add(d.isDay ? 'day-mode' : 'night-mode');
+                    if(c.gDate) c.gDate.textContent = d.dateStr;
+                    if(c.sDate && c.shamsi) c.sDate.textContent = d.shamsiDate || '';
                 });
             }
 
             function prepareQuotes() {
-                if (window.quotes && Array.isArray(window.quotes) && window.quotes.length > 0) {
-                    quotesArray = window.quotes;
-                } else if (typeof quotes !== 'undefined' && Array.isArray(quotes) && quotes.length > 0) {
-                    quotesArray = quotes;
-                } else {
-                    quotesArray = [];
-                }
+                if(window.quotes && Array.isArray(window.quotes)) quotesArray = window.quotes;
+                else if(typeof quotes !== 'undefined' && Array.isArray(quotes)) quotesArray = quotes;
+                else quotesArray = [];
             }
 
             function updateQuote() {
-                if (quotesArray.length === 0) prepareQuotes();
-                if (quotesArray.length === 0) {
-                    quoteText.textContent = 'فایل quotes.js یافت نشد';
-                    quoteAuthor.textContent = '';
-                    return;
-                }
-                if (quoteIndex >= quotesArray.length) quoteIndex = 0;
-                const quote = quotesArray[quoteIndex];
-                if (typeof quote === 'string') {
-                    quoteText.textContent = quote;
-                    quoteAuthor.textContent = '';
-                } else if (quote && quote.text) {
-                    quoteText.textContent = quote.text;
-                    quoteAuthor.textContent = quote.author ? `— ${quote.author}` : '';
-                } else {
-                    quoteText.textContent = JSON.stringify(quote);
-                    quoteAuthor.textContent = '';
-                }
-                quoteText.classList.remove('quote-fade');
-                void quoteText.offsetWidth;
-                quoteText.classList.add('quote-fade');
+                if(!quotesArray.length) prepareQuotes();
+                if(!quotesArray.length) { quoteText.textContent = 'فایل quotes.js یافت نشد'; quoteAuthor.textContent = ''; return; }
+                if(quoteIndex >= quotesArray.length) quoteIndex = 0;
+                const q = quotesArray[quoteIndex];
+                quoteText.textContent = typeof q === 'string' ? q : (q?.text || JSON.stringify(q));
+                quoteAuthor.textContent = (q?.author) ? `— ${q.author}` : '';
+                quoteText.classList.remove('quote-fade'); void quoteText.offsetWidth; quoteText.classList.add('quote-fade');
                 quoteIndex++;
             }
 
-            // ---------- پس‌زمینه ----------
-            function resizeCanvas() {
-                bgCanvas.width = window.innerWidth;
-                bgCanvas.height = window.innerHeight;
-            }
-
+            function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
             function createStars() {
                 stars = [];
-                for (let i = 0; i < 50; i++) {
-                    stars.push({
-                        x: Math.random() * bgCanvas.width,
-                        y: Math.random() * bgCanvas.height,
-                        size: Math.random() * 3 + 3,
-                        speedY: -(Math.random() * 0.3 + 0.1),
-                        speedX: (Math.random() - 0.5) * 0.2,
-                        opacity: Math.random() * 0.5 + 0.4,
-                        twinkleSpeed: Math.random() * 0.02 + 0.005,
-                        twinkleOffset: Math.random() * Math.PI * 2
-                    });
-                }
+                for(let i=0;i<50;i++) stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*3+3, speedY: -(Math.random()*0.3+0.1), speedX: (Math.random()-0.5)*0.2, opacity: Math.random()*0.5+0.4, twinkleSpeed: Math.random()*0.02+0.005, twinkleOffset: Math.random()*Math.PI*2 });
             }
-
-            function drawStar(cx, cy, spikes, outerRadius, innerRadius, opacity) {
-                let rot = Math.PI / 2 * 3;
-                let step = Math.PI / spikes;
-                ctx.beginPath();
-                ctx.moveTo(cx, cy - outerRadius);
-                for (let i = 0; i < spikes; i++) {
-                    ctx.lineTo(cx + Math.cos(rot) * outerRadius, cy + Math.sin(rot) * outerRadius);
-                    rot += step;
-                    ctx.lineTo(cx + Math.cos(rot) * innerRadius, cy + Math.sin(rot) * innerRadius);
-                    rot += step;
-                }
-                ctx.closePath();
-                ctx.fillStyle = currentTheme.starColor.replace('0.9', opacity);
-                ctx.fill();
+            function drawStar(cx,cy,spikes,outer,inner,op) {
+                let rot = Math.PI/2*3, step = Math.PI/spikes;
+                ctx.beginPath(); ctx.moveTo(cx, cy-outer);
+                for(let i=0;i<spikes;i++) { ctx.lineTo(cx+Math.cos(rot)*outer, cy+Math.sin(rot)*outer); rot+=step; ctx.lineTo(cx+Math.cos(rot)*inner, cy+Math.sin(rot)*inner); rot+=step; }
+                ctx.closePath(); ctx.fillStyle = currentTheme.starColor.replace('0.9', op); ctx.fill();
             }
-
-            function drawBackground(timestamp) {
-                ctx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-
-                stars.forEach(star => {
-                    let currentOpacity = star.opacity + Math.sin(timestamp * star.twinkleSpeed + star.twinkleOffset) * 0.1;
-                    currentOpacity = Math.max(0.3, Math.min(0.9, currentOpacity));
-                    drawStar(star.x, star.y, 5, star.size, star.size/2.5, currentOpacity);
-                    star.y += star.speedY;
-                    star.x += star.speedX;
-                    if (star.y < -10) { star.y = bgCanvas.height + 10; star.x = Math.random() * bgCanvas.width; }
-                    if (star.x < -10) star.x = bgCanvas.width + 10;
-                    if (star.x > bgCanvas.width + 10) star.x = -10;
+            function drawBackground(ts) {
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                stars.forEach(s => {
+                    let op = s.opacity + Math.sin(ts*s.twinkleSpeed + s.twinkleOffset)*0.1;
+                    op = Math.max(0.3, Math.min(0.9, op));
+                    drawStar(s.x, s.y, 5, s.size, s.size/2.5, op);
+                    s.y += s.speedY; s.x += s.speedX;
+                    if(s.y < -10) { s.y = canvas.height+10; s.x = Math.random()*canvas.width; }
+                    if(s.x < -10) s.x = canvas.width+10; if(s.x > canvas.width+10) s.x = -10;
                 });
-
                 requestAnimationFrame(drawBackground);
             }
 
-            function applyTheme(index) {
-                currentThemeIndex = index;
-                currentTheme = themes[index];
-                
-                // تغییر رنگ‌ها
+            function applyTheme(idx) {
+                currentThemeIndex = idx; currentTheme = themes[idx];
                 bgOverlay.style.background = `radial-gradient(ellipse at center, ${currentTheme.overlayColor} 0%, rgba(0,0,0,0.4) 100%)`;
                 quoteContainer.style.background = currentTheme.quoteBg;
                 document.documentElement.style.setProperty('--card-day-bg', currentTheme.cardDayBg);
                 document.documentElement.style.setProperty('--card-night-bg', currentTheme.cardNightBg);
-                
-                // نوار نشانگر
-                themeBar.style.width = '100%';
-                themeBar.style.background = currentTheme.barColor;
-                themeBar.style.boxShadow = `0 0 12px ${currentTheme.barColor}`;
-                setTimeout(() => { themeBar.style.width = '0'; }, 1000);
-                
-                // نام تم
-                themeTooltip.textContent = currentTheme.name;
-                themeTooltip.classList.add('show');
-                setTimeout(() => { themeTooltip.classList.remove('show'); }, 1500);
-                
-                // انیمیشن دکمه
-                themeSwitch.classList.add('rotating');
-                setTimeout(() => { themeSwitch.classList.remove('rotating'); }, 600);
+                themeTooltip.textContent = currentTheme.name; themeTooltip.classList.add('show');
+                setTimeout(() => themeTooltip.classList.remove('show'), 1500);
+                themeSwitch.classList.add('rotating'); setTimeout(() => themeSwitch.classList.remove('rotating'), 600);
             }
 
-            themeSwitch.addEventListener('click', () => {
-                let next = (currentThemeIndex + 1) % themes.length;
-                applyTheme(next);
-            });
+            themeSwitch.addEventListener('click', () => applyTheme((currentThemeIndex+1)%themes.length));
 
-            // موزیک
             function toggleMusic() {
                 if(isPlaying) { bgMusic.pause(); recordDisc.classList.remove('playing'); isPlaying = false; }
                 else { bgMusic.play().catch(()=>{}); recordDisc.classList.add('playing'); isPlaying = true; }
             }
             gramophoneBtn.addEventListener('click', toggleMusic);
-
             function tryAutoplay() {
-                bgMusic.play().then(() => { isPlaying = true; recordDisc.classList.add('playing'); })
-                .catch(() => { isPlaying = false; recordDisc.classList.remove('playing'); });
+                bgMusic.play().then(() => { isPlaying = true; recordDisc.classList.add('playing'); }).catch(() => { isPlaying = false; recordDisc.classList.remove('playing'); });
             }
 
-            // راه‌اندازی
+            // ========== منو همبرگری (۶۰+ امکان) ==========
+            const menuStructure = [
+                { cat: '⏱️ ابزارهای اصلی', items: [
+                    { icon:'🌍', text:'ساعت جهانی (جستجوی شهر)', action: () => openWorldClock() },
+                    { icon:'⏱️', text:'کرنوگراف حرفه‌ای', action: () => openChronograph() },
+                    { icon:'⏰', text:'آلارم و تایمر', action: () => openAlarm() },
+                    { icon:'🌙', text:'فاز ماه', action: () => openMoonPhase() },
+                    { icon:'🌦️', text:'آب‌وهوا (بین‌المللی)', action: () => openWeather() },
+                    { icon:'📅', text:'تقویم و مناسبت‌ها', action: () => openCalendar() },
+                    { icon:'🎨', text:'گالری تم‌ها', action: () => openThemeGallery() },
+                    { icon:'🔍', text:'جستجوی پیشرفته', action: () => openSearch() },
+                ]},
+                { cat: '🌐 مناطق زمانی', items: [
+                    { icon:'🗺️', text:'نقشه مناطق زمانی', action: ()=> showMsg('نقشه تعاملی') },
+                    { icon:'🏙️', text:'زمان در ۵۰ شهر', action: ()=> openFiftyCities() },
+                    { icon:'🕐', text:'مقایسه دو منطقه', action: ()=> showMsg('مقایسه زمان') },
+                    { icon:'📊', text:'نمودار اختلاف ساعت', action: ()=> showMsg('نمودار') },
+                    { icon:'🌞', text:'طلوع/غروب خورشید', action: ()=> showMsg('طلوع و غروب') },
+                    { icon:'📱', text:'ابزارک زمان', action: ()=> showMsg('ویجت') },
+                ]},
+                { cat: '⏲️ ابزارهای زمان', items: [
+                    { icon:'⏳', text:'ساعت شنی دیجیتال', action: ()=> showMsg('ساعت شنی') },
+                    { icon:'🕰️', text:'ساعت آنالوگ زنده', action: ()=> showMsg('آنالوگ') },
+                    { icon:'⏲️', text:'تایمر پومودورو', action: ()=> showMsg('پومودورو') },
+                    { icon:'🔄', text:'تبدیل واحد زمان', action: ()=> showMsg('تبدیل') },
+                    { icon:'📆', text:'تاریخچه زمانی', action: ()=> showMsg('تاریخچه') },
+                    { icon:'🧮', text:'ماشین حساب ساعت', action: ()=> showMsg('ماشین حساب') },
+                ]},
+                { cat: '🎛️ شخصی‌سازی', items: [
+                    { icon:'🖼️', text:'تغییر پس‌زمینه', action: ()=> showMsg('آپلود عکس') },
+                    { icon:'🔤', text:'فونت‌ها', action: ()=> showMsg('تنظیم فونت') },
+                    { icon:'🎚️', text:'شفافیت کارت‌ها', action: ()=> showMsg('شفافیت') },
+                    { icon:'💡', text:'حالت شب/روز دستی', action: ()=> showMsg('حالت') },
+                    { icon:'🔔', text:'صدای تیک‌تاک', action: ()=> showMsg('صدا') },
+                ]},
+                { cat: '📚 اطلاعاتی', items: [
+                    { icon:'📖', text:'تاریخچه ساعت‌سازی', action: ()=> showMsg('تاریخچه') },
+                    { icon:'🧠', text:'حقایق زمان', action: ()=> showMsg('حقایق') },
+                    { icon:'🎓', text:'آموزش خواندن ساعت', action: ()=> showMsg('آموزش') },
+                    { icon:'🏛️', text:'موزه ساعت', action: ()=> showMsg('موزه') },
+                ]},
+                { cat: '🌌 کیهان', items: [
+                    { icon:'🪐', text:'موقعیت سیارات', action: ()=> showMsg('سیارات') },
+                    { icon:'☄️', text:'بارش شهابی', action: ()=> showMsg('شهاب') },
+                    { icon:'🛰️', text:'ایستگاه فضایی', action: ()=> showMsg('ISS') },
+                    { icon:'🌌', text:'کهکشان راه شیری', action: ()=> showMsg('کهکشان') },
+                ]},
+                { cat: '🔧 ابزارهای بیشتر', items: [
+                    { icon:'⏱️', text:'ثبت زمان (Time Log)', action: ()=> showMsg('لاگ') },
+                    { icon:'📈', text:'ردیابی بهره‌وری', action: ()=> showMsg('بهره‌وری') },
+                    { icon:'🔗', text:'اشتراک‌گذاری زمان', action: ()=> showMsg('اشتراک') },
+                    { icon:'🖨️', text:'چاپ ساعت', action: ()=> showMsg('چاپ') },
+                    { icon:'📋', text:'کپی زمان', action: ()=> showMsg('کپی') },
+                    { icon:'💾', text:'ذخیره تنظیمات', action: ()=> showMsg('ذخیره') },
+                ]},
+                { cat: '🎮 سرگرمی', items: [
+                    { icon:'🧩', text:'بازی حدس زمان', action: ()=> showMsg('بازی') },
+                    { icon:'🎯', text:'چالش سرعت', action: ()=> showMsg('چالش') },
+                    { icon:'🎵', text:'موسیقی ساعت', action: ()=> showMsg('موسیقی') },
+                ]},
+                { cat: '📱 اپلیکیشن', items: [
+                    { icon:'📲', text:'نسخه PWA', action: ()=> showMsg('PWA') },
+                    { icon:'🔔', text:'نوتیفیکیشن', action: ()=> showMsg('نوتیف') },
+                    { icon:'📴', text:'حالت آفلاین', action: ()=> showMsg('آفلاین') },
+                ]},
+            ];
+
+            function buildMenu() {
+                let html = '<input type="text" class="menu-search" id="menuSearch" placeholder="جستجو در امکانات...">';
+                menuStructure.forEach(cat => {
+                    html += `<div class="menu-category"><div class="menu-category-header">${cat.cat}</div><div class="menu-category-items">`;
+                    cat.items.forEach(item => {
+                        html += `<div class="menu-item" data-action="${item.text}"><span class="icon">${item.icon}</span>${item.text}</div>`;
+                    });
+                    html += '</div></div>';
+                });
+                menuPanel.innerHTML = html;
+
+                // events
+                document.querySelectorAll('.menu-category-header').forEach(h => {
+                    h.addEventListener('click', () => h.parentElement.classList.toggle('open'));
+                });
+                document.querySelectorAll('.menu-item').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const action = el.dataset.action;
+                        const found = findAction(action);
+                        if(found) found();
+                        closeMenu();
+                    });
+                });
+                document.getElementById('menuSearch')?.addEventListener('input', function(e) {
+                    const q = e.target.value.toLowerCase();
+                    document.querySelectorAll('.menu-item').forEach(el => {
+                        el.style.display = el.textContent.toLowerCase().includes(q) ? 'flex' : 'none';
+                    });
+                });
+            }
+
+            function findAction(text) {
+                for(let cat of menuStructure) {
+                    for(let item of cat.items) if(item.text === text) return item.action;
+                }
+                return null;
+            }
+
+            function openMenu() {
+                menuPanel.classList.add('open');
+                menuOverlay.classList.add('active');
+                hamburgerToggle.classList.add('open');
+            }
+            function closeMenu() {
+                menuPanel.classList.remove('open');
+                menuOverlay.classList.remove('active');
+                hamburgerToggle.classList.remove('open');
+            }
+            hamburgerToggle.addEventListener('click', () => menuPanel.classList.contains('open') ? closeMenu() : openMenu());
+            menuOverlay.addEventListener('click', closeMenu);
+
+            // ========== مدال‌ها ==========
+            function openModal(title, contentHTML) {
+                modalBody.innerHTML = `<h2 style="color:#d4af37; margin-bottom:16px; font-family:'Playfair Display';">${title}</h2>${contentHTML}`;
+                modalOverlay.classList.add('active');
+            }
+            modalClose.addEventListener('click', () => modalOverlay.classList.remove('active'));
+            modalOverlay.addEventListener('click', (e) => { if(e.target === modalOverlay) modalOverlay.classList.remove('active'); });
+
+            function showMsg(msg) { openModal('📌 توجه', `<p style="text-align:center; color:#ccc;">${msg} (به‌زودی...)</p>`); }
+
+            // ========== ابزارهای واقعی ==========
+            function openWorldClock() {
+                let html = '<input type="text" id="citySearch" placeholder="نام شهر را جستجو کنید..." style="width:100%; padding:10px; border-radius:8px; background:rgba(255,255,255,0.1); border:1px solid rgba(212,175,55,0.4); color:#fff; margin-bottom:15px;"><div id="cityResults" style="max-height:300px; overflow-y:auto;"></div>';
+                openModal('🌍 ساعت جهانی', html);
+                const allCities = [...new Set([...countries.map(c=>c.city), 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose', 'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'Charlotte', 'Indianapolis', 'San Francisco', 'Seattle', 'Denver', 'Washington', 'Boston', 'El Paso', 'Nashville', 'Detroit', 'Oklahoma City', 'Portland', 'Las Vegas', 'Memphis', 'Louisville', 'Baltimore', 'Milwaukee', 'Albuquerque', 'Tucson', 'Fresno', 'Sacramento', 'Kansas City', 'Long Beach', 'Mesa', 'Atlanta', 'Colorado Springs', 'Virginia Beach', 'Raleigh', 'Omaha', 'Miami', 'Oakland', 'Minneapolis', 'Tulsa', 'Wichita', 'New Orleans', 'Arlington', 'Cleveland', 'Bakersfield', 'Tampa', 'Aurora', 'Honolulu', 'Anaheim', 'Santa Ana', 'Corpus Christi', 'Riverside', 'Lexington', 'Henderson', 'Stockton', 'Saint Paul', 'Cincinnati', 'St. Louis', 'Pittsburgh', 'Greensboro', 'Anchorage', 'Plano', 'Lincoln', 'Orlando', 'Irvine', 'Newark', 'Toledo', 'Durham', 'Chula Vista', 'Fort Wayne', 'Jersey City', 'St. Petersburg', 'Laredo', 'Madison', 'Chandler', 'Buffalo', 'Lubbock', 'Scottsdale', 'Reno', 'Glendale', 'Gilbert', 'Winston–Salem', 'North Las Vegas', 'Norfolk', 'Chesapeake', 'Garland', 'Irving', 'Hialeah', 'Fremont', 'Boise', 'Richmond', 'Baton Rouge', 'Spokane', 'Des Moines', 'Tacoma', 'San Bernardino', 'Modesto', 'Fontana', 'Santa Clarita', 'Birmingham', 'Oxnard', 'Fayetteville', 'Moreno Valley', 'Rochester', 'Glendale', 'Huntington Beach', 'Salt Lake City', 'Grand Rapids', 'Amarillo', 'Yonkers', 'Aurora', 'Montgomery', 'Akron', 'Little Rock', 'Huntsville', 'Augusta', 'Port St. Lucie', 'Grand Prairie', 'Columbus', 'Tallahassee', 'Overland Park', 'Tempe', 'McKinney', 'Mobile', 'Cape Coral', 'Shreveport', 'Frisco', 'Knoxville', 'Worcester', 'Brownsville', 'Vancouver', 'Fort Lauderdale', 'Sioux Falls', 'Ontario', 'Chattanooga', 'Providence', 'Newport News', 'Rancho Cucamonga', 'Santa Rosa', 'Oceanside', 'Salem', 'Elk Grove', 'Garden Grove', 'Pembroke Pines', 'Peoria', 'Eugene', 'Corona', 'Cary', 'Springfield', 'Fort Collins', 'Jackson', 'Alexandria', 'Hayward', 'Lancaster', 'Lakewood', 'Clarksville', 'Palmdale', 'Salinas', 'Springfield', 'Hollywood', 'Pasadena', 'Sunnyvale', 'Macon', 'Kansas City', 'Pomona', 'Escondido', 'Killeen', 'Naperville', 'Joliet', 'Bellevue', 'Rockford', 'Savannah', 'Paterson', 'Torrance', 'Bridgeport', 'McAllen', 'Mesquite', 'Syracuse', 'Midland', 'Pasadena', 'Murfreesboro', 'Miramar', 'Dayton', 'Fullerton', 'Olathe', 'Orange', 'Thornton', 'Roseville', 'Denton', 'Waco', 'Surprise', 'Carrollton', 'West Valley City', 'Charleston', 'Warren', 'Hampton', 'Gainesville', 'Visalia', 'Coral Springs', 'Columbia', 'Cedar Rapids', 'Sterling Heights', 'New Haven', 'Stamford', 'Concord', 'Kent', 'Santa Clara', 'Elizabeth', 'Round Rock', 'Thousand Oaks', 'Lafayette', 'Athens', 'Topeka', 'Simi Valley', 'Fargo', 'Norman', 'Columbia', 'Abilene', 'Wilmington', 'Hartford', 'Victorville', 'Pearland', 'Vallejo', 'Ann Arbor', 'Berkeley', 'Allentown', 'Richardson', 'Odessa', 'Arvada', 'Cambridge', 'Sugar Land', 'Beaumont', 'Lansing', 'Evansville', 'Rochester', 'Independence', 'Fairfield', 'Provo', 'Clearwater', 'College Station', 'West Jordan', 'Carlsbad', 'El Monte', 'Murrieta', 'Temecula', 'Springfield', 'Palm Bay', 'Costa Mesa', 'Westminster', 'North Charleston', 'Miami Gardens', 'Manchester', 'High Point', 'Downey', 'Clovis', 'Pompano Beach', 'Pueblo', 'Elgin', 'Lowell', 'Antioch', 'West Covina', 'Ventura', 'Richmond', 'Gresham', 'Waterbury', 'Billings', 'Inglewood', 'Everett', 'Boulder', 'Daly City', 'Santa Maria', 'Norwalk', 'Burbank', 'Green Bay', 'Centennial', 'Arden-Arcade', 'Sandy Springs', 'Hillsboro', 'Jurupa Valley', 'Wichita Falls', 'San Mateo', 'Brockton', 'Davenport', 'Rialto', 'Edison', 'Spokane Valley', 'Albany', 'San Angelo', 'Vacaville', 'Compton', 'Carson', 'San Leandro', 'Kenosha', 'South Gate', 'Hesperia', 'Portsmouth', 'Roswell', 'Dearborn', 'Lynn', 'Federal Way', 'Lee\'s Summit', 'Livonia', 'Sparks', 'Santa Barbara', 'Bend', 'Las Cruces', 'Chico', 'Tracy', 'Redding', 'Yuma', 'Orem', 'Largo', 'Melbourne', 'Suffolk', 'Boca Raton', 'Longmont', 'Canton', 'Fishers', 'Missoula', 'Blue Springs', 'San Marcos', 'Tustin', 'Bellingham', 'Medford', 'Joplin', 'Lake Charles', 'Merced', 'St. George', 'Pflugerville', 'Kennewick', 'Champaign', 'Hoover', 'Cicero', 'Hemet', 'New Braunfels', 'Hattiesburg', 'Alhambra', 'Buena Park', 'Lakewood', 'Turlock', 'Mission Viejo', 'Manteca', 'Loveland', 'Bryan', 'Terre Haute', 'Port Arthur', 'Cranston', 'Lawton', 'Nampa', 'Auburn', 'Pawtucket', 'Fayetteville', 'Gulfport', 'Waukegan', 'Columbus', 'Bloomington', 'Jacksonville', 'Yakima', 'New Rochelle', 'St. Cloud', 'Edinburg', 'Carmel', 'Palm Coast', 'Danbury', 'Dothan', 'Warwick', 'Redwood City', 'Mount Pleasant', 'Lynchburg', 'Union City', 'Passaic', 'Pocatello', 'Casa Grande', 'Troy', ' Pharr', 'Caldwell', 'Vineland', 'Mount Vernon', 'Kenner', 'Lake Havasu City', 'Milpitas', 'Casper', 'Pleasanton', 'Rapid City', 'Flint', 'Livermore', 'Indio', 'Sherman', 'Santa Cruz', 'Montebello', 'La Crosse', 'Albany', 'Council Bluffs', 'New Bedford', 'Pittsburg', 'Temple', 'Cedar Park', 'Avondale', 'Bismarck', 'Noblesville', 'Owensboro', 'Fall River', 'Morgantown', 'San Clemente', 'Laguna Niguel', 'West Palm Beach', 'Gastonia', 'Haverhill', 'Eau Claire', 'Oshkosh', 'Perris', 'Valdosta', 'Idaho Falls', 'Muncie', 'Apex', 'Kokomo', 'Boynton Beach', 'Brooklyn Park', 'Bonita Springs', 'Hickory', 'Kissimmee', 'Lawrence', 'Aliso Viejo', 'Tuscaloosa', 'Florence', 'Evanston', 'Deerfield Beach', 'Homestead', 'New Britain', 'Schenectady', 'Rogers', 'Waldorf', 'San Rafael', 'Wausau', 'Appleton', 'Summerville', 'Lake Forest', 'Lodi', 'Davis', 'Upland', 'Fort Smith', 'Coon Rapids', 'Taylorsville', 'Eagan', 'Mission', 'Brentwood', 'The Woodlands', 'Madera', 'Charlottesville', 'Blacksburg', 'Jeffersonville', 'Layton', 'Georgetown', 'Burlington', 'Allen', 'Plymouth', 'Johnson City', 'New Brunswick', 'El Centro', 'Bozeman', 'Dublin', 'Southfield', 'Texarkana', 'Billings', 'El Cajon', 'Waterloo', 'North Richland Hills', 'Bismarck', 'Riverview', 'Lehi', 'Bowie', 'Bossier City', 'Hendersonville', 'Waterville', 'Ames', 'Redlands', 'Lakewood', 'Victoria', 'Cleveland Heights', 'Wilson', 'West Des Moines', 'Dubuque', 'Rock Hill', 'Mount Juliet', 'Portage', 'Owasso', 'Bartlett', 'Euless', 'Woodbury', 'Missouri City', 'Cedar Hill', 'Bedford', 'Hilton Head Island', 'Parker', 'Eden Prairie', 'Wylie', 'Mansfield', 'Lakeville', 'Sanford', 'Bristol', 'Lancaster', 'Enfield', 'Hammond', 'Porterville', 'Palm Springs', 'Hanford', 'Deltona', 'Columbus', 'Smyrna', 'Flagstaff', 'Grand Junction', 'Bowling Green', 'Sarasota', 'Buckeye', 'Palm Beach Gardens', 'Rancho Cordova', 'Cheyenne', 'Goodyear', 'Waukesha', 'Huntington', 'Rowlett', 'Sandy', 'Galveston', 'Yuba City', 'Coon Rapids', 'Euless', 'Blue Springs', 'Mentor', 'Bentonville', 'Muncie', 'Jackson', 'San Luis Obispo', 'Bozeman', 'Longview', 'Laguna Hills', 'Petaluma', 'Chesterfield', 'Middletown', 'Mishawaka', 'Salem', 'Kettering', 'Moore', 'Cleveland', 'Lake Elsinore', 'Madison', 'Auburn', 'Johns Creek', 'Spring Hill', 'Alpharetta', 'Franklin', 'Farmington Hills', 'Warner Robins', 'Pasco', 'North Little Rock', 'Sammamish', 'Palm Desert', 'Bothell', 'Flower Mound', 'Redmond', 'Lake Havasu City', 'North Port', 'Pocatello', 'Haltom City', 'Orland Park', 'Doral', 'Bethlehem', 'Cedar Rapids', 'Westland', 'Covington', 'Ocala', 'Florissant', 'Schenectady', 'Vineland', 'Burien', 'Casper', 'Keller', 'Meridian', 'Rio Rancho', 'Janesville', 'Hamilton', 'Gaithersburg', 'Huntsville', 'Union City', 'Pico Rivera', 'Burnsville', 'Arlington Heights', 'Kannapolis', 'Great Falls', 'Methuen', 'Taunton', 'Midwest City', 'Rock Island', 'Dunwoody', 'Sierra Vista', 'Elmhurst', 'Brookfield', 'Rochester Hills', 'Maricopa', 'Salina', 'Urbandale', 'DeKalb', 'Bartlesville', 'Oak Lawn', 'Kingsport', 'Titusville', 'Germantown', 'Bellevue', 'Burlington', 'Bangor', 'Irondequoit', 'Leominster', 'Harlingen', 'Littleton', 'St. Charles', 'North Miami', 'State College', 'Grapevine', 'Peabody', 'Ankeny', 'Mount Prospect', 'Beverly', 'Brea', 'West Haven', 'Everett', 'Twin Falls', 'Linden', 'West Allis', 'Fond du Lac', 'Plainfield', 'Manhattan', 'Euclid', 'Bel Air South', 'Enid', 'Carol Stream', 'Council Bluffs', 'Palm Harbor', 'Blaine', 'Hurst', 'Binghamton', 'Lake Havasu City', 'Blue Springs', 'Cleveland', 'Muskegon', 'Prescott', 'Cutler Bay', 'Weslaco', 'Hicksville', 'Smyrna', 'Milford', 'East Providence', 'Cuyahoga Falls', 'Maple Grove', 'Dothan', 'Land O\' Lakes', 'Middletown', 'Eau Claire', 'San Ramon', 'The Villages', 'Caldwell', 'Woonsocket', 'Hattiesburg', 'Lafayette', 'Elkhart', 'Kankakee', 'Hot Springs', 'Lehi', 'Eagle', 'Rosemead', 'North Lauderdale', 'New Berlin', 'Hackensack', 'Apache Junction', 'Fairbanks', 'Midland', 'Sumter', 'Sayreville', 'Indian Trail', 'New City', 'Moore', 'Brea', 'Richland', 'Tamarac', 'Bryan', 'Sicklerville', 'Lancaster', 'Fitchburg', 'Jefferson City', 'Largo', 'Ormond Beach', 'West Bend', 'San Jacinto', 'Port Charlotte', 'Cathedral City', 'La Habra', 'Palm Beach', 'Eastvale', 'Ocoee', 'Riverview', 'Maricopa', 'Fort Pierce', 'Oakland Park', 'Hempstead', 'Benton Harbor', 'Huntersville', 'Kalamazoo', 'Orem', 'St. George', 'Wentzville', 'Altamonte Springs', 'Spartanburg', 'Menifee', 'Apollo Beach', 'San Juan Capistrano', 'Cape Girardeau', 'La Quinta', 'Bozeman', 'Williamsport', 'Wauwatosa', 'Texarkana', 'Lakewood Ranch', 'Weatherford', 'Bullhead City', 'Dania Beach', 'Cedar Park', 'Franklin', 'Manassas', 'Burien', 'Naples', 'Brooklyn Park', 'Burnsville', 'Gilroy', 'Sherman', 'Lake Stevens', 'Bountiful', 'Findlay', 'Rockville', 'Monterey Park', 'Hollister', 'Palm Springs', 'Bellflower', 'Menomonee Falls', 'Paramount', 'Valrico', 'Hilliard', 'DeSoto', 'Kinston', 'Sunrise', 'Statesboro', 'Bayonne', 'Tupelo', 'El Dorado Hills', 'Newark', 'Upper Darby', 'Burleson', 'Plantation', 'Turlock', 'Wheaton', 'Carson City', 'Salisbury', 'Westfield', 'Lombard', 'Mankato', 'Lafayette', 'Goose Creek', 'Bartlett', 'San Bruno', 'Lewiston', 'Lakewood', 'Biloxi', 'Dover', 'Grand Island', 'Medina', 'Oak Park', 'Wilson', 'Rancho Santa Margarita', 'Conroe', 'Santa Fe', 'Coppell', 'Marion', 'Newport Beach', 'Charleston', 'Springfield', 'Bristol', 'Palm Bay', 'Waukesha', 'Lincoln Park', 'Belleville', 'San Gabriel', 'Fairfield', 'Granite City', 'Midland', 'Ellicott City', 'Eagle Pass', 'Moline', 'Bristol', 'Watsonville', 'Hilton Head Island', 'Washington', 'Herriman', 'Mundelein', 'Port Orange', 'Rome', 'North Miami Beach', 'Euless', 'New Braunfels', 'Roswell', 'St. Cloud', 'Bellevue', 'Alafaya', 'Oakville', 'South Jordan', 'Mehlville', 'Bloomington', 'Marana', 'Westminster', 'Oakland', 'Encinitas', 'Brentwood', 'Lexington', 'Plymouth', 'Miramar', 'Glendora', 'Orland Park', 'Bethlehem', 'Greenville', 'Idaho Falls', 'Highlands Ranch', 'Lynnwood', 'Lakewood', 'Plainfield', 'El Dorado Hills', 'Littleton', 'Redondo Beach', 'Spanish Fork', 'Pocatello', 'Cleveland', 'Hammond', 'Sanford', 'Fishers', 'Santee', 'Menifee', 'Mount Laurel', 'Hempstead', 'Burlington', 'O\'Fallon', 'Aloha', 'Temple City', 'Puyallup', 'Broomfield', 'West Sacramento', 'Napa', 'Rockville', 'Addison', 'San Miguel', 'Florence-Graham', 'Lakewood', 'Spring', 'National City', 'Linden', 'Brea', 'Covina', 'Bloomington', 'Reston', 'Clovis', 'Lake Elsinore', 'Alton', 'Buckeye', 'North Las Vegas', 'Canoga Park', 'Oak Lawn', 'Westmont', 'Revere', 'Leesburg', 'Edgewood', 'Minnetonka', 'Alamogordo', 'Albany', 'Brownsville', 'Beaverton', 'Riverside', 'Buffalo Grove', 'Harker Heights', 'Florin', 'Antelope', 'Enfield', 'Pharr', 'Apopka', 'Liberty', 'West Hartford', 'North Bergen', 'Crystal Lake', 'Bridgewater', 'Commerce City', 'Sun Prairie', 'Cedar Hill', 'Lacey', 'Paradise', 'Cedar Falls', 'Walla Walla', 'Newport', 'Strongsville', 'Anderson', 'Albany', 'Lake Oswego', 'Carrollwood', 'Sahuarita', 'Huntley', 'Woodland', 'Windsor', 'Hutto', 'Lehi', 'Kyle', 'Owings Mills', 'Spring Valley', 'Moorhead', 'Holland', 'Leander', 'La Mesa', 'Parker', 'Los Banos', 'Crown Point', 'Windsor', 'Urbana', 'Hoffman Estates', 'West Lafayette', 'Friendswood', 'Alton', 'Socorro', 'Merrillville', 'Seguin', 'Portage', 'Atlantic City', 'Lakeland', 'Winter Haven', 'Mission Bend', 'Carol City', 'San Marcos', 'Hendersonville', 'Rosemont', 'Golden Gate', 'Lemon Grove', 'Charleston', 'Pleasant Grove', 'Pittsfield', 'Melbourne', 'Beloit', 'Mankato', 'Southaven', 'Saginaw', 'Potomac', 'Bay City', 'Blacksburg', 'Lincoln', 'Oak Creek', 'Land O\' Lakes', 'East Los Angeles', 'St. Augustine', 'Olympia', 'Lenexa', 'Randallstown', 'Northglenn', 'Highland', 'Muscatine', 'Montgomery Village', 'Huntsville', 'East Orange', 'Salem', 'University Place', 'Augusta', 'Downers Grove', 'Cottage Grove', 'St. Peters', 'Killeen', 'Freeport', 'Cheektowaga', 'Sierra Vista', 'Conway', 'Smyrna', 'Lauderhill', 'Carson', 'Terre Haute', 'Hazelwood', 'San Juan', 'Colton', 'Riviera Beach', 'Keller', 'Bell Gardens', 'Sunrise Manor', 'West Covina', 'Layton', 'East Meadow', 'Seaside', 'Greenacres', 'Germantown', 'Nashua', 'Norwich', 'Salina', 'Temple', 'High Point', 'Palm City', 'Oak Park', 'Marion', 'Palm Coast', 'Kissimmee', 'Lodi', 'Urbandale', 'Baytown', 'Commerce', 'Buffalo', 'Fallbrook', 'Rancho Cordova', 'West Babylon', 'Stillwater', 'Miami Lakes', 'Apple Valley', 'Weslaco', 'Cherry Hill', 'Hoboken', 'Chicopee', 'Gresham', 'Sheboygan', 'Meriden', 'Haltom City', 'Boca Raton', 'Plainfield', 'Auburn', 'Biloxi', 'Beaumont', 'Millcreek', 'Tracy', 'San Leandro', 'Menomonee Falls', 'Marietta', 'Centereach', 'Grand Forks', 'Marion', 'Blue Springs', 'Riverton', 'South Hill', 'Cooper City', 'Cedar Rapids', 'Kettering', 'Eagan', 'Florissant', 'Hattiesburg', 'Schenectady', 'Decatur', 'Rapid City', 'Dothan', 'Madison', 'Lakewood', 'New Rochelle', 'Pasco', 'Cleveland Heights', 'Dundalk', 'Taunton', 'Hanover', 'Niagara Falls', 'Peoria', 'Whitney', 'Keller', 'Park Ridge', 'Everett', 'Atascocita', 'Brooklyn Center', 'Sherwood', 'Framingham', 'Hicksville', 'Moorpark', 'Moline', 'San Clemente', 'Glendale', 'Lancaster', 'Jacksonville', 'Weston', 'Valley Stream', 'Kenosha', 'Sayreville', 'Bowie', 'Campbell', 'Trujillo Alto', 'Ocoee', 'Atlantic Beach', 'Magna', 'Coram', 'Bel Air North', 'Tuckahoe', 'Novi', 'Lafayette', 'York', 'Butler', 'Mehlville', 'Rochester', 'Fort Lee', 'Eagle Mountain', 'Klamath Falls', 'Friendswood', 'Kearny', 'Fort Walton Beach', 'Statesboro', 'Bullhead City', 'Cleveland', 'University', 'San Marcos', 'Lockport', 'Watertown', 'Owasso', 'Colonie', 'Pensacola', 'Wentzville', 'Newport', 'Southaven', 'Pleasanton', 'Menomonee Falls', 'San Luis', 'Burlingame', 'Burien', 'San Juan Capistrano', 'Lynn', 'Leominster', 'Alexandria', 'Cibolo', 'Ogden', 'Weslaco', 'Mankato', 'Romeoville', 'Socorro', 'El Dorado', 'St. Augustine', 'Socastee', 'Sunny Isles Beach', 'Saratoga', 'West Covina', 'Orland Park', 'White Plains', 'Blacksburg', 'Urbana', 'North Port', 'Walla Walla', 'Cedar Falls', 'Marana', 'Holladay', 'Moorhead', 'Pekin', 'Highland Park', 'Elmont', 'Pacifica', 'Ken Caryl', 'Huntersville', 'Los Gatos', 'Indian Trail', 'West Fargo', 'Dania Beach', 'Wheeling', 'Suffolk', 'Atwater', 'El Dorado Hills', 'Lake Havasu City', 'Sammamish', 'Catonsville', 'Oak Creek', 'Northbrook', 'Riviera Beach', 'Key West', 'Cedar Hill', 'Southglenn', 'St. Louis Park', 'Belvidere', 'Bella Vista', 'Elk Grove Village', 'Medford', 'Wheaton', 'Longwood', 'Greenwood', 'Pikesville', 'Perth Amboy', 'Ames', 'Morristown', 'Clarksburg', 'Allen', 'Burton', 'Del Rio', 'Phenix City', 'Woodside', 'Richmond', 'Hercules', 'Shreveport', 'Salisbury', 'Pahrump', 'Olive Branch', 'Rosemead', 'Sevierville', 'Merrifield', 'North Bethesda', 'Secaucus', 'Perry Hall', 'Faribault', 'Hazleton', 'Woburn', 'DeLand', 'Bountiful', 'West Hollywood', 'Dearborn Heights', 'Lemoore', 'Woodlawn', 'Chalmette', 'El Reno', 'Millville', 'Scranton', 'Edinburg', 'Des Plaines', 'Hopkinsville', 'Tolleson', 'Elk River', 'Arcadia', 'Morton Grove', 'Carpentersville', 'Magna', 'Parkland', 'Chillum', 'Austintown', 'Lodi', 'Midvale', 'Cave Spring', 'Aliso Viejo', 'Alabaster', 'Chambersburg', 'Springville', 'Malden', 'Lockport', 'Bethany', 'South Laurel', 'Upper Arlington', 'St. Charles', 'Belmont', 'Elk Grove', 'St. Clair Shores', 'Sandusky', 'Port Charlotte', 'Lompoc', 'Idaho Falls', 'Kearns', 'De Pere', 'Edgewater', 'Addison', 'Ontario', 'Alvin', 'South Portland', 'Round Lake Beach', 'Winter Springs', 'Royal Oak', 'New Smyrna Beach', 'Woodridge', 'Saginaw', 'Arroyo Grande', 'La Presa', 'Oviedo', 'Staunton', 'Troy', 'New Iberia', 'Lodi', 'Calexico', 'Caldwell', 'Coral Terrace', 'Saratoga Springs', 'Moscow', 'Post Falls', 'Cleburne', 'Midlothian', 'Carbondale', 'Hermiston', 'Durango', 'Morganton', 'Winchester', 'North Ridgeville', 'Hilo', 'White Bear Lake', 'Bryn Mawr-Skyway', 'North Bethesda', 'Sun City', 'Kankakee', 'Algonquin', 'Woonsocket', 'Linden', 'Beacon', 'Dunedin', 'Zionsville', 'Austin', 'Rochester', 'Winder', 'St. Cloud', 'Kerrville', 'Mason', 'Jackson', 'Athens', 'Biddeford', 'Brunswick', 'Lake Ridge', 'Oshkosh', 'Opelika', 'Onalaska', 'DeKalb', 'Plainview', 'Miamisburg', 'Bay Shore', 'Palatine', 'Clarksville', 'Sherwood', 'North Fort Myers', 'Easton', 'Mokena', 'Eagle', 'Bel Air', 'Winter Garden', 'Eastlake', 'McMinnville', 'Westlake', 'La Vergne', 'Crystal', 'Fairmont', 'Leawood', 'Palm River-Clair Mel', 'Chillicothe', 'Galesburg', 'Warren', 'Edmonds', 'Urbandale', 'Bridgeton', 'Brawley', 'Cornelius', 'Columbia', 'Paso Robles', 'Saratoga', 'Bozeman', 'Lansdale', 'Jeffersontown', 'Lawrence', 'Rahway', 'Palm Beach Gardens', 'North Olmsted', 'Wilsonville', 'Hot Springs', 'Fajardo', 'Vestavia Hills', 'Zanesville', 'Bangor', 'Wausau', 'Rancho Palos Verdes', 'Grandville', 'Colonial Heights', 'East Palo Alto', 'Mason', 'Farmington', 'Goshen', 'Alamogordo', 'Lake Jackson', 'Mill Creek', 'Balch Springs', 'Muscle Shoals', 'Redmond', 'Willowbrook', 'South Pasadena', 'East Chicago', 'Mequon', 'Eden Prairie', 'Greenfield', 'Waterloo', 'Matthews', 'Grove City', 'Massillon', 'South San Francisco', 'Reynoldsburg', 'Neenah', 'Kingman', 'Yorkville', 'Owosso', 'Lake Magdalene', 'West Islip', 'Nogales', 'Bellaire', 'Benicia', 'Rockledge', 'Mineola', 'North Tonawanda', 'Warwick', 'Bonita Springs', 'Columbus', 'Bellmore', 'Hackensack', 'Bothell West', 'Pleasant Hill', 'Brookfield', 'Chaska', 'Hialeah Gardens', 'University City', 'Dublin', 'Lake St. Louis', 'Muskogee', 'Cahokia Heights', 'Lake Oswego', 'Rolling Meadows', 'Hastings', 'Foster City', 'El Dorado', 'Marion', 'Camden', 'Ansonia', 'Murray', 'North Richland Hills', 'Kirkland', 'Bethpage', 'Maywood', 'Brookings', 'Marlboro', 'Sylvania', 'South Lake Tahoe', 'Northfield', 'Maplewood', 'Fuquay-Varina', 'Cookeville', 'Whitehall', 'Elizabeth City', 'Westlake', 'Willingboro', 'Palm City', 'New London', 'Derry', 'Loma Linda', 'Cumberland', 'Socorro', 'North Royalton', 'Southaven', 'Safety Harbor', 'University Park', 'Riverdale', 'Covington', 'Williamsburg', 'Cottonwood Heights', 'Grandview', 'Morrisville', 'Mount Vernon', 'Spring Hill', 'Wisconsin Rapids', 'Lakeside', 'St. Michael', 'Centralia', 'Mount Lebanon', 'Eureka', 'Mercer Island', 'Willmar', 'Red Wing', 'Newberg', 'Mandan', 'Edgewood', 'Dumont', 'West Odessa', 'Ferndale', 'Sun City West', 'Avon', 'Soledad', 'Monroe', 'Drexel Heights', 'Wesley Chapel', 'Ramsey', 'Greenbelt', 'Clemson', 'Pleasant Valley', 'Stallings', 'Pahrump', 'Lodi', 'Marysville', 'Ashland', 'Prattville', 'Defiance', 'Lakeland North', 'Auburn Hills', 'Hollister', 'Kingsville', 'Kuna', 'Mundelein', 'Prior Lake', 'East Moline', 'Oak Forest', 'Redmond', 'Gallatin', 'San Lorenzo', 'Garner', 'Northbrook', 'Severna Park', 'Linden', 'Mountain House', 'Chanhassen', 'Sunny Isles Beach', 'Mililani', 'La Porte', 'Shaker Heights', 'Suitland', 'Winchester', 'Rock Springs', 'Salmon Creek', 'Hastings', 'Mayagüez', 'Allendale', 'Mint Hill', 'Gahanna', 'Parker', 'Natick', 'Titusville', 'Erie', 'Auburn', 'Pullman', 'Ottawa', 'Hueytown', 'Millcreek', 'Lake Elsinore', 'Somerset', 'Ridgewood', 'East Point', 'Palm Desert', 'Danville', 'Mandan', 'Dickinson', 'Safety Harbor', 'Crown Point', 'North Tustin', 'Spanish Lake', 'Owatonna', 'Monterey', 'Suisun City', 'Lockport', 'Lindsay', 'St. Matthews', 'Sapulpa', 'North Salt Lake', 'Wilkes-Barre', 'Schererville', 'Middletown', 'Oswego', 'Sulphur', 'Mesquite', 'Langley Park', 'Central Islip', 'Montgomery', 'Rutland', 'Inglewood-Finn Hill', 'Lebanon', 'Goodlettsville', 'Wauconda', 'Cedar City', 'Paris', 'Milledgeville', 'Sedalia', 'North Platte', 'Middleton', 'Sidney', 'Auburn', 'Scarsdale', 'Alabaster', 'Harrison', 'Moscow', 'Seymour', 'Chester', 'Helena', 'Alma', 'Dodge City', 'Hayden', 'Canyon Lake', 'Garden City', 'Adelphi', 'Elko', 'Saratoga Springs', 'Helena', 'Auburn', 'Derby', 'Prescott Valley', 'Moraga', 'Cockeysville', 'Huntington Station', 'Portsmouth', 'Muskegon Heights', 'Palmer', 'Socastee', 'Green', 'Avon Lake', 'Los Altos', 'Spanish Fork', 'Crestview', 'Bay Point', 'Paris', 'Lebanon', 'Hawaiian Gardens', 'Fruit Cove', 'Stoneham', 'North Ridgeville', 'Cambridge', 'Bay City', 'Palisades Park', 'Muscatine', 'Bainbridge Island', 'St. Marys', 'Sunnyside', 'Forest Grove', 'Merritt Island', 'Erlanger', 'Asheboro', 'St. Charles', 'Farmington', 'New Brighton', 'Wesley Chapel', 'Onalaska', 'Huntington', 'Altadena', 'Bluefield', 'Elko', 'Rolla', 'North Canton', 'Salida', 'Spokane Valley', 'Milford Mill', 'Prichard', 'Mint Hill', 'Westerville', 'McMinnville', 'Southlake', 'Cliffside Park', 'Maryville', 'Paragould', 'Winder', 'Chillum', 'Oak Park', 'South Euclid', 'Searcy', 'West New York', 'West Linn', 'Parkland', 'Mustang', 'Oro Valley', 'Hopkins', 'Thomasville', 'Ottawa', 'Beaver Dam', 'Seminole', 'Zachary', 'Franklin Square', 'Glen Burnie', 'Piqua', 'Mequon', 'Ypsilanti', 'Sherwood', 'Loves Park', 'Concord', 'Banning', 'Wheat Ridge', 'Summerlin South', 'Newnan', 'Shoreline', 'South Salt Lake', 'Alamosa', 'Meadow Woods', 'Yucaipa', 'Danville', 'Fort Hunt', 'Eloy', 'Spanish Springs', 'Klamath Falls', 'Castro Valley', 'Tukwila', 'Papillion', 'Russellville', 'Salina', 'Elizabeth', 'Glasgow', 'Butte-Silver Bow', 'Martha Lake', 'Laguna Woods', 'Madera Acres', 'Middletown', 'Pueblo West', 'Farmington', 'Lewiston', 'Troy', 'St. Andrews', 'Boulder City', 'Malibu', 'Altus', 'Leavenworth', 'Tifton', 'Camas', 'Bessemer', 'Lake Wales', 'Hudson', 'Bixby', 'Coachella', 'Ardmore', 'Tumwater', 'New Albany', 'Pembroke', 'St. Simons', 'Lufkin', 'Duncan', 'Oakleaf Plantation', 'Ada', 'Centralia', 'Holt', 'Gladstone', 'Ruskin', 'Marshall', 'Shawnee', 'Marion', 'Long Branch', 'Cudahy', 'Spring Hill', 'West Springfield', 'North Liberty', 'Ashland', 'Monroe', 'West Memphis', 'Canyon Lake', 'Blythe', 'Garden City', 'Beverly Hills', 'San Dimas', 'Claremore', 'Collinsville', 'Iselin', 'Rutherford', 'Gainesville', 'Fair Lawn', 'Daphne', 'Natchitoches', 'Bristol', 'Sugar Hill', 'McDonough', 'Forest Lake', 'Belton', 'Burlington', 'Boone', 'Cullman', 'Nacogdoches', 'Worthington', 'Columbus', 'Crest Hill', 'Huntington', 'Mays Chapel', 'Kerrville', 'Orange', 'Miami Springs', 'Birmingham', 'North Highlands', 'Moses Lake', 'Nixa', 'Beaumont', 'Mountain Brook', 'Parkville', 'Cockeysville', 'Azusa', 'Glenville', 'South Valley', 'St. Helens', 'Kernersville', 'Goleta', 'Lansing', 'Graham', 'Lake Ronkonkoma', 'San Benito', 'Hackettstown', 'Elmwood Park', 'Branford', 'Trussville', 'Rosenberg', 'Whitewater', 'Rosemount', 'Calabasas', 'St. Peters', 'Silverdale', 'Douglasville', 'Uniondale', 'Rockville Centre', 'Andover', 'Mount Holly', 'Pooler', 'Rye', 'El Cerrito', 'New Castle', 'West Whittier-Los Nietos', 'Brea', 'Cullman', 'Milledgeville', 'Mokena', 'Garfield', 'Papillion', 'Fort Washington', 'Pickerington', 'Gretna', 'Monsey', 'Perry Hall', 'Ashwaubenon', 'East Peoria', 'Wauconda', 'Lakeside', 'Benbrook', 'Selma', 'Ridgefield', 'Johnston', 'Franklin', 'Norwood', 'Garfield Heights', 'Cullman', 'Galt', 'McAlester', 'Wyoming', 'Lakewood', 'Sweetwater', 'Fort Atkinson', 'Cockeysville', 'Merrick', 'Pleasant Grove', 'Tifton', 'Ramona', 'Little Elm', 'Neenah', 'Spokane Valley', 'Alpena', 'Sapulpa', 'St. Andrews', 'Willoughby', 'Bellefontaine', 'Norwalk', 'Dunmore', 'Bloomsburg', 'Neosho', 'Lake Forest', 'Laguna Hills', 'Dixon', 'Woodburn', 'St. Louis Park', 'Sedro-Woolley', 'Halfmoon', 'Lynbrook', 'Newberry', 'Raytown', 'West Chicago', 'Jennings', 'New Castle', 'Verona', 'Cliffside Park', 'Dover', 'Bayou Cane', 'St. Ann', 'Taylors', 'Rock Springs', 'Paradise Valley', 'Grand Terrace', 'Ellensburg', 'Lake Zurich', 'Tiffin', 'New Hope', 'Lake in the Hills', 'Hurstbourne', 'Santa Fe Springs', 'Mountlake Terrace', 'Weatherford', 'Cottage Lake', 'Canby', 'Fitchburg', 'Ontario', 'Westbury', 'Eureka', 'Sartell', 'Deer Park', 'Le Ray', 'Glen Rock', 'Westfield', 'McMinnville', 'Scottsbluff', 'Belleview', 'Floral Park', 'San Fernando', 'Cahokia', 'Hutto', 'Plymouth', 'Bellview', 'Walker', 'Callaway', 'Blue Island', 'Sachse', 'El Paso de Robles', 'Tullahoma', 'Socorro', 'Glenview', 'Muskogee', 'Nogales', 'Stuart', 'Homewood', 'Fort Dix', 'Maryland Heights', 'Washington', 'Evesham', 'Nanuet', 'McKeesport', 'Oak Ridge', 'Chubbuck', 'Steubenville', 'Hazel Dell', 'Lincolnia', 'Mount Pleasant', 'Nicholasville', 'New Berlin', 'Myrtle Beach', 'Shoreview', 'Riverbank', 'New Providence', 'Avon', 'Garner', 'Tifton', 'Depew', 'Lake Geneva', 'Sun City Center', 'Marple', 'Forest Hills', 'North Myrtle Beach', 'Monroe', 'Plattsburgh', 'Old Bridge', 'Lakeway', 'Northampton', 'Pleasant Prairie', 'Streetsboro', 'McHenry', 'Pasadena', 'Northport', 'Brownwood', 'Berea', 'Los Lunas', 'Payson', 'Bothell', 'Ridgecrest', 'South Elgin', 'Port Hueneme', 'Machesney Park', 'Chillicothe', 'Holbrook', 'Norco', 'Commerce City', 'Centennial', 'McKeesport', 'Easthampton', 'Dyersburg', 'Libertyville', 'Hilliard', 'Benbrook', 'Tullahoma', 'North Laurel', 'New Baltimore', 'Farmers Branch', 'Athens', 'South Portland', 'Portland', 'Pearl River', 'Waynesboro', 'Wyandotte', 'Shelby', 'Grayslake', 'Brooklyn', 'Newburyport', 'Clemmons', 'Lisle', 'St. John', 'Belleview', 'Bothell West', 'Lithia Springs', 'South Plainfield', 'Hermitage', 'Rowland Heights', 'Galesburg', 'Danville', 'Dover', 'Jacksonville Beach', 'Lemon Hill', 'Maple Valley', 'Grandview', 'Tega Cay', 'Greeneville', 'Kihei', 'Secaucus', 'Moorhead', 'Plainview', 'Colleyville', 'Winder', 'Satellite Beach', 'Hampden', 'Abilene', 'Kilgore', 'Rolling Meadows', 'Harker Heights', 'St. Matthews', 'Knik-Fairview', 'Enumclaw', 'North Cowichan', 'Frederickson', 'Silver Spring', 'Alliance', 'East Northport', 'Kingston', 'Cleburne', 'Bristol', 'Fish Hawk', 'Lebanon', 'Chesterfield', 'North Platte', 'Lake Mary', 'Havre de Grace', 'Ferndale', 'Radcliff', 'Springfield', 'Mason City', 'Plum', 'Chippewa Falls', 'Dodge City', 'Eagle River', 'Eagle Pass', 'Port Huron', 'Mequon', 'Oak Park', 'Lincolnwood', 'Montgomery', 'Mattoon', 'Lemon Grove', 'Athens', 'Alvin', 'Enumclaw', 'Spring Hill', 'Sunland Park', 'Lino Lakes', 'Edgewater', 'Clarksburg', 'Cedar Mill', 'Granite Bay', 'Cedar Rapids', 'Sulphur Springs', 'St. John\'s', 'Ridgefield Park', 'Havre', 'Lake Forest Park', 'Vernon', 'Boulder', 'Rochester', 'Kernersville', 'New Hartford', 'Lombard', 'Cottonwood Heights', 'Hernando', 'Miami', 'Bellefontaine Neighbors', 'Onalaska', 'Ashland', 'Hurstbourne Acres', 'Hamilton', 'Jefferson', 'Cherry Hill Mall', 'Clay', 'Bethel Park', 'Fitchburg', 'Wauwatosa', 'Lino Lakes', 'North Tonawanda', 'Baldwin', 'Spanish Fort', 'Beavercreek', 'Cedar Falls', 'Lake Country', 'Escanaba', 'Bowie', 'Parma Heights', 'Port Chester', 'Kings Park', 'Logan', 'Winchester', 'Shorewood', 'Laurinburg', 'Green', 'Bedford', 'Clinton', 'Savage', 'Auburn', 'Lincolnton', 'Brown Deer', 'Lower Burrell', 'Princeton', 'Fenton', 'Pomfret', 'Jefferson Hills', 'Warrensburg', 'Alpena', 'Oregon', 'Cudahy', 'Ashland', 'Lemoore Station', 'Lockhart', 'Norfolk', 'St. Ann', 'Pinehurst', 'Painesville', 'Fairview Heights', 'Lyndhurst', 'St. Marys', 'North Chicago', 'Hazel Green', 'Bluffton', 'Menominee', 'South Portland', 'Gardner', 'McPherson', 'Burlington', 'Athens', 'St. Michael', 'Dunn', 'North Olmsted', 'Sycamore', 'Sunnyvale', 'Murphy', 'Pella', 'Hobbs', 'Brainerd', 'Laguna Beach', 'Manchester', 'Meriden', 'Carolina Beach', 'Newington', 'Oconomowoc', 'Brenham', 'Bon Air', 'Saint-Laurent', 'Valley', 'Lebanon', 'Crowley', 'West Odessa', 'Copperas Cove', 'Corcoran', 'New Lenox', 'Melrose', 'Lambertville', 'Trenton', 'Williston', 'Jefferson City', 'North Platte', 'Kerrville', 'Mountain Home', 'Manhattan Beach', 'Beaver', 'Fairview Park', 'Parkland', 'Scarsdale', 'Sweetwater', 'Wyoming', 'Winter Garden', 'Hudson', 'Pewaukee', 'Painesville', 'Seven Oaks', 'Cornelius', 'Montgomery', 'Wixom', 'River Falls', 'North Fort Myers', 'Palm Coast', 'North Royalton', 'Bay Point', 'Van Buren', 'Monroe', 'Cedar Mill', 'Waxahachie', 'Rocky River', 'Norwalk', 'Albemarle', 'Seal Beach', 'Johnson City', 'Dunedin', 'Conway', 'Orinda', 'Lenoir', 'Gatesville', 'Short Pump', 'Artesia', 'Centralia', 'Sedalia', 'Nederland', 'North Bend', 'Mount Juliet', 'Shelbyville', 'Burleson', 'Howell', 'Wilmette', 'Canyon Lake', 'Prineville', 'Westbrook', 'Maitland', 'Longview', 'Vero Beach South', 'Medford', 'Walnut', 'Lithonia', 'Middleton', 'Fernley', 'Cadillac', 'Socorro', 'Suamico', 'Highland', 'Midlothian', 'Ken Caryl', 'Willow Grove', 'Wake Forest', 'Corbin', 'Groveland', 'Lake Zurich', 'Greenfield', 'Buda', 'Branson', 'South Burlington', 'Troutdale', 'Canon City', 'Mason', 'North Plainfield', 'Lynn Haven', 'Whitefish Bay', 'Sebastian', 'Wheeling', 'Jefferson Valley-Yorktown', 'Hobe Sound', 'Mountain Home', 'Moscow', 'Harrison', 'Halfmoon', 'Hybla Valley', 'Terrytown', 'Clive', 'Marshfield', 'Mount Vernon', 'New River', 'Villa Rica', 'Summit', 'Trenton', 'Solon', 'Durant', 'Clarksburg', 'Bentonville', 'Butler', 'Fountain Valley', 'La Plata', 'Cleveland', 'Bryn Mawr', 'Griffin', 'Brea', 'Fort Lee', 'University Heights', 'Elkhorn', 'Brawley', 'Fostoria', 'Stillwater', 'Heber', 'Arlington', 'Lakewood', 'Cudahy', 'Pittsburg', 'Marietta', 'Cottage Grove', 'Silver Firs', 'Scituate', 'Pearl City', 'Huron', 'Farmington', 'Centralia', 'Westport', 'Seymour', 'St. John', 'Lakeland South', 'Havre de Grace', 'Duluth', 'Commerce', 'Onalaska', 'McMinnville', 'Maitland', 'Albemarle', 'Fernandina Beach', 'Lake Forest', 'Hope Mills', 'Powell', 'Highland', 'Lynden', 'Fayetteville', 'Moorestown', 'Palm Valley', 'Santee', 'Cedar City', 'Center Point', 'Watertown', 'Millbrae', 'Monroe', 'Bella Vista', 'Laurel', 'Washington', 'Sun City West', 'San Carlos', 'Goose Creek', 'South Lake Tahoe', 'Denison', 'Iselin', 'Cedar Park', 'Hayward', 'Galt', 'Wilkinsburg', 'Long Beach', 'Mehlville', 'Le Mars', 'Glassboro', 'Grenada', 'Lebanon', 'Middle River', 'University Park', 'Shrewsbury', 'Fort Lee', 'Fort Hunt', 'Budd Lake', 'Cohoes', 'Harrisburg', 'Homewood', 'Sulphur', 'Troy', 'Des Moines', 'Fort Payne', 'Ypsilanti', 'Sidney', 'Clemmons', 'Lake Oswego', 'Central', 'Biddeford', 'Parker', 'Camas', 'Plainview', 'Roosevelt', 'Oxford', 'Arcadia', 'Weirton', 'Evergreen Park', 'College Park', 'Forest Park', 'Lexington', 'Seaford', 'King of Prussia', 'Mequon', 'Mequon', 'Barnstable Town', 'Payson', 'Mount Pleasant', 'Gloversville', 'Biddeford', 'Blytheville', 'Ridgewood', 'Boulder City', 'Melville', 'Chelsea', 'Mercerville', 'New Castle', 'Hastings-on-Hudson', 'Wauconda', 'Miamisburg', 'Kings Park West', 'Magna', 'Galloway', 'Jefferson Hills', 'Ferguson', 'South Bradenton', 'Twentynine Palms', 'Hewitt', 'Georgetown', 'Franklin', 'Mill Creek', 'Mequon', 'Winter Park', 'Lakewood', 'St. Matthews', 'Lake Forest', 'River Forest', 'Walker', 'Willowick', 'Drexel Hill', 'Chanhassen', 'Gillette', 'Alexandria', 'Socorro', 'Harker Heights', 'Fairfax', 'Truckee', 'Lemon Hill', 'Hazel Park', 'Holly Hill', 'Homewood', 'Ames', 'Monroe', 'Ocean Springs', 'Auburn', 'Mequon', 'Wilton Manors', 'American Fork', 'Mason City', 'Crestview', 'Lemon Grove', 'Baraboo', 'North Tonawanda', 'Cornelius', 'Washington', 'Wallingford', 'Des Moines', 'Burke', 'Jeannette', 'Brawley', 'Hazel Green', 'Mineola', 'Ferndale', 'Dallas', 'Raytown', 'Northport', 'Spanish Springs', 'Eloy', 'Bridgetown', 'Puyallup', 'Scottsboro', 'Socastee', 'La Vergne', 'Short Pump', 'River Forest', 'Tonawanda', 'Middleton', 'St. Marys', 'Farragut', 'Newburgh', 'Rexburg', 'Rocky Hill', 'Clarksburg', 'Dover', 'West Hollywood', 'Tinton Falls', 'College', 'Glenn Dale', 'Moraga', 'Morton', 'Hartford', 'Wilmington', 'Baker', 'Garden Grove', 'Eureka', 'Northbrook', 'Lafayette', 'Lehi', 'West Bend', 'Mountlake Terrace', 'Sulphur', 'Goshen', 'St. Michael', 'Pelham', 'Atchison', 'Sweetwater', 'Havre', 'Lake Zurich', 'Lumberton', 'Mokena', 'West Odessa', 'New Hope', 'Mandan', 'Dobbs Ferry', 'Halfmoon', 'Bethpage', 'Socorro', 'Kailua', 'Hazelwood', 'Owatonna', 'Holtsville', 'Mountain Home', 'St. Matthews', 'Bethany', 'Beaver Dam', 'Graham', 'Spanish Lake', 'Socorro', 'North Canton', 'Fultondale', 'Fernley', 'Sherwood', 'Lake Grove', 'St. Louis Park', 'Bellaire', 'Wisconsin Rapids', 'North Liberty', 'Forest City', 'Lavon', 'Socorro', 'Lakeville', 'Mandan', 'Socorro', 'Kingsland', 'Northview', 'Socorro', 'East Lansing', 'Socorro', 'Socorro', 'Socorro']]);
+                const resultsDiv = document.getElementById('cityResults');
+                const input = document.getElementById('citySearch');
+                function showCities(filter = '') {
+                    const filtered = allCities.filter(c => c.toLowerCase().includes(filter.toLowerCase()));
+                    resultsDiv.innerHTML = filtered.slice(0,20).map(c => `<div style="padding:8px; border-bottom:1px solid rgba(255,255,255,0.1); cursor:pointer;" onclick="showTimeForCity('${c}')">${c}</div>`).join('');
+                }
+                showCities();
+                input.addEventListener('input', () => showCities(input.value));
+            }
+
+            function openChronograph() {
+                let html = `
+                <div style="text-align:center; font-size:2.5rem; font-family:'Cinzel'; margin:20px 0;" id="chronoDisplay">00:00.00</div>
+                <div style="display:flex; gap:10px; justify-content:center;">
+                    <button onclick="startChrono()" style="background:rgba(212,175,55,0.3); border:1px solid #d4af37; padding:10px 20px; border-radius:8px; color:#fff; cursor:pointer;">شروع</button>
+                    <button onclick="stopChrono()" style="background:rgba(255,100,100,0.3); border:1px solid #ff6464; padding:10px 20px; border-radius:8px; color:#fff; cursor:pointer;">توقف</button>
+                    <button onclick="resetChrono()" style="background:rgba(100,180,255,0.3); border:1px solid #64b4ff; padding:10px 20px; border-radius:8px; color:#fff; cursor:pointer;">ریست</button>
+                </div>`;
+                openModal('⏱️ کرنوگراف', html);
+            }
+
+            function openAlarm() {
+                let html = `
+                <div style="display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap;">
+                    <input type="number" id="alarmHour" placeholder="ساعت" min="0" max="23" style="padding:8px; width:70px; border-radius:8px; background:rgba(255,255,255,0.1); border:1px solid #d4af37; color:#fff;">
+                    <span>:</span>
+                    <input type="number" id="alarmMinute" placeholder="دقیقه" min="0" max="59" style="padding:8px; width:70px; border-radius:8px; background:rgba(255,255,255,0.1); border:1px solid #d4af37; color:#fff;">
+                    <button id="setAlarmBtn" style="background:rgba(212,175,55,0.3); border:1px solid #d4af37; padding:8px 16px; border-radius:8px; color:#fff; cursor:pointer;">تنظیم</button>
+                </div>
+                <div id="alarmStatus" style="text-align:center; margin-top:15px; color:#d4af37;"></div>`;
+                openModal('⏰ آلارم', html);
+            }
+
+            function openMoonPhase() {
+                let html = '<canvas id="moonCanvas" width="200" height="200" style="display:block; margin:0 auto;"></canvas><p style="text-align:center; color:#d4af37; margin-top:10px;" id="moonPhaseText"></p>';
+                openModal('🌙 فاز ماه', html);
+            }
+
+            function openWeather() {
+                let html = '<input type="text" id="weatherCity" placeholder="نام شهر (انگلیسی)" style="width:100%; padding:10px; border-radius:8px; background:rgba(255,255,255,0.1); border:1px solid #d4af37; color:#fff; margin-bottom:10px;"><button id="getWeather" style="background:rgba(212,175,55,0.3); border:1px solid #d4af37; padding:8px 16px; border-radius:8px; color:#fff; cursor:pointer;">دریافت آب‌وهوا</button><div id="weatherResult" style="margin-top:15px; text-align:center;"></div>';
+                openModal('🌦️ آب‌وهوا', html);
+            }
+
+            function openCalendar() {
+                let html = '<div style="text-align:center; font-size:2rem; color:#d4af37; font-family:\'Cinzel\';" id="calendarDate"></div><div style="text-align:center; margin-top:10px; color:#ccc;" id="shamsiDateLarge"></div>';
+                openModal('📅 تقویم', html);
+            }
+
+            function openThemeGallery() {
+                let html = themes.map((t,i) => `<div style="display:flex; align-items:center; gap:10px; padding:10px; margin:5px 0; border-radius:10px; background:rgba(255,255,255,0.05); cursor:pointer;" onclick="applyTheme(${i}); document.getElementById('modalOverlay').classList.remove('active');"><div style="width:24px; height:24px; border-radius:50%; background:${t.barColor};"></div>${t.name}</div>`).join('');
+                openModal('🎨 گالری تم‌ها', html);
+            }
+
+            function openSearch() {
+                let html = '<input type="text" id="globalSearch" placeholder="جستجو در تمام امکانات..." style="width:100%; padding:10px; border-radius:8px; background:rgba(255,255,255,0.1); border:1px solid #d4af37; color:#fff; margin-bottom:10px;"><div id="searchResults"></div>';
+                openModal('🔍 جستجوی پیشرفته', html);
+            }
+
+            function openFiftyCities() {
+                let html = countries.map(c => `<div>${c.city}: ${new Date().toLocaleString('en-US',{timeZone:c.timezone, hour:'2-digit', minute:'2-digit'})}</div>`).join('<br>');
+                openModal('🏙️ زمان ۵۰ شهر', html);
+            }
+
+            // اجرای اولیه
             function init() {
                 setInitialImage();
-                setInterval(changeBackgroundImage, IMAGE_CHANGE_INTERVAL);
-
-                resizeCanvas();
-                createStars();
+                setInterval(changeBackgroundImage, IMAGE_INTERVAL);
+                resizeCanvas(); createStars();
                 requestAnimationFrame(drawBackground);
-
-                createClockCards();
-                updateClocks();
-
-                prepareQuotes();
-                updateQuote();
-
+                createClocks(); updateClocks();
+                prepareQuotes(); updateQuote();
                 applyTheme(0);
-
                 setInterval(updateClocks, CLOCK_INTERVAL);
                 setInterval(updateQuote, QUOTE_INTERVAL);
-
                 tryAutoplay();
                 setTimeout(() => { if(bgMusic.paused) tryAutoplay(); }, 1000);
-
-                window.addEventListener('resize', () => {
-                    resizeCanvas();
-                    createStars();
-                });
+                window.addEventListener('resize', () => { resizeCanvas(); createStars(); });
+                buildMenu();
             }
 
             if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
