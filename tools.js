@@ -230,7 +230,7 @@
         });
     }
 
-    // ========== ۶. ساعت آنالوگ (ویجت پیش‌ساخته) ==========
+    // ========== ۶. ساعت آنالوگ ==========
     function openAnalogClock() {
         openAppPage('🕰️ ساعت آنالوگ', `
             <div class="glass-panel" style="text-align:center;">
@@ -655,158 +655,234 @@
         });
     }
 
-    // ادامه در بخش دوم (هوش مصنوعی و ابزارهای جدید)...    // ====================== هوش مصنوعی‌های واقعی و تست‌شده ======================
+    // ادامه در بخش دوم (هوش مصنوعی و ابزارهای جدید)...    // ====================== هوش مصنوعی‌های ساده و کاربردی ======================
 
-    // ========== ۲۵. چت‌بات هوشمند با Gemini API ==========
-    function openChatbot() {
-        openAppPage('🤖 چت‌بات هوشمند', `
+    // ========== ۲۵. متن به گفتار (Web Speech API - فارسی) ==========
+    function openTTS() {
+        openAppPage('🗣️ متن به گفتار', `
             <div class="glass-panel">
-                <div id="chatHistory" style="max-height:400px; overflow-y:auto; padding:10px; margin-bottom:15px;"></div>
-                <input type="text" id="chatInput" class="tool-input" placeholder="سوالت رو بپرس...">
-                <button class="tool-btn" id="sendChatBtn" style="display:block; margin:10px auto;">ارسال</button>
+                <textarea id="ttsInput" class="tool-input" placeholder="متنت رو اینجا بنویس تا برات بخونم..." style="height:150px;"></textarea>
+                <button class="tool-btn" id="ttsBtn" style="display:block; margin:10px auto;">🔊 بخوان</button>
+                <button class="tool-btn" id="ttsStopBtn" style="display:block; margin:10px auto;">⏹ توقف</button>
+                <div id="ttsStatus" style="text-align:center; margin-top:10px; color:#d4af37;"></div>
             </div>
         `, () => {
-            const history = document.getElementById('chatHistory');
-            const input = document.getElementById('chatInput');
-            const API_KEY = 'AIzaSyA_your_gemini_api_key_here'; // کلید رایگان Gemini
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-
-            document.getElementById('sendChatBtn').onclick = async () => {
-                const msg = input.value.trim();
-                if (!msg) return;
-                history.innerHTML += `<div style="text-align:right; color:#d4af37; margin:8px;">🧑‍💻 ${msg}</div>`;
-                input.value = '';
-                try {
-                    const res = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: msg }] }] })
-                    });
-                    const data = await res.json();
-                    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'متوجه نشدم.';
-                    history.innerHTML += `<div style="text-align:left; color:#ccc; margin:8px;">🤖 ${reply}</div>`;
-                } catch (e) {
-                    history.innerHTML += `<div style="text-align:left; color:#ff6464; margin:8px;">❌ خطا در ارتباط با هوش مصنوعی</div>`;
-                }
-                history.scrollTop = history.scrollHeight;
+            document.getElementById('ttsBtn').onclick = () => {
+                const text = document.getElementById('ttsInput').value;
+                if (!text) { document.getElementById('ttsStatus').textContent = 'لطفاً متنی وارد کنید'; return; }
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'fa-IR';
+                utterance.rate = 0.9;
+                utterance.onstart = () => { document.getElementById('ttsStatus').textContent = '🔊 در حال خواندن...'; };
+                utterance.onend = () => { document.getElementById('ttsStatus').textContent = '✅ تمام شد'; };
+                window.speechSynthesis.speak(utterance);
+            };
+            document.getElementById('ttsStopBtn').onclick = () => {
+                window.speechSynthesis.cancel();
+                document.getElementById('ttsStatus').textContent = '⏹ متوقف شد';
             };
         });
     }
 
-    // ========== ۲۶. تولید عکس با Pollinations.ai ==========
-    function openAIImage() {
-        openAppPage('🎨 تولید عکس هنری', `
+    // ========== ۲۶. گفتار به متن (Web Speech API - فارسی) ==========
+    function openSTT() {
+        openAppPage('🎤 گفتار به متن', `
             <div class="glass-panel" style="text-align:center;">
-                <input type="text" id="imagePrompt" class="tool-input" placeholder="توضیح عکس (فارسی یا انگلیسی)">
-                <button class="tool-btn" id="generateImageBtn">✨ تولید عکس</button>
-                <div id="imageResult" style="margin-top:20px;"></div>
+                <button class="tool-btn" id="sttBtn">🎤 شروع ضبط</button>
+                <button class="tool-btn" id="sttStopBtn">⏹ توقف</button>
+                <div id="sttResult" style="margin-top:20px; padding:15px; background:rgba(255,255,255,0.05); border-radius:12px; color:#ccc; min-height:100px;"></div>
             </div>
         `, () => {
-            document.getElementById('generateImageBtn').onclick = () => {
-                const prompt = document.getElementById('imagePrompt').value || 'a beautiful galaxy';
-                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&nologo=true`;
-                document.getElementById('imageResult').innerHTML = `<img src="${url}" style="max-width:100%; border-radius:16px;" onerror="this.parentElement.innerHTML='خطا در تولید عکس'">`;
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                document.getElementById('sttResult').textContent = '❌ مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کند';
+                return;
+            }
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'fa-IR';
+            recognition.interimResults = true;
+            recognition.continuous = true;
+            
+            document.getElementById('sttBtn').onclick = () => {
+                recognition.start();
+                document.getElementById('sttResult').textContent = '🎤 در حال گوش دادن...';
+            };
+            document.getElementById('sttStopBtn').onclick = () => {
+                recognition.stop();
+            };
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = 0; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
+                document.getElementById('sttResult').textContent = transcript;
+            };
+            recognition.onerror = (event) => {
+                document.getElementById('sttResult').textContent = '❌ خطا: ' + event.error;
             };
         });
     }
 
-    // ========== ۲۷. ترجمه هوشمند (LibreTranslate) ==========
-    function openTranslator() {
-        openAppPage('🌍 ترجمه هوشمند', `
-            <div class="glass-panel">
-                <textarea id="translateInput" class="tool-input" placeholder="متن خود را وارد کنید..."></textarea>
-                <div class="grid-2">
-                    <select id="translateFrom" class="tool-input"><option value="fa">فارسی</option><option value="en">انگلیسی</option></select>
-                    <select id="translateTo" class="tool-input"><option value="en">انگلیسی</option><option value="fa">فارسی</option></select>
-                </div>
-                <button class="tool-btn" id="translateBtn" style="display:block; margin:10px auto;">ترجمه کن</button>
-                <div id="translateResult" style="margin-top:20px; padding:15px; background:rgba(255,255,255,0.05); border-radius:12px; color:#ccc;"></div>
+    // ========== ۲۷. تولید نقل‌قول هوشمند ==========
+    function openAIQuote() {
+        openAppPage('📜 نقل‌قول هوشمند', `
+            <div class="glass-panel" style="text-align:center;">
+                <button class="tool-btn" id="generateQuoteBtn">✨ تولید نقل‌قول جدید</button>
+                <div id="aiQuoteText" style="font-size:1.6rem; font-style:italic; color:#ede5d0; margin:30px 0; line-height:2;"></div>
+                <div id="aiQuoteAuthor" style="color:#d4af37; font-size:1.2rem; font-family:'Cormorant Garamond', serif;"></div>
             </div>
         `, () => {
-            document.getElementById('translateBtn').onclick = async () => {
-                const text = document.getElementById('translateInput').value;
-                const from = document.getElementById('translateFrom').value;
-                const to = document.getElementById('translateTo').value;
+            let quotesArray = [];
+            if(window.quotes && Array.isArray(window.quotes)) quotesArray = window.quotes;
+            else if(typeof quotes !== 'undefined' && Array.isArray(quotes)) quotesArray = quotes;
+            
+            function generateQuote() {
+                if (quotesArray.length === 0) {
+                    document.getElementById('aiQuoteText').textContent = 'فایل quotes.js یافت نشد';
+                    return;
+                }
+                const random = quotesArray[Math.floor(Math.random() * quotesArray.length)];
+                document.getElementById('aiQuoteText').textContent = typeof random === 'string' ? random : random.text;
+                document.getElementById('aiQuoteAuthor').textContent = random.author ? `— ${random.author}` : '';
+            }
+            generateQuote();
+            document.getElementById('generateQuoteBtn').onclick = generateQuote;
+        });
+    }
+
+    // ========== ۲۸. مشاور هوشمند زمان ==========
+    function openTimeAdvisor() {
+        openAppPage('⏰ مشاور زمان', `
+            <div class="glass-panel" style="text-align:center;">
+                <div style="font-size:4rem; margin:20px 0;" id="advisorIcon">⏰</div>
+                <div id="advisorTime" style="color:#d4af37; font-size:1.5rem; font-family:'Cinzel';"></div>
+                <div id="advisorAdvice" style="font-size:1.3rem; color:#ede5d0; margin:20px 0; line-height:2;"></div>
+                <button class="tool-btn" id="refreshAdviceBtn">🔄 مشاوره جدید</button>
+            </div>
+        `, () => {
+            function getAdvice() {
+                const now = new Date();
+                const hour = now.getHours();
+                document.getElementById('advisorTime').textContent = now.toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
+                
+                let advice, icon;
+                if (hour >= 5 && hour < 8) {
+                    advice = 'صبح بخیر! بهترین زمان برای ورزش صبحگاهی و برنامه‌ریزی روزانه است. ذهنت در اوج آمادگی است.';
+                    icon = '🌅';
+                } else if (hour >= 8 && hour < 12) {
+                    advice = 'اوج بهره‌وری صبحگاهی! کارهای مهم و پیچیده را الان انجام بده. تمرکزت در بالاترین سطح است.';
+                    icon = '☀️';
+                } else if (hour >= 12 && hour < 14) {
+                    advice = 'وقت ناهار و استراحت کوتاه. یک وعده سبک بخور و ۱۵ دقیقه پیاده‌روی کن.';
+                    icon = '🕐';
+                } else if (hour >= 14 && hour < 17) {
+                    advice = 'بعدازظهر مناسبه برای کارهای روتین، جلسات و ایمیل‌ها. از کارهای سنگین پرهیز کن.';
+                    icon = '🌤️';
+                } else if (hour >= 17 && hour < 20) {
+                    advice = 'وقت خوبی برای یادگیری مهارت جدید یا ورزش عصرگاهی. ذهنت پذیرای اطلاعات تازه است.';
+                    icon = '🌆';
+                } else if (hour >= 20 && hour < 23) {
+                    advice = 'وقت استراحت و دورهمی. از صفحه نمایش فاصله بگیر و برای خواب آماده شو.';
+                    icon = '🌙';
+                } else {
+                    advice = 'نیمه‌شب است! اگر بیداری، وقت مناسبی برای کارهای خلاقانه و تفکر عمیق است.';
+                    icon = '🌃';
+                }
+                document.getElementById('advisorIcon').textContent = icon;
+                document.getElementById('advisorAdvice').textContent = advice;
+            }
+            getAdvice();
+            document.getElementById('refreshAdviceBtn').onclick = getAdvice;
+        });
+    }
+
+    // ========== ۲۹. تشخیص زبان ==========
+    function openLanguageDetector() {
+        openAppPage('🔍 تشخیص زبان', `
+            <div class="glass-panel">
+                <textarea id="langInput" class="tool-input" placeholder="متنی برای تشخیص زبان..."></textarea>
+                <button class="tool-btn" id="detectLangBtn" style="display:block; margin:10px auto;">تشخیص</button>
+                <div id="langResult" style="text-align:center; margin-top:20px; color:#d4af37; font-size:1.3rem;"></div>
+            </div>
+        `, () => {
+            document.getElementById('detectLangBtn').onclick = () => {
+                const text = document.getElementById('langInput').value;
+                if (!text.trim()) { document.getElementById('langResult').textContent = 'متنی وارد نشده'; return; }
+                
+                const persianChars = /[\u0600-\u06FF]/;
+                const englishChars = /[a-zA-Z]/;
+                const hasPersian = persianChars.test(text);
+                const hasEnglish = englishChars.test(text);
+                
+                let result;
+                if (hasPersian && !hasEnglish) result = '🇮🇷 فارسی';
+                else if (hasEnglish && !hasPersian) result = '🇬🇧 انگلیسی';
+                else if (hasPersian && hasEnglish) result = '🇮🇷 فارسی + 🇬🇧 انگلیسی';
+                else result = '🌍 سایر زبان‌ها';
+                
+                document.getElementById('langResult').textContent = result;
+            };
+        });
+    }
+
+    // ========== ۳۰. تکمیل خودکار متن ==========
+    function openAutocomplete() {
+        openAppPage('✍️ تکمیل خودکار', `
+            <div class="glass-panel">
+                <textarea id="autocompleteInput" class="tool-input" placeholder="شروع یک جمله..."></textarea>
+                <button class="tool-btn" id="autocompleteBtn" style="display:block; margin:10px auto;">✨ تکمیل کن</button>
+                <div id="autocompleteResult" style="margin-top:20px; padding:15px; background:rgba(255,255,255,0.05); border-radius:12px; color:#ccc;"></div>
+            </div>
+        `, () => {
+            const completions = {
+                'سلام': 'سلام، حالت چطوره؟ امیدوارم روز خوبی داشته باشی.',
+                'امروز': 'امروز هوا عالیه و بهترین روز برای شروع یه کار جدیده.',
+                'من': 'من همیشه به این فکر می‌کنم که چطور می‌تونم بهتر باشم.',
+                'زمان': 'زمان مثل رودخونه‌ست، هیچوقت منتظرت نمی‌مونه.',
+                'موفقیت': 'موفقیت یعنی هر روز یه قدم به جلو برداشتن، حتی اگه کوچیک باشه.',
+            };
+            document.getElementById('autocompleteBtn').onclick = () => {
+                const input = document.getElementById('autocompleteInput').value.trim();
+                let bestMatch = 'جمله‌ات رو ادامه بده...';
+                for (const [key, value] of Object.entries(completions)) {
+                    if (input.includes(key)) { bestMatch = value; break; }
+                }
+                document.getElementById('autocompleteResult').textContent = input ? input + ' ' + bestMatch.split(' ').slice(1).join(' ') : bestMatch;
+            };
+        });
+    }
+
+    // ====================== ابزارهای تعمیرشده ======================
+
+    // ========== ۳۱. کوتاه‌کننده لینک (TinyURL) ==========
+    function openLinkShortener() {
+        openAppPage('🔗 کوتاه‌کننده لینک', `
+            <div class="glass-panel">
+                <input type="text" id="longUrl" class="tool-input" placeholder="لینک بلند خود را وارد کنید">
+                <button class="tool-btn" id="shortenBtn" style="display:block; margin:10px auto;">کوتاه کن</button>
+                <div id="shortUrlResult" style="margin-top:20px; text-align:center; color:#d4af37; font-size:1.2rem;"></div>
+            </div>
+        `, () => {
+            document.getElementById('shortenBtn').onclick = async () => {
+                const url = document.getElementById('longUrl').value;
+                if (!url) { document.getElementById('shortUrlResult').textContent = 'لطفاً یک لینک وارد کنید'; return; }
                 try {
-                    const res = await fetch('https://libretranslate.de/translate', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ q: text, source: from, target: to, format: 'text' })
-                    });
-                    const data = await res.json();
-                    document.getElementById('translateResult').textContent = data.translatedText || 'ترجمه نشد.';
+                    const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
+                    const shortUrl = await res.text();
+                    if (shortUrl.startsWith('http')) {
+                        document.getElementById('shortUrlResult').innerHTML = `<a href="${shortUrl}" target="_blank" style="color:#d4af37;">${shortUrl}</a>`;
+                    } else {
+                        document.getElementById('shortUrlResult').textContent = 'خطا: لینک نامعتبر است';
+                    }
                 } catch (e) {
-                    document.getElementById('translateResult').textContent = 'خطا در ترجمه.';
+                    document.getElementById('shortUrlResult').textContent = 'خطا در اتصال به سرور';
                 }
             };
         });
     }
 
-    // ========== ۲۸. خلاصه‌سازی متن (الگوریتم هوشمند) ==========
-    function openSummarizer() {
-        openAppPage('📝 خلاصه‌سازی', `
-            <div class="glass-panel">
-                <textarea id="summarizeInput" class="tool-input" placeholder="متن طولانی..."></textarea>
-                <button class="tool-btn" id="summarizeBtn">خلاصه کن</button>
-                <div id="summarizeResult" style="margin-top:20px; padding:15px; background:rgba(255,255,255,0.05); border-radius:12px; color:#ccc;"></div>
-            </div>
-        `, () => {
-            document.getElementById('summarizeBtn').onclick = () => {
-                const text = document.getElementById('summarizeInput').value;
-                const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 0);
-                if (sentences.length === 0) return;
-                const summary = sentences.slice(0, Math.ceil(sentences.length / 3)).join('. ') + '.';
-                document.getElementById('summarizeResult').textContent = summary;
-            };
-        });
-    }
-
-    // ========== ۲۹. تحلیل احساسات (الگوریتم کلمات کلیدی) ==========
-    function openSentiment() {
-        openAppPage('😊 تحلیل احساسات', `
-            <div class="glass-panel">
-                <textarea id="sentimentInput" class="tool-input" placeholder="متنی برای تحلیل احساسات..."></textarea>
-                <button class="tool-btn" id="analyzeSentimentBtn">تحلیل</button>
-                <div id="sentimentResult" style="text-align:center; margin-top:20px; color:#d4af37; font-size:1.3rem;"></div>
-            </div>
-        `, () => {
-            const positiveWords = ['خوب', 'عالی', 'زیبا', 'دوست', 'شاد', 'موفق', 'عالی', 'خوشحال', 'بهترین'];
-            const negativeWords = ['بد', 'زشت', 'ناراحت', 'غمگین', 'شکست', 'وحشتناک', 'دشمن'];
-            document.getElementById('analyzeSentimentBtn').onclick = () => {
-                const text = document.getElementById('sentimentInput').value;
-                let score = 0;
-                positiveWords.forEach(w => { if (text.includes(w)) score++; });
-                negativeWords.forEach(w => { if (text.includes(w)) score--; });
-                document.getElementById('sentimentResult').textContent = score > 0 ? '😊 مثبت' : score < 0 ? '😢 منفی' : '😐 خنثی';
-            };
-        });
-    }
-
-    // ========== ۳۰. دستیار کدنویسی (الگوریتم ساده) ==========
-    function openCodeAssistant() {
-        openAppPage('💻 دستیار کدنویسی', `
-            <div class="glass-panel">
-                <textarea id="codePrompt" class="tool-input" placeholder="شرح تابع مورد نظر..."></textarea>
-                <button class="tool-btn" id="generateCodeBtn">✨ تولید کد</button>
-                <pre id="codeResult" style="margin-top:20px; padding:15px; background:rgba(0,0,0,0.3); border-radius:12px; color:#d4af37; overflow-x:auto;"></pre>
-            </div>
-        `, () => {
-            const templates = {
-                'مرتب‌سازی': 'function sortArray(arr) {\n  return arr.sort((a, b) => a - b);\n}',
-                'جستجو': 'function searchArray(arr, target) {\n  return arr.find(item => item === target);\n}',
-                'میانگین': 'function average(arr) {\n  return arr.reduce((a, b) => a + b, 0) / arr.length;\n}',
-            };
-            document.getElementById('generateCodeBtn').onclick = () => {
-                const prompt = document.getElementById('codePrompt').value;
-                const matched = Object.keys(templates).find(k => prompt.includes(k));
-                document.getElementById('codeResult').textContent = matched ? templates[matched] : '// تابع مورد نظر یافت نشد.';
-            };
-        });
-    }
-
-    // ====================== ابزارهای جدید و محبوب ======================
-
-    // ========== ۳۱. مبدل ارز (API جدید) ==========
+    // ========== ۳۲. مبدل ارز (همان API قبلی - سالم بود) ==========
     function openCurrencyConverter() {
         openAppPage('💱 مبدل ارز', `
             <div class="glass-panel">
@@ -832,190 +908,16 @@
         });
     }
 
-    // ========== ۳۲. کوتاه‌کننده لینک (is.gd) ==========
-    function openLinkShortener() {
-        openAppPage('🔗 کوتاه‌کننده لینک', `
-            <div class="glass-panel">
-                <input type="text" id="longUrl" class="tool-input" placeholder="لینک بلند خود را وارد کنید">
-                <button class="tool-btn" id="shortenBtn" style="display:block; margin:10px auto;">کوتاه کن</button>
-                <div id="shortUrlResult" style="margin-top:20px; text-align:center; color:#d4af37; font-size:1.2rem;"></div>
-            </div>
-        `, () => {
-            document.getElementById('shortenBtn').onclick = async () => {
-                const url = document.getElementById('longUrl').value;
-                try {
-                    const res = await fetch(`https://is.gd/create.php?format=json&url=${encodeURIComponent(url)}`);
-                    const data = await res.json();
-                    document.getElementById('shortUrlResult').innerHTML = `<a href="${data.shorturl}" target="_blank" style="color:#d4af37;">${data.shorturl}</a>`;
-                } catch (e) { document.getElementById('shortUrlResult').textContent = 'خطا در کوتاه کردن.'; }
-            };
-        });
-    }
-
-    // ========== ۳۳. QR Code Generator ==========
-    function openQRCode() {
-        openAppPage('🏷️ QR Code Generator', `
-            <div class="glass-panel" style="text-align:center;">
-                <input type="text" id="qrInput" class="tool-input" placeholder="متن یا لینک برای QR Code">
-                <button class="tool-btn" id="generateQRBtn">✨ تولید</button>
-                <div id="qrResult" style="margin-top:20px;"></div>
-            </div>
-        `, () => {
-            document.getElementById('generateQRBtn').onclick = () => {
-                const text = document.getElementById('qrInput').value;
-                const url = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(text)}`;
-                document.getElementById('qrResult').innerHTML = `<img src="${url}" style="border-radius:16px;">`;
-            };
-        });
-    }
-
-    // ========== ۳۴. Markdown Preview ==========
-    function openMarkdownPreview() {
-        openAppPage('📝 Markdown Preview', `
-            <div class="glass-panel">
-                <textarea id="mdInput" class="tool-input" placeholder="متن Markdown..." style="height:150px;"></textarea>
-                <div id="mdPreview" style="margin-top:20px; padding:15px; background:rgba(255,255,255,0.05); border-radius:12px; color:#ccc;"></div>
-            </div>
-        `, () => {
-            document.getElementById('mdInput').addEventListener('input', function() {
-                const text = this.value;
-                const html = text
-                    .replace(/### (.*)/g, '<h3 style="color:#d4af37;">$1</h3>')
-                    .replace(/## (.*)/g, '<h2 style="color:#d4af37;">$1</h2>')
-                    .replace(/# (.*)/g, '<h1 style="color:#d4af37;">$1</h1>')
-                    .replace(/\*\*(.*)\*\*/g, '<b>$1</b>')
-                    .replace(/\*(.*)\*/g, '<i>$1</i>');
-                document.getElementById('mdPreview').innerHTML = html;
-            });
-        });
-    }
-
-    // ========== ۳۵. Text Diff Checker ==========
-    function openTextDiff() {
-        openAppPage('🔍 Text Diff Checker', `
-            <div class="glass-panel">
-                <textarea id="diffText1" class="tool-input" placeholder="متن اول..."></textarea>
-                <textarea id="diffText2" class="tool-input" placeholder="متن دوم..."></textarea>
-                <button class="tool-btn" id="compareDiffBtn">مقایسه</button>
-                <div id="diffResult" style="margin-top:20px; padding:15px; background:rgba(255,255,255,0.05); border-radius:12px; color:#ccc; white-space:pre-wrap;"></div>
-            </div>
-        `, () => {
-            document.getElementById('compareDiffBtn').onclick = () => {
-                const text1 = document.getElementById('diffText1').value;
-                const text2 = document.getElementById('diffText2').value;
-                if (text1 === text2) {
-                    document.getElementById('diffResult').textContent = '✅ متون یکسان هستند.';
-                } else {
-                    document.getElementById('diffResult').textContent = '❌ متون متفاوت هستند.';
-                }
-            };
-        });
-    }
-
-    // ========== ۳۶. UUID Generator ==========
-    function openUUIDGenerator() {
-        openAppPage('🆔 UUID Generator', `
-            <div class="glass-panel" style="text-align:center;">
-                <button class="tool-btn" id="generateUUIDBtn">تولید UUID</button>
-                <div id="uuidResult" style="margin-top:20px; color:#d4af37; font-size:1.2rem; word-break:break-all;"></div>
-            </div>
-        `, () => {
-            document.getElementById('generateUUIDBtn').onclick = () => {
-                const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-                    return v.toString(16);
-                });
-                document.getElementById('uuidResult').textContent = uuid;
-            };
-        });
-    }
-
-    // ========== ۳۷. IP Lookup ==========
-    function openIPLookup() {
-        openAppPage('🌐 IP Lookup', `
-            <div class="glass-panel" style="text-align:center;">
-                <button class="tool-btn" id="checkIPBtn">بررسی IP من</button>
-                <div id="ipResult" style="margin-top:20px; color:#ccc;"></div>
-            </div>
-        `, () => {
-            document.getElementById('checkIPBtn').onclick = async () => {
-                try {
-                    const res = await fetch('https://api.ipify.org?format=json');
-                    const data = await res.json();
-                    document.getElementById('ipResult').textContent = `آدرس IP: ${data.ip}`;
-                } catch (e) {
-                    document.getElementById('ipResult').textContent = 'خطا در دریافت IP.';
-                }
-            };
-        });
-    }
-
-    // ========== ۳۸. تست سرعت اینترنت ==========
-    function openSpeedTest() {
-        openAppPage('🚀 تست سرعت', `
-            <div class="glass-panel" style="text-align:center;">
-                <button class="tool-btn" id="startSpeedTest">شروع تست</button>
-                <div id="speedResult" style="margin-top:20px; color:#d4af37; font-size:1.3rem;"></div>
-            </div>
-        `, () => {
-            document.getElementById('startSpeedTest').onclick = () => {
-                document.getElementById('speedResult').textContent = '⏳ در حال تست...';
-                const image = new Image(); const startTime = Date.now();
-                image.onload = () => {
-                    const duration = (Date.now() - startTime) / 1000;
-                    const speed = (500000 * 8 / duration / 1024 / 1024).toFixed(2);
-                    document.getElementById('speedResult').textContent = `سرعت تقریبی: ${speed} Mbps`;
-                };
-                image.src = 'https://www.google.com/images/phd/px.gif?t=' + Date.now();
-            };
-        });
-    }
-
-    // ========== ۳۹. تولید رمز عبور ==========
-    function openPasswordGenerator() {
-        openAppPage('🔐 رمز عبور', `
-            <div class="glass-panel" style="text-align:center;">
-                <button class="tool-btn" id="generatePasswordBtn">تولید رمز</button>
-                <div id="passwordResult" style="margin-top:20px; color:#d4af37; font-size:1.5rem; word-break:break-all;"></div>
-            </div>
-        `, () => {
-            document.getElementById('generatePasswordBtn').onclick = () => {
-                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%';
-                let pass = ''; for (let i=0; i<16; i++) pass += chars[Math.floor(Math.random() * chars.length)];
-                document.getElementById('passwordResult').textContent = pass;
-            };
-        });
-    }
-
-    // ========== ۴۰. محاسبه BMI ==========
-    function openBMI() {
-        openAppPage('⚖️ محاسبه BMI', `
-            <div class="glass-panel">
-                <input type="number" id="weight" class="tool-input" placeholder="وزن (kg)">
-                <input type="number" id="height" class="tool-input" placeholder="قد (cm)">
-                <button class="tool-btn" id="calcBMIBtn">محاسبه</button>
-                <div id="bmiResult" style="text-align:center; margin-top:20px; color:#d4af37; font-size:1.5rem;"></div>
-            </div>
-        `, () => {
-            document.getElementById('calcBMIBtn').onclick = () => {
-                const w = parseFloat(document.getElementById('weight').value), h = parseFloat(document.getElementById('height').value) / 100;
-                const bmi = (w / (h * h)).toFixed(1);
-                let status = bmi < 18.5 ? 'کمبود وزن' : bmi < 25 ? 'نرمال' : bmi < 30 ? 'اضافه وزن' : 'چاق';
-                document.getElementById('bmiResult').textContent = `${bmi} (${status})`;
-            };
-        });
-    }
-
     // ========== منوی نهایی بر اساس ارزش ==========
     const menuCategories = [
         { name: '✨ خانه', items: [{ icon:'🏠', text:'داشبورد', action: openDashboard }] },
         { name: '🤖 هوش مصنوعی', items: [
-            { icon:'🤖', text:'چت‌بات هوشمند', action: openChatbot },
-            { icon:'🎨', text:'تولید عکس هنری', action: openAIImage },
-            { icon:'🌍', text:'ترجمه هوشمند', action: openTranslator },
-            { icon:'📝', text:'خلاصه‌سازی', action: openSummarizer },
-            { icon:'😊', text:'تحلیل احساسات', action: openSentiment },
-            { icon:'💻', text:'دستیار کدنویسی', action: openCodeAssistant },
+            { icon:'🗣️', text:'متن به گفتار', action: openTTS },
+            { icon:'🎤', text:'گفتار به متن', action: openSTT },
+            { icon:'📜', text:'نقل‌قول هوشمند', action: openAIQuote },
+            { icon:'⏰', text:'مشاور زمان', action: openTimeAdvisor },
+            { icon:'🔍', text:'تشخیص زبان', action: openLanguageDetector },
+            { icon:'✍️', text:'تکمیل خودکار', action: openAutocomplete },
         ]},
         { name: '🌍 ابزارهای جهانی', items: [
             { icon:'💱', text:'مبدل ارز', action: openCurrencyConverter },
