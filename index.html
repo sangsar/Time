@@ -17,18 +17,20 @@
             --card-night-bg: linear-gradient(145deg, rgba(16,14,35,0.65), rgba(28,22,50,0.75));
             --quote-bg: rgba(20, 15, 35, 0.4);
             --star-color: rgba(230,220,255,0.9);
+            --body-font: 'Vazirmatn', 'Cormorant Garamond', sans-serif;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; }
 
         body {
-            font-family: 'Vazirmatn', 'Cormorant Garamond', sans-serif;
+            font-family: var(--body-font);
             min-height: 100vh;
             background: #0a0a18;
             color: #e8e4f0;
             overflow-x: hidden;
             position: relative;
             -webkit-font-smoothing: antialiased;
+            transition: font-family 0.3s;
         }
 
         /* لایه‌های عکس */
@@ -325,6 +327,73 @@
 
         .footer { text-align: center; padding: 10px; font-size: 0.6rem; color: #8e8a80; letter-spacing: 2px; opacity: 0.5; }
 
+        /* ابزارهای مدال */
+        .modal-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 200;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background: rgba(22, 18, 38, 0.85);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(212,175,55,0.35);
+            border-radius: 20px;
+            padding: 28px 24px;
+            width: 90%; max-width: 600px; max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            transform: translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+            position: relative;
+            color: #e8e4f0;
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        .modal-close {
+            position: absolute; top: 12px; left: 12px;
+            width: 34px; height: 34px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            color: #fff; font-size: 1rem;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+        }
+        .modal-close:hover { background: rgba(255,100,100,0.3); }
+
+        .tool-btn {
+            background: rgba(212,175,55,0.2);
+            border: 1px solid rgba(212,175,55,0.4);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Vazirmatn', sans-serif;
+            margin: 5px;
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+        .tool-btn:hover { background: rgba(212,175,55,0.4); }
+        .tool-input {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(212,175,55,0.3);
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-family: 'Vazirmatn', sans-serif;
+            width: 100%;
+            margin: 8px 0;
+            outline: none;
+            font-size: 1rem;
+        }
+
         @media (max-width: 1200px) { .clocks-grid { grid-template-columns: repeat(4,1fr); } }
         @media (max-width: 900px) { .clocks-grid { grid-template-columns: repeat(3,1fr); } .logo-text { font-size:2.4rem; } }
         @media (max-width: 600px) {
@@ -389,11 +458,19 @@
         <footer class="footer">✦ my time ✦ Memento Mori ✦</footer>
     </div>
 
+    <!-- مدال عمومی -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">✕</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
     <!-- فایل quotes.js -->
     <script src="quotes.js"></script>
 
+    <!-- اسکریپت اصلی -->
     <script>
-        // ==================== اسکریپت اصلی ====================
         (function() {
             const QUOTE_INTERVAL = 10000;
             const CLOCK_INTERVAL = 1000;
@@ -436,11 +513,14 @@
                 { city: 'Johannesburg', timezone: 'Africa/Johannesburg' }
             ];
 
+            // تعریف تم‌ها (حالا ۶ تم با فونت‌های مختلف)
             const themes = [
-                { name: 'کهکشانی', overlayColor: 'rgba(10,0,20,0.3)', quoteBg: 'rgba(20,15,35,0.4)', starColor: 'rgba(230,220,255,0.9)' },
-                { name: 'صورتی رؤیایی', overlayColor: 'rgba(30,5,20,0.3)', quoteBg: 'rgba(35,15,30,0.4)', starColor: 'rgba(255,200,220,0.9)' },
-                { name: 'آبی دریایی', overlayColor: 'rgba(0,10,25,0.3)', quoteBg: 'rgba(15,20,35,0.4)', starColor: 'rgba(180,220,255,0.9)' },
-                { name: 'سفید مهتابی', overlayColor: 'rgba(20,20,30,0.3)', quoteBg: 'rgba(30,30,40,0.4)', starColor: 'rgba(255,255,255,0.9)' }
+                { name: 'کهکشانی', overlayColor: 'rgba(10,0,20,0.3)', quoteBg: 'rgba(20,15,35,0.4)', starColor: 'rgba(230,220,255,0.9)', bodyFont: "'Vazirmatn', 'Cormorant Garamond', sans-serif" },
+                { name: 'صورتی رؤیایی', overlayColor: 'rgba(30,5,20,0.3)', quoteBg: 'rgba(35,15,30,0.4)', starColor: 'rgba(255,200,220,0.9)', bodyFont: "'Vazirmatn', 'Cormorant Garamond', sans-serif" },
+                { name: 'آبی دریایی', overlayColor: 'rgba(0,10,25,0.3)', quoteBg: 'rgba(15,20,35,0.4)', starColor: 'rgba(180,220,255,0.9)', bodyFont: "'Vazirmatn', 'Cormorant Garamond', sans-serif" },
+                { name: 'سبز زمردی', overlayColor: 'rgba(0,20,10,0.3)', quoteBg: 'rgba(15,30,20,0.4)', starColor: 'rgba(180,255,200,0.9)', bodyFont: "'Vazirmatn', 'Cormorant Garamond', sans-serif" },
+                { name: 'طلایی مجلل', overlayColor: 'rgba(20,15,0,0.3)', quoteBg: 'rgba(35,25,10,0.4)', starColor: 'rgba(255,220,150,0.9)', bodyFont: "'Playfair Display', serif" },
+                { name: 'سفید مهتابی', overlayColor: 'rgba(20,20,30,0.3)', quoteBg: 'rgba(30,30,40,0.4)', starColor: 'rgba(255,255,255,0.9)', bodyFont: "'Cormorant Garamond', serif" }
             ];
 
             const bgLayerA = document.getElementById('bgLayerA'), bgLayerB = document.getElementById('bgLayerB');
@@ -560,36 +640,18 @@
                 requestAnimationFrame(drawBackground);
             }
 
-            // حالا تابع applyTheme را هم global می‌کنیم تا بعداً در tools.js هم قابل استفاده باشد
+            // تابع تغییر تم (global تا tools.js هم بتواند از آن استفاده کند)
             window.applyTheme = function(idx) {
-                currentThemeIndex = idx; currentTheme = themes[idx];
+                currentThemeIndex = idx;
+                currentTheme = themes[idx];
                 bgOverlay.style.background = `radial-gradient(ellipse at center, ${currentTheme.overlayColor} 0%, rgba(0,0,0,0.4) 100%)`;
                 quoteContainer.style.background = currentTheme.quoteBg;
-                themeTooltip.textContent = currentTheme.name; themeTooltip.classList.add('show');
+                document.body.style.fontFamily = currentTheme.bodyFont;
+                themeTooltip.textContent = currentTheme.name;
+                themeTooltip.classList.add('show');
                 setTimeout(() => themeTooltip.classList.remove('show'), 1500);
                 console.log('تم تغییر کرد به: ' + currentTheme.name);
             };
-
-            // اتصال دکمه تم – این بار در init انجام می‌دهیم
-            function init() {
-                setInitialImage();
-                setInterval(changeBackgroundImage, IMAGE_INTERVAL);
-                resizeCanvas(); createStars();
-                requestAnimationFrame(drawBackground);
-                createClocks(); updateClocks();
-                prepareQuotes(); updateQuote();
-                applyTheme(0);
-                setInterval(updateClocks, CLOCK_INTERVAL);
-                setInterval(updateQuote, QUOTE_INTERVAL);
-                tryAutoplay();
-                setTimeout(() => { if(bgMusic.paused) tryAutoplay(); }, 1000);
-                window.addEventListener('resize', () => { resizeCanvas(); createStars(); });
-
-                // کلیک روی دکمه تم
-                themeSwitch.addEventListener('click', () => {
-                    applyTheme((currentThemeIndex + 1) % themes.length);
-                });
-            }
 
             function toggleMusic() {
                 if(isPlaying) { bgMusic.pause(); recordDisc.classList.remove('playing'); isPlaying = false; }
@@ -598,75 +660,32 @@
             gramophoneBtn.addEventListener('click', toggleMusic);
             function tryAutoplay() { bgMusic.play().then(() => { isPlaying = true; recordDisc.classList.add('playing'); }).catch(() => { isPlaying = false; recordDisc.classList.remove('playing'); }); }
 
+            function init() {
+                setInitialImage();
+                setInterval(changeBackgroundImage, IMAGE_INTERVAL);
+                resizeCanvas(); createStars();
+                requestAnimationFrame(drawBackground);
+                createClocks(); updateClocks();
+                prepareQuotes(); updateQuote();
+                applyTheme(0); // تم اولیه
+                setInterval(updateClocks, CLOCK_INTERVAL);
+                setInterval(updateQuote, QUOTE_INTERVAL);
+                tryAutoplay();
+                setTimeout(() => { if(bgMusic.paused) tryAutoplay(); }, 1000);
+                window.addEventListener('resize', () => { resizeCanvas(); createStars(); });
+
+                // اتصال دکمه تغییر تم
+                themeSwitch.addEventListener('click', () => {
+                    applyTheme((currentThemeIndex + 1) % themes.length);
+                });
+            }
+
             if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
             else init();
         })();
     </script>
 
-    <!-- منوی همبرگری -->
-    <script>
-        (function() {
-            const menuCategories = [
-                { name: '⏱️ کرنوگراف و تایمر', items: [
-                    { icon:'⏱️', text:'کرنوگراف', action: null },
-                    { icon:'⏳', text:'تایمر', action: null },
-                    { icon:'🍅', text:'پومودورو', action: null },
-                ]},
-                { name: '⏰ ساعت و آلارم', items: [
-                    { icon:'⏰', text:'آلارم', action: null },
-                    { icon:'🕰️', text:'ساعت آنالوگ', action: null },
-                ]},
-                { name: '🌍 مناطق زمانی', items: [
-                    { icon:'🕐', text:'تهران', action: null },
-                    { icon:'🕐', text:'نیویورک', action: null },
-                    { icon:'🕐', text:'لندن', action: null },
-                    { icon:'🕐', text:'توکیو', action: null },
-                    { icon:'🕐', text:'پکن', action: null },
-                ]},
-                { name: '📅 تقویم و نجوم', items: [
-                    { icon:'📅', text:'تقویم', action: null },
-                    { icon:'🌙', text:'فاز ماه', action: null },
-                ]},
-                { name: '🧮 محاسبات', items: [
-                    { icon:'🔢', text:'ماشین حساب زمان', action: null },
-                    { icon:'🎂', text:'محاسبه سن', action: null },
-                ]},
-            ];
-
-            const menuContent = document.getElementById('menuContent');
-            let html = '';
-            menuCategories.forEach(cat => {
-                html += `<div class="menu-category">`;
-                html += `<div class="menu-cat-header"><span>${cat.name}</span><span class="arrow">▼</span></div>`;
-                html += `<div class="menu-cat-items">`;
-                cat.items.forEach(item => {
-                    html += `<div class="menu-item"><span>${item.icon}</span> ${item.text}</div>`;
-                });
-                html += `</div></div>`;
-            });
-            menuContent.innerHTML = html;
-
-            document.querySelectorAll('.menu-cat-header').forEach(header => {
-                header.addEventListener('click', () => header.parentElement.classList.toggle('open'));
-            });
-
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    alert('این ابزار به‌زودی در tools.js اضافه می‌شود.');
-                    closeMenu();
-                });
-            });
-
-            const hamburgerBtn = document.getElementById('hamburgerBtn');
-            const menuDrawer = document.getElementById('menuDrawer');
-            const menuOverlay = document.getElementById('menuOverlay');
-
-            function openMenu() { menuDrawer.classList.add('open'); menuOverlay.classList.add('active'); hamburgerBtn.classList.add('open'); }
-            function closeMenu() { menuDrawer.classList.remove('open'); menuOverlay.classList.remove('active'); hamburgerBtn.classList.remove('open'); }
-
-            hamburgerBtn.addEventListener('click', () => menuDrawer.classList.contains('open') ? closeMenu() : openMenu());
-            menuOverlay.addEventListener('click', closeMenu);
-        })();
-    </script>
+    <!-- اسکریپت منوی همبرگری و ابزارها (tools.js) -->
+    <script src="tools.js"></script>
 </body>
 </html>
